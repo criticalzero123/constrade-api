@@ -7,7 +7,7 @@ namespace ConstradeApi.Entity
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         public DbSet<Address> Address { get; set; } 
-        public DbSet<Person> Person { get; set; }
+        public DbSet<Person> Persons { get; set; }
         public DbSet<User> Users { get; set; }
     }
 }

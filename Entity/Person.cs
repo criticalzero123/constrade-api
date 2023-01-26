@@ -11,15 +11,18 @@ namespace ConstradeApi.Entity
 
        
         [ForeignKey("Address")]
-        public int AddressRef_id { get; set; }
+        public int? AddressRef_id { get; set; }
         public  Address Address { get; set; } 
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
-        public DateTime Birthdate { get; set; }
+        [StringLength(100)]
+        public string LastName { get; set; } = string.Empty;
+
+        public DateTime? Birthdate { get; set; }
 
         [StringLength(50)]
         public string PhoneNumber { get; set; } = string.Empty;

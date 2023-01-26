@@ -10,17 +10,16 @@ namespace ConstradeApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly DbHelper _dbHelper;
-        public UserController(DataContext dataContext)
+        public UsersController(DataContext dataContext)
         {
             _dbHelper  = new DbHelper(dataContext);
         }
 
         // GET: api/<UserController>
         [HttpGet]
-        [Route("GetUsers")]
         public IActionResult Get()
         {
             ResponseType responseType = ResponseType.Success;
@@ -45,15 +44,41 @@ namespace ConstradeApi.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            ResponseType responseType = ResponseType.Success;
+
+            try
+            {
+                UserModel? user= _dbHelper.GetUser(id);
+                if (user == null)
+                {
+                    responseType = ResponseType.NotFound;
+                    return NotFound();
+                }
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, user));
+            } catch(Exception ex)
+            {
+                responseType = ResponseType.Failure;
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
         }
 
         // POST api/<UserController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] UserModel userModel)
         {
+            try
+            {
+                ResponseType response= ResponseType.Success;
+                _dbHelper.SaveUser(userModel);
+
+                return Ok(ResponseHandler.GetApiResponse(response, userModel));
+            }catch( Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException));
+            }
         }
 
         // PUT api/<UserController>/5

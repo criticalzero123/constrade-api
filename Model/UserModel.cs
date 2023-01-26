@@ -11,6 +11,7 @@ namespace ConstradeApi.Model
         public string User_type { get; set; } = string.Empty;
 
         public int PersonRefId { get; set; }
+        public PersonModel Person { get; set; }
 
         public string Authprovider_type { get; set; } = string.Empty;
 
@@ -21,15 +22,15 @@ namespace ConstradeApi.Model
         public string User_status { get; set; } = string.Empty;
 
         
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-       
-        public string Password { get; set; }
 
-     
-        public string ImageUrl { get; set; }
+        public string Password { get; set; } = string.Empty;
 
-    
+
+        public string ImageUrl { get; set; } = string.Empty;
+
+
         public DateTime LastActiveAt { get; set; }
 
        

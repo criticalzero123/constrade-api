@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230118231507_InitialDatabase")]
-    partial class InitialDatabase
+    [Migration("20230126135439_AddingNullOptionInAddress")]
+    partial class AddingNullOptionInAddress
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,13 +81,18 @@ namespace ConstradeApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Person_id"));
 
-                    b.Property<int>("AddressRef_id")
+                    b.Property<int?>("AddressRef_id")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Birthdate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -170,9 +175,7 @@ namespace ConstradeApi.Migrations
                 {
                     b.HasOne("ConstradeApi.Entity.Address", "Address")
                         .WithMany()
-                        .HasForeignKey("AddressRef_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AddressRef_id");
 
                     b.Navigation("Address");
                 });

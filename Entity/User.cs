@@ -12,7 +12,7 @@ namespace ConstradeApi.Entity
 
         [ForeignKey("Person")]
         public int PersonRef_id { get; set; }
-        public Person Person { get; set; }
+        public Person? Person { get; set; }
 
         [Required]
         [StringLength(20)]
@@ -28,25 +28,25 @@ namespace ConstradeApi.Entity
         [Required]
         [StringLength(20)]
         public string User_status { get; set; } = string.Empty;
-        
+
         [Required]
         [StringLength(50)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [StringLength(255)]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         [Required]
         [StringLength(255)]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
 
         [Required]
-        public DateTime LastActiveAt { get; set; }
+        public DateTime LastActiveAt { get; set; } = DateTime.Now;
 
         [Required]
         public int CountPost { get; set; }
 
         [Required]
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.Now;
     }
 }

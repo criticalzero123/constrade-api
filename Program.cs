@@ -16,15 +16,13 @@ namespace ConstradeApi
             // Add services to the container.
             builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgressDB"]));
             builder.Services.AddControllers();
-
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            // Configure the HTTP request pipeline.
 
-
+           
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
 

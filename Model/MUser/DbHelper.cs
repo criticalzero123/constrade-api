@@ -1,7 +1,8 @@
 ﻿using ConstradeApi.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
-namespace ConstradeApi.Model
+namespace ConstradeApi.Model.MUser
 {
     public class DbHelper
     {
@@ -16,7 +17,7 @@ namespace ConstradeApi.Model
         /// GET
         /// </summary>
         /// <returns>List of Users</returns>
-        public List<UserModel> GetUsers()
+        public List<UserModel> GetAll()
         {
             List<UserModel> response = new List<UserModel>();
 
@@ -24,15 +25,15 @@ namespace ConstradeApi.Model
             data.ForEach(row => response.Add(new UserModel()
             {
                 User_id = row.User_id,
-                User_status= row.User_status,
-                User_type= row.User_type, 
-                Authprovider_type= row.Authprovider_type,
-                Subscription_type= row.Subscription_type,
-                ImageUrl= row.ImageUrl,
-                DateCreated= row.DateCreated,
+                User_status = row.User_status,
+                User_type = row.User_type,
+                Authprovider_type = row.Authprovider_type,
+                Subscription_type = row.Subscription_type,
+                ImageUrl = row.ImageUrl,
+                DateCreated = row.DateCreated,
                 PersonRefId = row.PersonRef_id,
-                Email= row.Email,
-                LastActiveAt= row.LastActiveAt,
+                Email = row.Email,
+                LastActiveAt = row.LastActiveAt,
                 CountPost = row.CountPost,
             }));
 
@@ -44,7 +45,7 @@ namespace ConstradeApi.Model
         /// </summary>
         /// <param name="id"></param>
         /// <returns>null or an UserModel</returns>
-        public UserModel? GetUser(int id)
+        public UserModel? Get(int id)
         {
 
             var userData = _context.Users.ToList();
@@ -61,37 +62,38 @@ namespace ConstradeApi.Model
                 .Where(o => o._user.User_id == id)
                 .Select(o => new UserModel()
                 {
-                    User_id= o._user.User_id,
-                    User_type= o._user.User_type,
+                    User_id = o._user.User_id,
+                    User_type = o._user.User_type,
                     PersonRefId = o._user.PersonRef_id,
-                    Email= o._user.Email,
-                    Authprovider_type= o._user.Authprovider_type,
-                    Subscription_type  = o._user.Subscription_type,
-                    User_status= o._user.User_status,
-                    Password= o._user.Password,
-                    ImageUrl= o._user.ImageUrl,
-                    LastActiveAt= o._user.LastActiveAt,
-                    CountPost= o._user.CountPost,
-                    DateCreated= o._user.DateCreated,
+                    Email = o._user.Email,
+                    Authprovider_type = o._user.Authprovider_type,
+                    Subscription_type = o._user.Subscription_type,
+                    User_status = o._user.User_status,
+                    Password = o._user.Password,
+                    ImageUrl = o._user.ImageUrl,
+                    LastActiveAt = o._user.LastActiveAt,
+                    CountPost = o._user.CountPost,
+                    DateCreated = o._user.DateCreated,
                     Person = new PersonModel()
                     {
                         Person_id = o._person.Person_id,
-                        FirstName= o._person.FirstName,
+                        FirstName = o._person.FirstName,
                         LastName = o._person.LastName,
                         AddressReference_id = o._person.AddressRef_id,
-                        Birthdate= o._person.Birthdate,
-                        PhoneNumber= o._person.PhoneNumber,
+                        Birthdate = o._person.Birthdate,
+                        PhoneNumber = o._person.PhoneNumber,
                     }
                 }).FirstOrDefault();
 
 
             return data;
         }
+
         /// <summary>
         /// POST or PUT for USER
         /// </summary>
         /// <param name="user"></param>
-        public void SaveUser(UserModel user)
+        public void Save(UserModel user)
         {
             Person personTable = new Person();
             personTable.FirstName = user.Person.FirstName;
@@ -102,9 +104,9 @@ namespace ConstradeApi.Model
             _context.SaveChanges();
 
             User userTable = new User();
-            userTable.User_type= user.User_type;
+            userTable.User_type = user.User_type;
             userTable.PersonRef_id = personTable.Person_id;
-            userTable.Authprovider_type= user.Authprovider_type;
+            userTable.Authprovider_type = user.Authprovider_type;
             userTable.Subscription_type = user.Subscription_type;
             userTable.User_status = user.User_status;
             userTable.Email = user.Email;
@@ -117,5 +119,30 @@ namespace ConstradeApi.Model
 
             _context.SaveChanges();
         }
+
+        /// <summary>
+        /// Check the email if it exist in the database
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>true or false</returns>
+        public async Task<bool> CheckEmailExist(string email)
+        {
+            bool result = await _context.Users.AnyAsync(user => user.Email == email);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Check the phone if it exist in the database
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <returns>true or false</returns>
+        public async Task<bool> CheckPhoneExist(string phone)
+        {
+            bool result = await _context.Persons.AnyAsync(person => person.PhoneNumber == phone);
+
+            return result;
+        }
+
     }
 }

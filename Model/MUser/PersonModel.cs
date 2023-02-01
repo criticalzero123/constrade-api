@@ -1,12 +1,8 @@
-﻿using ConstradeApi.Entity;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace ConstradeApi.Model
+﻿namespace ConstradeApi.Model.MUser
 {
     public class PersonModel
     {
-       
+
         public int Person_id { get; set; }
 
         public string FirstName { get; set; } = string.Empty;

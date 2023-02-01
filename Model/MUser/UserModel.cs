@@ -2,12 +2,12 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace ConstradeApi.Model
+namespace ConstradeApi.Model.MUser
 {
     public class UserModel
     {
         public int User_id { get; set; }
-        
+
         public string User_type { get; set; } = string.Empty;
 
         public int PersonRefId { get; set; }
@@ -15,13 +15,13 @@ namespace ConstradeApi.Model
 
         public string Authprovider_type { get; set; } = string.Empty;
 
-       
+
         public string Subscription_type { get; set; } = string.Empty;
 
-       
+
         public string User_status { get; set; } = string.Empty;
 
-        
+
         public string Email { get; set; } = string.Empty;
 
 
@@ -33,10 +33,10 @@ namespace ConstradeApi.Model
 
         public DateTime LastActiveAt { get; set; }
 
-       
+
         public int CountPost { get; set; }
 
-        
+
         public DateTime DateCreated { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace ConstradeApi.Entity
 
         [ForeignKey("Person")]
         public int PersonRef_id { get; set; }
-        public Person? Person { get; set; }
+        public Person Person { get; set; }
 
         [Required]
         [StringLength(20)]

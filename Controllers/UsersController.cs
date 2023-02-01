@@ -1,5 +1,5 @@
 ﻿using ConstradeApi.Entity;
-using ConstradeApi.Model;
+using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
@@ -25,7 +25,7 @@ namespace ConstradeApi.Controllers
             ResponseType responseType = ResponseType.Success;
             try
             {
-                IEnumerable<UserModel> users = _dbHelper.GetUsers();
+                IEnumerable<UserModel> users = _dbHelper.GetAll();
                 
                 if (!users.Any())
                 {
@@ -36,8 +36,40 @@ namespace ConstradeApi.Controllers
             }
             catch (Exception ex)
             {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
 
-                responseType = ResponseType.Failure;
+        // GET: api/<UserController>/check/email/johndoe@test.com
+        [Route("check/email/{email}")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            ResponseType responseType = ResponseType.Success;
+            try
+            {
+                bool userExist = await _dbHelper.CheckEmailExist(email);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, userExist));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        // GET: api/<UserController>/check/phone/6399999999
+        [Route("check/phone/{phone}")]
+        public async Task<IActionResult> GetUserByPhone(string phone)
+        {
+            ResponseType responseType = ResponseType.Success;
+            try
+            {
+                bool userExist = await _dbHelper.CheckPhoneExist(phone);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, userExist));
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
@@ -50,7 +82,7 @@ namespace ConstradeApi.Controllers
 
             try
             {
-                UserModel? user= _dbHelper.GetUser(id);
+                UserModel? user= _dbHelper.Get(id);
                 if (user == null)
                 {
                     responseType = ResponseType.NotFound;
@@ -60,11 +92,11 @@ namespace ConstradeApi.Controllers
                 return Ok(ResponseHandler.GetApiResponse(responseType, user));
             } catch(Exception ex)
             {
-                responseType = ResponseType.Failure;
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
 
+        
         // POST api/<UserController>
         [HttpPost]
         public IActionResult Post([FromBody] UserModel userModel)
@@ -72,12 +104,12 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType response= ResponseType.Success;
-                _dbHelper.SaveUser(userModel);
+                _dbHelper.Save(userModel);
 
                 return Ok(ResponseHandler.GetApiResponse(response, userModel));
             }catch( Exception ex)
             {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException));
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
 
@@ -87,10 +119,6 @@ namespace ConstradeApi.Controllers
         {
         }
 
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+      
     }
 }

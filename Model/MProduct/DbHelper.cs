@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace ConstradeApi.Model.MProduct
@@ -12,7 +13,11 @@ namespace ConstradeApi.Model.MProduct
             _context = context;
         }
 
-        public List<ProductModel> GetProducts()
+        /// <summary>
+        ///  GET All
+        /// </summary>
+        /// <returns>List of Products</returns>
+        public List<ProductModel> GetAllProducts()
         {
             List<ProductModel> _products = new List<ProductModel>();
 
@@ -42,6 +47,10 @@ namespace ConstradeApi.Model.MProduct
             return _products;
         }
 
+        /// <summary>
+        /// POST for product
+        /// </summary>
+        /// <param name="product"></param>
         public void Save(ProductModel product)
         {
             Product _product = new Product()
@@ -68,5 +77,70 @@ namespace ConstradeApi.Model.MProduct
             _context.Products.Add( _product );
             _context.SaveChanges();
         }
+
+        public async Task<ProductModel?> Get(int id)
+        {
+            var _data = await _context.Products.Where(p => p.ProductId == id).Select(product => new ProductModel()
+            {
+                PosterUserId = product.PosterUserId,
+                Title = product.Title,
+                Description = product.Description,
+                Condition = product.Condition,
+                PreferTrade = product.PreferTrade,
+                DeliveryMethod = product.DeliveryMethod,
+                ProductStatus = product.ProductStatus,
+                Location = product.Location,
+                ModelNumber = product.ModelNumber,
+                SerialNumber = product.SerialNumber,
+                GameGenre = product.GameGenre,
+                Platform = product.Platform,
+                ThumbnailUrl = product.ThumbnailUrl,
+                Cash = product.Cash,
+                Item = product.Item,
+                DateCreated = product.DateCreated,
+                CountFavorite = product.CountFavorite,
+            }).FirstOrDefaultAsync();
+
+            return _data;
+        }
+
+        public async Task<bool> DeleteProduct(int id)
+        {
+            Product? product = await _context.Products.Where(_p => _p.ProductId.Equals( id)).FirstOrDefaultAsync();
+
+            if(product == null) return false;
+            
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateProduct(int id, ProductModel product)
+        {
+            Product? _product = await _context.Products.Where(_p => _p.ProductId.Equals(id)).FirstOrDefaultAsync();
+            if(_product == null) return false;
+
+            _product.Title = product.Title;
+            _product.Description= product.Description;
+            _product.ModelNumber = product.ModelNumber;
+            _product.SerialNumber = product.SerialNumber;
+            _product.GameGenre = product.GameGenre;
+            _product.Platform = product.Platform;
+            _product.ThumbnailUrl = product.ThumbnailUrl;
+            _product.Cash = product.Cash;
+            _product.Item = product.Item;
+            _product.Location = product.Location;
+            _product.Condition = product.Condition;
+            _product.PreferTrade= product.PreferTrade;
+            _product.ThumbnailUrl = product.ThumbnailUrl;
+            product.DeliveryMethod = product.DeliveryMethod;
+
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
+
+
 }

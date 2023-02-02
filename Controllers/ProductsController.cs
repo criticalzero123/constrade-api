@@ -25,7 +25,7 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType= ResponseType.Success;
-                IEnumerable<ProductModel> products = _dbHelper.GetProducts();
+                IEnumerable<ProductModel> products = _dbHelper.GetAllProducts();
 
                 if(!products.Any()) 
                 {
@@ -42,9 +42,22 @@ namespace ConstradeApi.Controllers
 
         // GET api/<ProductController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            try
+            {
+                ResponseType responseType= ResponseType.Success;
+
+                var product = await _dbHelper.Get(id);
+
+                if(product == null) responseType = ResponseType.NotFound;
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, product));
+
+            }catch(Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
         }
 
         // POST api/<ProductController>
@@ -65,14 +78,42 @@ namespace ConstradeApi.Controllers
 
         // PUT api/<ProductController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(int id, [FromBody] ProductModel productModel)
         {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                bool result = await _dbHelper.UpdateProduct(id, productModel);
+
+                if (!result) responseType = ResponseType.NotFound;
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, result));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
         }
 
         // DELETE api/<ProductController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+                bool _result = await _dbHelper.DeleteProduct(id);
+
+                if (!_result) responseType = ResponseType.NotFound; 
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, id));
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ namespace ConstradeApi.Entity
         [ForeignKey("Product")]
         [Column("product_id")]
         public int ProductId { get; set; }
-        public Product product { get; set; }
+        public Product Product { get; set; }
 
         [Required]
         [Column("imageURL")]

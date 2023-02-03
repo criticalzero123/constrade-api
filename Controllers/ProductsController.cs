@@ -62,12 +62,12 @@ namespace ConstradeApi.Controllers
 
         // POST api/<ProductController>
         [HttpPost]
-        public IActionResult Post([FromBody] ProductModel productModel)
+        public IActionResult Post([FromBody] ProductAndImages productModel)
         {
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                _dbHelper.Save(productModel);
+                _dbHelper.Save(productModel.Product, productModel.ImageURLList);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, productModel));
             }catch(Exception ex)

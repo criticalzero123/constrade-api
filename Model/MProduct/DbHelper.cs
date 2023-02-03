@@ -51,7 +51,7 @@ namespace ConstradeApi.Model.MProduct
         /// POST for product
         /// </summary>
         /// <param name="product"></param>
-        public void Save(ProductModel product)
+        public void Save(ProductModel product, List<string> imageList)
         {
             Product _product = new Product()
             {
@@ -75,6 +75,18 @@ namespace ConstradeApi.Model.MProduct
             };
 
             _context.Products.Add( _product );
+            _context.SaveChanges();
+
+            // Adding the images in image list table
+            foreach ( string item in imageList ) 
+            {
+                _context.Images.Add(new ImageList()
+                {
+                    ProductId = _product.ProductId,
+                    ImageURL = item
+                });
+            }
+
             _context.SaveChanges();
         }
 

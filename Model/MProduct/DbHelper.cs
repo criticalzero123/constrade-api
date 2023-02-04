@@ -90,6 +90,11 @@ namespace ConstradeApi.Model.MProduct
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// GET for specific product 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>ProductModel</returns>
         public async Task<ProductModel?> Get(int id)
         {
             var _data = await _context.Products.Where(p => p.ProductId == id).Select(product => new ProductModel()
@@ -116,6 +121,11 @@ namespace ConstradeApi.Model.MProduct
             return _data;
         }
 
+        /// <summary>
+        /// DELETE a specific product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Boolean</returns>
         public async Task<bool> DeleteProduct(int id)
         {
             Product? product = await _context.Products.FindAsync(id);
@@ -127,6 +137,12 @@ namespace ConstradeApi.Model.MProduct
             return true;
         }
 
+        /// <summary>
+        /// PUT for specific product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="product"></param>
+        /// <returns>Boolean</returns>
         public async Task<bool> UpdateProduct(int id, ProductModel product)
         {
             Product? _product = await _context.Products.FindAsync(id);
@@ -153,6 +169,37 @@ namespace ConstradeApi.Model.MProduct
             return true;
         }
 
+        //ProductComment 
+        /// <summary>
+        /// GET: List of comments for specific product
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public async Task<List<ProductCommentModel>> GetProductComment(int productId)
+        {
+            bool product = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
+            if (!product) return new List<ProductCommentModel>();
+
+            var comments = await _context.ProductComments.Where(_p => _p.ProductId == productId).Select(_p => new ProductCommentModel()
+            {
+                ProductCommentId= _p.ProductCommentId,
+                ProductId = _p.ProductId,
+                UserId= _p.UserId,
+                Comment= _p.Comment,
+                DateCreated = _p.DateCreated,
+            }).ToListAsync();
+
+            return comments;
+        }
+
+        /// <summary>
+        /// POST: creating a comment for a specific product
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="userId"></param>
+        /// <param name="comment"></param>
+        /// <returns></returns>
+        /// <exception cref="IndexOutOfRangeException"></exception>
         public async Task<bool> AddCommentProduct(int productId, int userId, string comment)
         {
             bool _productExist = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
@@ -170,7 +217,50 @@ namespace ConstradeApi.Model.MProduct
 
             await _context.ProductComments.AddAsync(productComment);
 
+            await _context.SaveChangesAsync();
+
             return true;
         }
+
+        /// <summary>
+        /// DELETE: for a specific comment
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteCommentProduct(int productId, int id)
+        {
+            bool product = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
+            if (!product) return false;
+
+            ProductComment? _commentExist = await _context.ProductComments.FindAsync(id);
+            if(_commentExist == null) return false;
+
+            _context.Remove(_commentExist);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        /// <summary>
+        /// PUT: updating a specific comment
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="newComment"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateCommentProduct(int productId,int id, int userId,string newComment)
+        {
+            bool product = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
+            if(!product) return false;
+
+            ProductComment? productComment = await _context.ProductComments.FindAsync(id);
+            if (productComment == null) throw new IndexOutOfRangeException("Comment not found");
+            if (productComment.UserId != userId) throw new ArgumentException("User is not correct");
+
+            productComment.Comment = newComment;
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        //End of Product Comment
     }
 }

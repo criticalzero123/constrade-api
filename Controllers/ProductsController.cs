@@ -116,21 +116,82 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpPost("add_comment")]
-        public async Task<IActionResult> AddComment([FromBody] ProductCommentModel productCommentModel)
+        // GET api/<ProductsController>/1/comment
+        [HttpGet("{productId}/comment")]
+        public async Task<IActionResult> GetComments(int productId)
+        {
+            try
+            {
+                ResponseType response = ResponseType.Success;
+
+                List<ProductCommentModel> _comments = await _dbHelper.GetProductComment(productId);
+
+                if (_comments.Count == 0) return NotFound();
+
+                return Ok(ResponseHandler.GetApiResponse(response, _comments));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        // POST api/<ProductsController>/1/comment
+        [HttpPost("{productId}/comment")]
+        public async Task<IActionResult> AddComment(int productId, [FromBody] ProductCommentModel productCommentModel)
         {
             try
             {
                 ResponseType responseType = ResponseType.Success;
 
-                bool _result = await _dbHelper.AddCommentProduct(productCommentModel.ProductId, productCommentModel.UserId, productCommentModel.Comment);
-
+                bool _result = await _dbHelper.AddCommentProduct(productId, productCommentModel.UserId, productCommentModel.Comment);
                 return Ok(ResponseHandler.GetApiResponse(responseType, productCommentModel));
             }
             catch(IndexOutOfRangeException ex)
             {
                 //This is for the catcher of the dbhandler will throw exception
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        //PUT api/<ProductsController/1/comment/1
+        [HttpPut("{productId}/comment/{id}")]
+        public async Task<IActionResult> UpdateComment(int productId, int id, [FromBody] ProductUpdateNewComment newMessage)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                bool _result = await _dbHelper.UpdateCommentProduct(productId, id, newMessage.UserId, newMessage.NewComment);
+
+                if (!_result) responseType = ResponseType.NotFound;
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, newMessage));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        // DELETE api/<ProductsController>/1/comment/5
+        [HttpDelete("{productId}/comment/{id}")]
+        public async Task<IActionResult> DeleleComment(int productId, int id)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+                
+
+                bool _result = await _dbHelper.DeleteCommentProduct(productId, id);
+
+                if(!_result) responseType = ResponseType.NotFound;
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, id));
             }
             catch (Exception ex)
             {

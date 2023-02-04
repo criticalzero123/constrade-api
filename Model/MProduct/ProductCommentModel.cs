@@ -16,4 +16,10 @@ namespace ConstradeApi.Model.MProduct
      
         public DateTime DateCreated { get; set; } = DateTime.Now;
     }
+
+    public class ProductUpdateNewComment
+    {
+        public string NewComment { get; set; } = string.Empty;
+        public int UserId { get; set; }
+    }
 }

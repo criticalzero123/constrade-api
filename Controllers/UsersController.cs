@@ -114,13 +114,13 @@ namespace ConstradeApi.Controllers
 
         //GET api/<UserController>/4/favorite
         [HttpGet("{userId}/favorite")]
-        public async Task<IActionResult> GetFavorite(int userId)
+        public IActionResult GetFavorite(int userId)
         {
             try
             {
                 ResponseType responseType = ResponseType.Success;
 
-                List<FavoriteModel> result = await _dbHelper.GetFavorite(userId);
+                List<FavoriteModel> result =  _dbHelper.GetFavorite(userId);
 
                 if (result.Count == 0) return NotFound();
 
@@ -167,6 +167,44 @@ namespace ConstradeApi.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
+
+        //POST api/<UserController>/4/follow
+        [HttpPost("{userId}/follow")]
+        public IActionResult Follow(int userId, [FromBody] UserFollowModel userFollow)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+                bool flag = _dbHelper.FollowUser(userId, userFollow.FollowedByUserId);
+
+                if (!flag) responseType = ResponseType.Failure;
+                
+                return Ok(ResponseHandler.GetApiResponse(responseType, userFollow));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
+
+        //GET api/<Usercontroller>/4/follow
+        [HttpGet("{userId}/follow")]
+        public IActionResult GetFollows(int userId)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                List<UserFollowModel> followers = _dbHelper.GetUserFollower(userId);
+                List<UserFollowModel> follows = _dbHelper.GetUserFollow(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { followers, follows }));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null? ex.InnerException : ex));
             }
         }
     }

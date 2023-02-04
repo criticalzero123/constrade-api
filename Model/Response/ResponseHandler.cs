@@ -24,6 +24,11 @@
                     response.Code = "2";
                     response.Message = "No Record Found/Available";
                     break;
+
+                case ResponseType.Failure:
+                    response.Code = "3";
+                    response.Message = "Something Went Wrong!";
+                    break;
             }
 
             return response;

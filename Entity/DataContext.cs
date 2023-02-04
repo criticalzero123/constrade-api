@@ -13,5 +13,6 @@ namespace ConstradeApi.Entity
         public DbSet<ImageList> Images { get; set; }
         public DbSet<ProductComment > ProductComments { get; set; }
         public DbSet<Favorites> UserFavorites { get; set; }
+        public DbSet<Follow> UserFollows { get; set; }
     }
 }

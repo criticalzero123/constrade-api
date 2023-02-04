@@ -144,13 +144,19 @@ namespace ConstradeApi.Model.MUser
             return result;
         }
 
-        public async Task<List<FavoriteModel>> GetFavorite(int userId)
+        /// <summary>
+        /// GET: the list of the favorites
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public  List<FavoriteModel> GetFavorite(int userId)
         {
-            List<FavoriteModel> favoriteModels = await _context.UserFavorites.Where(_f => _f.UserId == userId).Select(_f => new FavoriteModel()
+            List<FavoriteModel> favoriteModels =  _context.UserFavorites.Where(_f => _f.UserId == userId).Select(_f => new FavoriteModel()
             {
+                FavoriteId = _f.FavoriteId,
                 UserId = _f.UserId,
                 ProductId = _f.ProductId,
-            }).ToListAsync();
+            }).ToList();
 
             return favoriteModels;
         }  
@@ -201,6 +207,74 @@ namespace ConstradeApi.Model.MUser
 
 
             return true;
+        }
+
+        /// <summary>
+        /// Getting the User Follower
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>List of Users ID</returns>
+        public List<UserFollowModel> GetUserFollow(int userId)
+        {
+            List<UserFollowModel> userFollowModel = _context.UserFollows.Where(_u => _u.FollowedByUserId.Equals(userId)).Select(_u => new UserFollowModel()
+            {
+                FollowId = _u.FollowId,
+                FollowedByUserId = _u.FollowedByUserId,
+                DateFollowed = _u.DateFollowed
+            }).ToList();
+
+            return userFollowModel;
+        }
+
+        /// <summary>
+        /// Getting the User Followed User
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>List of Users ID and date</returns>
+        public List<UserFollowModel> GetUserFollower(int userId)
+        {
+            List<UserFollowModel> userFollowModels = _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(userId)).Select(_u => new UserFollowModel()
+            {
+                FollowId = _u.FollowId,
+                FollowByUserId= _u.FollowByUserId,
+                DateFollowed = _u.DateFollowed
+            }).ToList();
+
+            return userFollowModels;
+        }
+
+        /// <summary>
+        /// POST & DELETE: the followed user is the one who is the follower
+        /// </summary>
+        /// <param name="followUser"></param>
+        /// <param name="followedUser"></param>
+        public  bool FollowUser(int followUser, int followedByUser)
+        {
+            if(followUser == followedByUser) return false;
+
+            List<Follow> follows =  _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(followUser)).ToList();
+            Follow? flag =  follows.Where(_u => _u.FollowedByUserId.Equals(followedByUser)).FirstOrDefault();
+
+            //if the user already follows
+            if(flag != null)
+            {
+                _context.UserFollows.Remove(flag);
+            }
+            else
+            {
+                Follow follow = new Follow()
+                {
+                    FollowByUserId = followUser,
+                    FollowedByUserId = followedByUser,
+                    DateFollowed = DateTime.Now,
+                };
+
+                _context.UserFollows.Add(follow);
+               
+            }
+            _context.SaveChanges();
+            return true;
+
         }
     }
 }

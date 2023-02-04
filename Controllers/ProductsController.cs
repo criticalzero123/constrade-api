@@ -88,7 +88,7 @@ namespace ConstradeApi.Controllers
 
                 if (!result) responseType = ResponseType.NotFound;
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, result));
+                return Ok(ResponseHandler.GetApiResponse(responseType, productModel));
             }
             catch (Exception ex)
             {

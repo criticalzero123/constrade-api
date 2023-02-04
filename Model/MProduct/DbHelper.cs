@@ -21,7 +21,7 @@ namespace ConstradeApi.Model.MProduct
         {
             List<ProductModel> _products = new List<ProductModel>();
 
-            List<Product> data = _context.Products.ToList<Product>();
+            List<Product> data = _context.Products.ToList();
 
             data.ForEach(row => _products.Add(new ProductModel()
             {
@@ -118,7 +118,7 @@ namespace ConstradeApi.Model.MProduct
 
         public async Task<bool> DeleteProduct(int id)
         {
-            Product? product = await _context.Products.Where(_p => _p.ProductId.Equals( id)).FirstOrDefaultAsync();
+            Product? product = await _context.Products.FindAsync(id);
 
             if(product == null) return false;
             
@@ -129,7 +129,7 @@ namespace ConstradeApi.Model.MProduct
 
         public async Task<bool> UpdateProduct(int id, ProductModel product)
         {
-            Product? _product = await _context.Products.Where(_p => _p.ProductId.Equals(id)).FirstOrDefaultAsync();
+            Product? _product = await _context.Products.FindAsync(id);
             if(_product == null) return false;
 
             _product.Title = product.Title;
@@ -145,14 +145,19 @@ namespace ConstradeApi.Model.MProduct
             _product.Condition = product.Condition;
             _product.PreferTrade= product.PreferTrade;
             _product.ThumbnailUrl = product.ThumbnailUrl;
-            product.DeliveryMethod = product.DeliveryMethod;
+            _product.DeliveryMethod = product.DeliveryMethod;
 
 
             await _context.SaveChangesAsync();
 
             return true;
         }
+
+        public async Task<bool> AddCommentProduct(int productId, int userId, string comment)
+        {
+            Product? _product = await _context.Products.FindAsync(productId);
+
+
+        }
     }
-
-
 }

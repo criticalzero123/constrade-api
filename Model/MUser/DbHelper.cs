@@ -219,7 +219,7 @@ namespace ConstradeApi.Model.MUser
             List<UserFollowModel> userFollowModel = _context.UserFollows.Where(_u => _u.FollowedByUserId.Equals(userId)).Select(_u => new UserFollowModel()
             {
                 FollowId = _u.FollowId,
-                FollowedByUserId = _u.FollowedByUserId,
+                FollowByUserId = _u.FollowByUserId,
                 DateFollowed = _u.DateFollowed
             }).ToList();
 
@@ -236,7 +236,7 @@ namespace ConstradeApi.Model.MUser
             List<UserFollowModel> userFollowModels = _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(userId)).Select(_u => new UserFollowModel()
             {
                 FollowId = _u.FollowId,
-                FollowByUserId= _u.FollowByUserId,
+                FollowedByUserId = _u.FollowedByUserId,
                 DateFollowed = _u.DateFollowed
             }).ToList();
 

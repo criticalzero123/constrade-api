@@ -115,5 +115,27 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
+
+        [HttpPost("add_comment")]
+        public async Task<IActionResult> AddComment([FromBody] ProductCommentModel productCommentModel)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                bool _result = await _dbHelper.AddCommentProduct(productCommentModel.ProductId, productCommentModel.UserId, productCommentModel.Comment);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, productCommentModel));
+            }
+            catch(IndexOutOfRangeException ex)
+            {
+                //This is for the catcher of the dbhandler will throw exception
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
     }
 }

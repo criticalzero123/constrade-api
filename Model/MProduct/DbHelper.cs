@@ -155,9 +155,22 @@ namespace ConstradeApi.Model.MProduct
 
         public async Task<bool> AddCommentProduct(int productId, int userId, string comment)
         {
-            Product? _product = await _context.Products.FindAsync(productId);
+            bool _productExist = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
+            bool _userExist = await _context.Users.AnyAsync(_u => _u.User_id.Equals(userId));
 
+            if(!_productExist) throw new IndexOutOfRangeException("Product Not found");
+            if (!_userExist) throw new IndexOutOfRangeException("User Not Found");
 
+            ProductComment productComment = new ProductComment();
+
+            productComment.ProductId = productId;
+            productComment.UserId = userId;
+            productComment.Comment = comment;
+            productComment.DateCreated = DateTime.Now;
+
+            await _context.ProductComments.AddAsync(productComment);
+
+            return true;
         }
     }
 }

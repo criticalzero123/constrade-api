@@ -27,10 +27,7 @@ namespace ConstradeApi.Controllers
             {
                 IEnumerable<UserModel> users = _dbHelper.GetAll();
                 
-                if (!users.Any())
-                {
-                    responseType = ResponseType.NotFound;
-                }
+                if (!users.Any()) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, users));
             }
@@ -83,11 +80,7 @@ namespace ConstradeApi.Controllers
             try
             {
                 UserModel? user= _dbHelper.Get(id);
-                if (user == null)
-                {
-                    responseType = ResponseType.NotFound;
-                    return NotFound();
-                }
+                if (user == null) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, user));
             } catch(Exception ex)
@@ -119,6 +112,62 @@ namespace ConstradeApi.Controllers
         {
         }
 
-      
+        //GET api/<UserController>/4/favorite
+        [HttpGet("{userId}/favorite")]
+        public async Task<IActionResult> GetFavorite(int userId)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                List<FavoriteModel> result = await _dbHelper.GetFavorite(userId);
+
+                if (result.Count == 0) return NotFound();
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, result));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        //POST api/<UserController>/4/favorite
+        [HttpPost("{userId}/favorite")]
+        public async Task<IActionResult> AddFavorite(int userId, [FromBody] FavoriteModel favoriteModel)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                bool result = await _dbHelper.AddFavorite(userId, favoriteModel.ProductId);
+                if(!result) return NotFound();
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, favoriteModel));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
+
+        //GET api/<UserController>/4/favorite/4
+        [HttpDelete("{userId}/favorite/{id}")]
+        public async Task<IActionResult> DeleteFavorite(int id)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                bool result = await _dbHelper.DeleteFavorite(id);
+                if(!result) return NotFound();
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
     }
 }

@@ -90,7 +90,7 @@ namespace ConstradeApi.Model.MUser
         }
 
         /// <summary>
-        /// POST or PUT for USER
+        /// POST for User
         /// </summary>
         /// <param name="user"></param>
         public void Save(UserModel user)
@@ -144,5 +144,63 @@ namespace ConstradeApi.Model.MUser
             return result;
         }
 
+        public async Task<List<FavoriteModel>> GetFavorite(int userId)
+        {
+            List<FavoriteModel> favoriteModels = await _context.UserFavorites.Where(_f => _f.UserId == userId).Select(_f => new FavoriteModel()
+            {
+                UserId = _f.UserId,
+                ProductId = _f.ProductId,
+            }).ToListAsync();
+
+            return favoriteModels;
+        }  
+
+        /// <summary>
+        /// POST for adding product to favorite
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<bool> AddFavorite( int userId, int productId)
+        {
+            Product? product = await _context.Products.FindAsync(productId);
+            if (product == null) return false;
+
+            product.CountFavorite += 1;
+            await _context.SaveChangesAsync();
+
+            Favorites favorites= new Favorites();
+            favorites.ProductId = productId;
+            favorites.UserId = userId;
+            favorites.Date = DateTime.Now;
+
+            await _context.UserFavorites.AddAsync(favorites);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        
+        /// <summary>
+        /// DELETE for favorite of user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteFavorite(int id)
+        {
+            Favorites? favorites = await _context.UserFavorites.FindAsync(id);
+            if(favorites == null) return false;
+
+            Product? product = await _context.Products.FindAsync(favorites.ProductId);
+            if (product == null) return false;
+
+            product.CountFavorite -= 1;
+            await _context.SaveChangesAsync();
+
+            _context.UserFavorites.Remove(favorites);
+            await _context.SaveChangesAsync();
+
+
+            return true;
+        }
     }
 }

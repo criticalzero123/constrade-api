@@ -202,12 +202,6 @@ namespace ConstradeApi.Model.MProduct
         /// <exception cref="IndexOutOfRangeException"></exception>
         public async Task<bool> AddCommentProduct(int productId, int userId, string comment)
         {
-            bool _productExist = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
-            bool _userExist = await _context.Users.AnyAsync(_u => _u.User_id.Equals(userId));
-
-            if(!_productExist) throw new IndexOutOfRangeException("Product Not found");
-            if (!_userExist) throw new IndexOutOfRangeException("User Not Found");
-
             ProductComment productComment = new ProductComment();
 
             productComment.ProductId = productId;
@@ -227,11 +221,8 @@ namespace ConstradeApi.Model.MProduct
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<bool> DeleteCommentProduct(int productId, int id)
+        public async Task<bool> DeleteCommentProduct(int id)
         {
-            bool product = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
-            if (!product) return false;
-
             ProductComment? _commentExist = await _context.ProductComments.FindAsync(id);
             if(_commentExist == null) return false;
 
@@ -249,9 +240,6 @@ namespace ConstradeApi.Model.MProduct
         /// <returns></returns>
         public async Task<bool> UpdateCommentProduct(int productId,int id, int userId,string newComment)
         {
-            bool product = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
-            if(!product) return false;
-
             ProductComment? productComment = await _context.ProductComments.FindAsync(id);
             if (productComment == null) throw new IndexOutOfRangeException("Comment not found");
             if (productComment.UserId != userId) throw new ArgumentException("User is not correct");

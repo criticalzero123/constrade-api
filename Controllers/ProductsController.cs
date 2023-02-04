@@ -25,12 +25,9 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType= ResponseType.Success;
-                IEnumerable<ProductModel> products = _dbHelper.GetAllProducts();
+                List<ProductModel> products = _dbHelper.GetAllProducts();
 
-                if(!products.Any()) 
-                {
-                    responseType = ResponseType.NotFound;
-                }
+                if (!products.Any()) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, products));
 
@@ -86,7 +83,7 @@ namespace ConstradeApi.Controllers
 
                 bool result = await _dbHelper.UpdateProduct(id, productModel);
 
-                if (!result) responseType = ResponseType.NotFound;
+                if (!result) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, productModel));
             }
@@ -105,7 +102,7 @@ namespace ConstradeApi.Controllers
                 ResponseType responseType = ResponseType.Success;
                 bool _result = await _dbHelper.DeleteProduct(id);
 
-                if (!_result) responseType = ResponseType.NotFound; 
+                if (!_result) return NotFound(); 
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, id));
             }
@@ -147,14 +144,9 @@ namespace ConstradeApi.Controllers
                 bool _result = await _dbHelper.AddCommentProduct(productId, productCommentModel.UserId, productCommentModel.Comment);
                 return Ok(ResponseHandler.GetApiResponse(responseType, productCommentModel));
             }
-            catch(IndexOutOfRangeException ex)
-            {
-                //This is for the catcher of the dbhandler will throw exception
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
-            }
             catch (Exception ex)
             {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
             }
         }
 
@@ -168,7 +160,7 @@ namespace ConstradeApi.Controllers
 
                 bool _result = await _dbHelper.UpdateCommentProduct(productId, id, newMessage.UserId, newMessage.NewComment);
 
-                if (!_result) responseType = ResponseType.NotFound;
+                if (!_result) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, newMessage));
             }
@@ -180,16 +172,16 @@ namespace ConstradeApi.Controllers
 
         // DELETE api/<ProductsController>/1/comment/5
         [HttpDelete("{productId}/comment/{id}")]
-        public async Task<IActionResult> DeleleComment(int productId, int id)
+        public async Task<IActionResult> DeleleComment( int id)
         {
             try
             {
                 ResponseType responseType = ResponseType.Success;
                 
 
-                bool _result = await _dbHelper.DeleteCommentProduct(productId, id);
+                bool _result = await _dbHelper.DeleteCommentProduct( id);
 
-                if(!_result) responseType = ResponseType.NotFound;
+                if(!_result) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, id));
             }

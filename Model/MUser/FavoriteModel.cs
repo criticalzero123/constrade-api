@@ -1,7 +1,4 @@
-﻿using ConstradeApi.Entity;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
+﻿
 namespace ConstradeApi.Model.MUser
 {
     public class FavoriteModel

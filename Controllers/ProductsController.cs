@@ -38,14 +38,15 @@ namespace ConstradeApi.Controllers
         }
 
         // GET api/<ProductController>/5
+        // Get api/<ProductController>/5?uid=5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, int? uid)
         {
             try
             {
                 ResponseType responseType= ResponseType.Success;
 
-                var product = await _dbHelper.Get(id);
+                var product = await _dbHelper.Get(id,uid);
 
                 if(product == null) responseType = ResponseType.NotFound;
 

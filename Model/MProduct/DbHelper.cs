@@ -91,14 +91,16 @@ namespace ConstradeApi.Model.MProduct
         }
 
         /// <summary>
-        /// GET for specific product 
+        /// GET for specific product and putting a view if the user is logged in
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="userId"></param>
         /// <returns>ProductModel</returns>
-        public async Task<ProductModel?> Get(int id)
+        public async Task<ProductModel?> Get(int id, int? userId)
         {
             var _data = await _context.Products.Where(p => p.ProductId == id).Select(product => new ProductModel()
             {
+                ProductId = product.ProductId,
                 PosterUserId = product.PosterUserId,
                 Title = product.Title,
                 Description = product.Description,
@@ -117,6 +119,26 @@ namespace ConstradeApi.Model.MProduct
                 DateCreated = product.DateCreated,
                 CountFavorite = product.CountFavorite,
             }).FirstOrDefaultAsync();
+
+            if (_data == null) return null;
+            if(!userId.HasValue) return _data;
+
+            bool userExist = await _context.Users.AnyAsync(_u => _u.UserId.Equals(userId));
+            if (!userExist) return _data;
+
+            List<ProductView> list = await _context.ProductViews.Where(_p => _p.ProductId.Equals(_data.ProductId)).ToListAsync();
+            bool exist = list.Any(_p => _p.UserId == userId);
+            if(!exist)
+            {
+                _context.ProductViews.Add(new ProductView() 
+                {
+                    ProductId= _data.ProductId,
+                    UserId = (int)userId
+                });
+
+                await _context.SaveChangesAsync();
+                    
+            }
 
             return _data;
         }

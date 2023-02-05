@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230205030437_AddingProductViewTable")]
+    partial class AddingProductViewTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -360,74 +363,62 @@ namespace ConstradeApi.Migrations
 
             modelBuilder.Entity("ConstradeApi.Entity.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("User_id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("User_id"));
 
-                    b.Property<string>("AuthProviderType")
+                    b.Property<string>("Authprovider_type")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("auth_provider_type");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<int>("CountPost")
-                        .HasColumnType("integer")
-                        .HasColumnName("count_post");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_created");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("email");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("image_url");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("LastActiveAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_active_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("password");
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<int>("PersonRefId")
-                        .HasColumnType("integer")
-                        .HasColumnName("person_ref_id");
+                    b.Property<int>("PersonRef_id")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("SubscriptionType")
+                    b.Property<string>("Subscription_type")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("subscription_type");
+                        .HasColumnType("character varying(20)");
 
-                    b.Property<string>("UserStatus")
+                    b.Property<string>("User_status")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("user_status");
+                        .HasColumnType("character varying(20)");
 
-                    b.Property<string>("UserType")
+                    b.Property<string>("User_type")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("user_type");
+                        .HasColumnType("character varying(20)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("User_id");
 
-                    b.HasIndex("PersonRefId");
+                    b.HasIndex("PersonRef_id");
 
                     b.ToTable("user");
                 });
@@ -543,7 +534,7 @@ namespace ConstradeApi.Migrations
                 {
                     b.HasOne("ConstradeApi.Entity.Person", "Person")
                         .WithMany()
-                        .HasForeignKey("PersonRefId")
+                        .HasForeignKey("PersonRef_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

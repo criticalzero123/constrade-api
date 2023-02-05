@@ -1,5 +1,4 @@
-﻿using ConstradeApi.Entity;
-using ConstradeApi.Model.MUser;
+﻿
 
 namespace ConstradeApi.Model.MProduct
 {

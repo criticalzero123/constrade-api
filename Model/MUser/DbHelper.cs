@@ -24,14 +24,14 @@ namespace ConstradeApi.Model.MUser
             var data = _context.Users.ToList();
             data.ForEach(row => response.Add(new UserModel()
             {
-                User_id = row.User_id,
-                User_status = row.User_status,
-                User_type = row.User_type,
-                Authprovider_type = row.Authprovider_type,
-                Subscription_type = row.Subscription_type,
+                User_id = row.UserId,
+                User_status = row.UserStatus,
+                User_type = row.UserType,
+                Authprovider_type = row.AuthProviderType,
+                Subscription_type = row.SubscriptionType,
                 ImageUrl = row.ImageUrl,
                 DateCreated = row.DateCreated,
-                PersonRefId = row.PersonRef_id,
+                PersonRefId = row.PersonRefId,
                 Email = row.Email,
                 LastActiveAt = row.LastActiveAt,
                 CountPost = row.CountPost,
@@ -52,23 +52,23 @@ namespace ConstradeApi.Model.MUser
             var personData = _context.Persons.ToList();
 
             var data = userData.Join(personData,
-                                    _user => _user.PersonRef_id,
+                                    _user => _user.PersonRefId,
                                     _person => _person.Person_id,
                                     (_user, _person) => new
                                     {
                                         _user,
                                         _person
                                     })
-                .Where(o => o._user.User_id == id)
+                .Where(o => o._user.UserId == id)
                 .Select(o => new UserModel()
                 {
-                    User_id = o._user.User_id,
-                    User_type = o._user.User_type,
-                    PersonRefId = o._user.PersonRef_id,
+                    User_id = o._user.UserId,
+                    User_type = o._user.UserType,
+                    PersonRefId = o._user.PersonRefId,
                     Email = o._user.Email,
-                    Authprovider_type = o._user.Authprovider_type,
-                    Subscription_type = o._user.Subscription_type,
-                    User_status = o._user.User_status,
+                    Authprovider_type = o._user.AuthProviderType,
+                    Subscription_type = o._user.SubscriptionType,
+                    User_status = o._user.UserStatus,
                     Password = o._user.Password,
                     ImageUrl = o._user.ImageUrl,
                     LastActiveAt = o._user.LastActiveAt,
@@ -104,11 +104,11 @@ namespace ConstradeApi.Model.MUser
             _context.SaveChanges();
 
             User userTable = new User();
-            userTable.User_type = user.User_type;
-            userTable.PersonRef_id = personTable.Person_id;
-            userTable.Authprovider_type = user.Authprovider_type;
-            userTable.Subscription_type = user.Subscription_type;
-            userTable.User_status = user.User_status;
+            userTable.UserType = user.User_type;
+            userTable.PersonRefId = personTable.Person_id;
+            userTable.AuthProviderType = user.Authprovider_type;
+            userTable.SubscriptionType = user.Subscription_type;
+            userTable.UserStatus = user.User_status;
             userTable.Email = user.Email;
             userTable.Password = user.Password;
             userTable.ImageUrl = user.ImageUrl;

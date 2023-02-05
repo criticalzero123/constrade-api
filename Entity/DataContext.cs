@@ -15,5 +15,6 @@ namespace ConstradeApi.Entity
         public DbSet<Favorites> UserFavorites { get; set; }
         public DbSet<Follow> UserFollows { get; set; }
         public DbSet<ProductView> ProductViews { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 }

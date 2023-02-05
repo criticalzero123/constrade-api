@@ -123,8 +123,8 @@ namespace ConstradeApi.Model.MProduct
             if (_data == null) return null;
             if(!userId.HasValue) return _data;
 
-            bool userExist = await _context.Users.AnyAsync(_u => _u.UserId.Equals(userId));
-            if (!userExist) return _data;
+            User? userExist = await _context.Users.FindAsync(userId);
+            if (userExist == null) return _data;
 
             List<ProductView> list = await _context.ProductViews.Where(_p => _p.ProductId.Equals(_data.ProductId)).ToListAsync();
             bool exist = list.Any(_p => _p.UserId == userId);

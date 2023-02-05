@@ -35,7 +35,7 @@ namespace ConstradeApi.Entity
 
         [StringLength(100), Required]
         [Column("game_genre")]
-        public string GameGenre{ get; set; }
+        public string GameGenre { get; set; }
 
         [StringLength(100), Required]
         [Column("platform")]
@@ -45,7 +45,7 @@ namespace ConstradeApi.Entity
         [Column("thumbnail_url")]
         public string ThumbnailUrl { get; set; }
 
-        [ Required]
+        [Required]
         [Column("cash")]
         public decimal Cash { get; set; }
 
@@ -53,11 +53,11 @@ namespace ConstradeApi.Entity
         [Column("item")]
         public string Item { get; set; }
 
-        [ Required]
+        [Required]
         [Column("date_created")]
         public DateTime DateCreated { get; set; }
 
-        [ Required]
+        [Required]
         [Column("count_favorite")]
         public int CountFavorite { get; set; }
 

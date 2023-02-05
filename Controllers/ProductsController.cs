@@ -54,7 +54,7 @@ namespace ConstradeApi.Controllers
 
             }catch(Exception ex)
             {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
             }
         }
 

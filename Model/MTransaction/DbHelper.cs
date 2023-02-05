@@ -31,6 +31,7 @@ namespace ConstradeApi.Model.MTransaction
                 SellerUserId = transaction.SellerUserId,
                 InAppTransaction = transaction.InAppTransaction,
                 GetWanted = transaction.GetWanted,
+                IsReviewed = transaction.IsReviewed,
                 DateTransaction= transaction.DateTransaction
             });
 

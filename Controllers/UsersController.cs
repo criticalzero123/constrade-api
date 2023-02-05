@@ -207,5 +207,52 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null? ex.InnerException : ex));
             }
         }
+
+        //POST api/<Usercontroller>/review
+        [HttpPost("{userId}/review")]
+        public async Task<IActionResult> AddReview([FromBody] UserReviewModel userReviewModel)
+        {
+            try
+            {
+                bool flag = await _dbHelper.AddReview(userReviewModel);
+
+                if (!flag) return BadRequest("Transaction is not found or You already Reviewed");
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
+
+        /// <summary>
+        /// Getting the Reviews of the user and User Review
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="myReview">if true the reviewed by the user will be fetch</param>
+        /// <param name="review">if true the reviews of the user will be fetch</param>
+        /// <returns>object</returns>
+        //GET api/<Usercontroller>/review
+        [HttpGet("{userId}/review")]
+        public async Task<IActionResult> GetReviews(int userId)
+        {
+            try
+            {
+                UserModel?  userExist =  _dbHelper.Get(userId);
+
+                if (userExist == null) return NotFound();
+
+                var myReviews = await _dbHelper.GetMyReviews(userId);
+                var reviews = await _dbHelper.GetReviews(userId);
+                
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, new { myReviews, reviews }));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
     }
 }

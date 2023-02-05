@@ -31,6 +31,12 @@ namespace ConstradeApi.Entity
         [Column("get_wanted")]
         public bool GetWanted { get; set; }
 
+        /// <summary>
+        /// If the Buyer leave already a review or not
+        /// </summary>
+        [Column("is_reviewed")]
+        public bool IsReviewed { get; set; } = false;
+
         [Column("date_transaction")]
         public DateTime DateTransaction { get; set; }
     }

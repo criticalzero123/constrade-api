@@ -15,7 +15,7 @@ namespace ConstradeApi.Model.MTransaction
 
         public bool InAppTransaction { get; set; }
         public bool GetWanted { get; set; }
-
+        public bool IsReviewed { get; set; } = false;
         public DateTime DateTransaction { get; set; }
     }
 }

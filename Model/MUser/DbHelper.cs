@@ -276,5 +276,86 @@ namespace ConstradeApi.Model.MUser
             return true;
 
         }
+
+        /// <summary>
+        /// Adding Review to a user that has a transaction record
+        /// </summary>
+        /// <param name="userReviewModel"></param>
+        /// <returns>false if the transaction is not found or already has review to the seller</returns>
+        public async Task<bool> AddReview(UserReviewModel userReviewModel)
+        {
+            Transaction? transaction = await _context.Transactions.FindAsync(userReviewModel.TransactionRefId);
+
+            //Checking if the transcation already has a review or the transaction not existed
+            if (transaction == null || transaction.IsReviewed) return false;
+
+            await _context.UserReviews.AddAsync(new Review()
+            {
+                TransactionRefId = userReviewModel.TransactionRefId,
+                Rate = userReviewModel.Rate,
+                DateCreated = userReviewModel.DateCreated    
+            });
+            await _context.SaveChangesAsync();
+
+
+            transaction.IsReviewed = true;
+            _context.SaveChanges();
+
+            return true;
+        }
+
+        /// <summary>
+        /// GET: transaction reviews of the buyer or the user created reviews 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<List<UserReviewModel>> GetMyReviews(int userId)
+        {
+            List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.BuyerUserId.Equals(userId)).Where(_t => _t.IsReviewed == true).ToListAsync();
+            List<Review> _reviews = _context.UserReviews.ToList();
+
+
+            var data = _reviews.Join(_transaction,
+                                      _r => _r.TransactionRefId,
+                                      _t => _t.TransactionId,
+                                      (_r, _t) => new {_r,_t}
+                                    )
+                .Select(result => new UserReviewModel()
+                {
+                    ReviewId = result._r.ReviewId,
+                    TransactionRefId = result._t.TransactionId,
+                    Rate = result._r.Rate,
+                    DateCreated = result._r.DateCreated
+                }).ToList();
+
+            return data;
+        }
+
+        /// <summary>
+        /// GET: transaction review about the seller
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<List<UserReviewModel>> GetReviews(int userId)
+        {
+            List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.SellerUserId.Equals(userId)).Where(_t => _t.IsReviewed == true).ToListAsync();
+            List<Review> _reviews = _context.UserReviews.ToList();
+
+
+            var data = _reviews.Join(_transaction,
+                                      _r => _r.TransactionRefId,
+                                      _t => _t.TransactionId,
+                                      (_r, _t) => new { _r, _t }
+                                    )
+                .Select(result => new UserReviewModel()
+                {
+                    ReviewId = result._r.ReviewId,
+                    TransactionRefId = result._t.TransactionId,
+                    Rate = result._r.Rate,
+                    DateCreated = result._r.DateCreated
+                }).ToList();
+
+            return data;
+        }
     }
 }

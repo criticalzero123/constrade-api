@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230205113424_AddingIsReviewedColumnInTransaction")]
+    partial class AddingIsReviewedColumnInTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +70,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasKey("Address_id");
 
-                    b.ToTable("address", (string)null);
+                    b.ToTable("address");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Favorites", b =>
@@ -97,7 +100,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("favorites", (string)null);
+                    b.ToTable("favorites");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Follow", b =>
@@ -127,7 +130,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("FollowedByUserId");
 
-                    b.ToTable("follow", (string)null);
+                    b.ToTable("follow");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.ImageList", b =>
@@ -152,7 +155,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("image_list", (string)null);
+                    b.ToTable("image_list");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Person", b =>
@@ -188,7 +191,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("AddressRef_id");
 
-                    b.ToTable("person", (string)null);
+                    b.ToTable("person");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Product", b =>
@@ -293,7 +296,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("PosterUserId");
 
-                    b.ToTable("product", (string)null);
+                    b.ToTable("product");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.ProductComment", b =>
@@ -329,7 +332,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("product_comment", (string)null);
+                    b.ToTable("product_comment");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.ProductView", b =>
@@ -355,7 +358,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("product_view", (string)null);
+                    b.ToTable("product_view");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Review", b =>
@@ -382,7 +385,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("TransactionRefId");
 
-                    b.ToTable("reviews", (string)null);
+                    b.ToTable("reviews");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Transaction", b =>
@@ -430,7 +433,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("SellerUserId");
 
-                    b.ToTable("transactions", (string)null);
+                    b.ToTable("transactions");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.User", b =>
@@ -504,7 +507,7 @@ namespace ConstradeApi.Migrations
 
                     b.HasIndex("PersonRefId");
 
-                    b.ToTable("user", (string)null);
+                    b.ToTable("user");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Favorites", b =>

@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using System.Runtime.CompilerServices;
 
 namespace ConstradeApi.Model.MTransaction
 {
@@ -11,11 +12,13 @@ namespace ConstradeApi.Model.MTransaction
             _context = dataContext;
         }
 
+        /// <summary>
+        /// POST: check if the product existed
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
         public async Task<bool> SoldProduct(TransactionModel transaction) 
         {
-            User? seller = await _context.Users.FindAsync(transaction.SellerUserId);
-            User? buyer = await _context.Users.FindAsync(transaction.BuyerUserId);
-            if (seller == null || buyer == null) return false;
 
             Product? product = await _context.Products.FindAsync(transaction.ProductId);
             if (product == null) return false;
@@ -40,6 +43,10 @@ namespace ConstradeApi.Model.MTransaction
             return true;
         }
 
+        /// <summary>
+        /// Getting all transactions
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<TransactionModel> GetAllTransaction()
         {
             return _context.Transactions.Select(_t => new TransactionModel()
@@ -49,12 +56,17 @@ namespace ConstradeApi.Model.MTransaction
                 BuyerUserId = _t.BuyerUserId,
                 SellerUserId= _t.SellerUserId,
                 InAppTransaction= _t.InAppTransaction,
+                IsReviewed = _t.IsReviewed,
                 GetWanted= _t.GetWanted,
                 DateTransaction= _t.DateTransaction
             });
         }
 
-
+        /// <summary>
+        /// Getting specific transaction by passing the id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public TransactionModel? GetTransaction(int id)
         {
             Transaction? data = _context.Transactions.Find(id);
@@ -66,6 +78,7 @@ namespace ConstradeApi.Model.MTransaction
                 ProductId = data.ProductId,
                 BuyerUserId = data.BuyerUserId,
                 SellerUserId = data.SellerUserId,
+                IsReviewed = data.IsReviewed,
                 InAppTransaction = data.InAppTransaction,
                 GetWanted = data.GetWanted,
                 DateTransaction = data.DateTransaction
@@ -73,5 +86,10 @@ namespace ConstradeApi.Model.MTransaction
 
             return transaction;
         }
+
+        //public async Task<List<TransactionModel>> GetTransactionByUser(int uid)
+        //{
+
+        //}
     }
 }

@@ -123,6 +123,7 @@ namespace ConstradeApi.Model.MProduct
             if (_data == null) return null;
             if(!userId.HasValue) return _data;
 
+            //check if the user exist in database to avoid database failure
             User? userExist = await _context.Users.FindAsync(userId);
             if (userExist == null) return _data;
 

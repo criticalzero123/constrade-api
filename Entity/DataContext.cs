@@ -17,5 +17,8 @@ namespace ConstradeApi.Entity
         public DbSet<ProductView> ProductViews { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Review> UserReviews { get; set; }
+        public DbSet<Wallet> UserWallet { get; set; }
+        public DbSet<TopUpTransaction> TopUpTransactions { get; set; }
+        public DbSet<SendMoneyTransaction> SendMoneyTransactions { get; set; }  
     }
 }

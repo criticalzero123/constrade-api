@@ -38,6 +38,6 @@ namespace ConstradeApi.Entity
         public bool IsReviewed { get; set; } = false;
 
         [Column("date_transaction")]
-        public DateTime DateTransaction { get; set; }
+        public DateTime DateTransaction { get; set; } = DateTime.Now;
     }
 }

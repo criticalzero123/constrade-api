@@ -21,6 +21,6 @@ namespace ConstradeApi.Entity
 
         [Required]
         [Column("date_created")]
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.Now;
     }
 }

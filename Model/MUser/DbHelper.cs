@@ -280,14 +280,17 @@ namespace ConstradeApi.Model.MUser
         /// <summary>
         /// Adding Review to a user that has a transaction record
         /// </summary>
+        /// <param name="reviewerId"></param>
         /// <param name="userReviewModel"></param>
         /// <returns>false if the transaction is not found or already has review to the seller</returns>
-        public async Task<bool> AddReview(UserReviewModel userReviewModel)
+        public async Task<bool> AddReview(int reviewerId, UserReviewModel userReviewModel)
         {
             Transaction? transaction = await _context.Transactions.FindAsync(userReviewModel.TransactionRefId);
 
             //Checking if the transcation already has a review or the transaction not existed
             if (transaction == null || transaction.IsReviewed) return false;
+
+            if (!reviewerId.Equals(transaction.BuyerUserId)) return false;
 
             await _context.UserReviews.AddAsync(new Review()
             {

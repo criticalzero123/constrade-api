@@ -210,11 +210,11 @@ namespace ConstradeApi.Controllers
 
         //POST api/<Usercontroller>/review
         [HttpPost("{userId}/review")]
-        public async Task<IActionResult> AddReview([FromBody] UserReviewModel userReviewModel)
+        public async Task<IActionResult> AddReview(int uid,[FromBody] UserReviewModel userReviewModel)
         {
             try
             {
-                bool flag = await _dbHelper.AddReview(userReviewModel);
+                bool flag = await _dbHelper.AddReview(uid, userReviewModel);
 
                 if (!flag) return BadRequest("Transaction is not found or You already Reviewed");
 

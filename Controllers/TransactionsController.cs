@@ -16,8 +16,8 @@ namespace ConstradeApi.Controllers
             _dbHelper= new DbHelper(dataContext);
         }
 
-        // api/<TransactionsController>
-        [HttpGet]
+        // api/<TransactionsController>/product
+        [HttpGet("product")]
         public IActionResult GetAllTransaction()
         {
             try
@@ -30,8 +30,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        // api/<TransactionsController>/4
-        [HttpGet("{id}")]
+        // api/<TransactionsController>/product/4
+        [HttpGet("product/{id}")]
         public IActionResult GetTransaction(int id)
         {
             try
@@ -48,8 +48,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        // api/<TransactionController>
-        [HttpPost]
+        // api/<TransactionController>/product
+        [HttpPost("product")]
         public async Task<IActionResult> SoldProduct([FromBody] TransactionModel transactionModel)
         {
             try

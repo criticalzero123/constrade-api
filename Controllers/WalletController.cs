@@ -34,6 +34,24 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        // api/wallet/id/4
+        [HttpGet("id/{walletId}")]
+        public IActionResult GetWalletById(int walletId)
+        {
+            try
+            {
+                WalletModel? data = _dbHelper.GetWalletById(walletId);
+
+                if (data == null) return NotFound();
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         // api/wallet/send
         [HttpPost("send")]
         public async Task<IActionResult> SendMoney([FromBody] SendMoneyTransactionModel info)
@@ -86,12 +104,12 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/receive/4
-        [HttpGet("transactions/receive/{uid}")]
-        public IActionResult GetReceiveTransaction(int uid) 
+        [HttpGet("transactions/receive/{walletId}")]
+        public IActionResult GetReceiveTransaction(int walletId) 
         {
             try
             {
-                var data = _dbHelper.GetReceiveMoneyTransaction(uid);
+                var data = _dbHelper.GetReceiveMoneyTransaction(walletId);
 
                 if (data.Count == 0) return NotFound();
 
@@ -103,15 +121,33 @@ namespace ConstradeApi.Controllers
             }
         }
 
+
         // api/wallet/transactions/send/4
-        [HttpGet("transactions/send/{uid}")]
-        public IActionResult GetSendTransaction(int uid)
+        [HttpGet("transactions/send/{walletId}")]
+        public IActionResult GetSendTransaction(int walletId)
         {
             try
             {
-                var data = _dbHelper.GetSendMoneyTransaction(uid);
+                var data = _dbHelper.GetSendMoneyTransaction(walletId);
 
                 if (data.Count == 0) return NotFound();
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("transactions/id/{id}")]
+        public IActionResult GetTransactionByWalletId(int id)
+        {
+            try
+            {
+                SendMoneyTransactionModel? data = _dbHelper.GetWalletTransactionById(id);
+
+                if (data == null) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
             }

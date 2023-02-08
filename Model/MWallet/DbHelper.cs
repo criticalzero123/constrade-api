@@ -44,6 +44,26 @@ namespace ConstradeApi.Model.MWallet
 
             return _wallet;
         }
+
+        /// <summary>
+        /// GET: getting the Wallet by using wallet id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public WalletModel? GetWalletById (int id)
+        {
+            Wallet? data = _context.UserWallet.Find(id);
+
+            if (data == null) return null;
+
+            return new WalletModel()
+            {
+               
+                WalletId= data.WalletId,
+                UserId = data.UserId,
+                Balance = data.Balance,
+            };
+        }
         /// <summary>
         /// POST: Sending money 
         /// </summary>
@@ -85,9 +105,9 @@ namespace ConstradeApi.Model.MWallet
         /// </summary>
         /// <param name="uid"></param>
         /// <returns>List of SendMoneyTransactionModel</returns>
-        public List<SendMoneyTransactionModel> GetReceiveMoneyTransaction (int uid)
+        public List<SendMoneyTransactionModel> GetReceiveMoneyTransaction (int walletId)
         {
-            List<SendMoneyTransactionModel> data =  _context.SendMoneyTransactions.Where(_t => _t.ReceiverWalletId.Equals(uid)).Select(_t => new SendMoneyTransactionModel() 
+            List<SendMoneyTransactionModel> data =  _context.SendMoneyTransactions.Where(_t => _t.ReceiverWalletId.Equals(walletId)).Select(_t => new SendMoneyTransactionModel() 
             {
                 SendMoneyTransactionId = _t.SendMoneyTransactionId,
                 ReceiverWalletId = _t.ReceiverWalletId,
@@ -103,9 +123,9 @@ namespace ConstradeApi.Model.MWallet
         /// </summary>
         /// <param name="uid"></param>
         /// <returns>List of SendMoneyTransactionModel</returns>
-        public List<SendMoneyTransactionModel> GetSendMoneyTransaction(int uid)
+        public List<SendMoneyTransactionModel> GetSendMoneyTransaction(int walletId)
         {
-            List<SendMoneyTransactionModel> data = _context.SendMoneyTransactions.Where(_t => _t.SenderWalletId.Equals(uid)).Select(_t => new SendMoneyTransactionModel()
+            List<SendMoneyTransactionModel> data = _context.SendMoneyTransactions.Where(_t => _t.SenderWalletId.Equals(walletId)).Select(_t => new SendMoneyTransactionModel()
             {
                 SendMoneyTransactionId = _t.SendMoneyTransactionId,
                 ReceiverWalletId = _t.ReceiverWalletId,

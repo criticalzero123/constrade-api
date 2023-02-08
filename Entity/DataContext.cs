@@ -20,5 +20,6 @@ namespace ConstradeApi.Entity
         public DbSet<Wallet> UserWallet { get; set; }
         public DbSet<TopUpTransaction> TopUpTransactions { get; set; }
         public DbSet<SendMoneyTransaction> SendMoneyTransactions { get; set; }  
+        public DbSet<SubscriptionHistory> SubscriptionsHistory { get; set; }    
     }
 }

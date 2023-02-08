@@ -51,8 +51,14 @@ namespace ConstradeApi.Model.MProduct
         /// POST for product
         /// </summary>
         /// <param name="product"></param>
-        public void Save(ProductModel product, List<string> imageList)
+        public async Task Save(ProductModel product, List<string> imageList)
         {
+            User? user = await _context.Users.FindAsync(product.PosterUserId);
+            if (user == null) return;
+
+            user.CountPost -= 1;
+            await _context.SaveChangesAsync();
+
             Product _product = new Product()
             {
                 PosterUserId= product.PosterUserId,

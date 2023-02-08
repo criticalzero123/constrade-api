@@ -121,7 +121,6 @@ namespace ConstradeApi.Controllers
             }
         }
 
-
         // api/wallet/transactions/send/4
         [HttpGet("transactions/send/{walletId}")]
         public IActionResult GetSendTransaction(int walletId)

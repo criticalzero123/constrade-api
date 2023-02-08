@@ -234,14 +234,14 @@ namespace ConstradeApi.Controllers
         /// <param name="review">if true the reviews of the user will be fetch</param>
         /// <returns>object</returns>
         //GET api/<Usercontroller>/review
-        [HttpGet("{userId}/review")]
-        public async Task<IActionResult> GetReviews(int userId)
+        [HttpGet("{userId}/review/all")]
+        public async Task<IActionResult> GetAllReviews(int userId)
         {
             try
             {
-                UserModel?  userExist =  _dbHelper.Get(userId);
+                //UserModel?  userExist =  _dbHelper.Get(userId);
 
-                if (userExist == null) return NotFound();
+                //if (userExist == null) return NotFound();
 
                 var myReviews = await _dbHelper.GetMyReviews(userId);
                 var reviews = await _dbHelper.GetReviews(userId);

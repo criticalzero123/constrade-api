@@ -1,7 +1,7 @@
 ﻿
 namespace ConstradeApi.Model.MTransaction
 {
-    public class TransactionModel
+    public class TransactionModel 
     {
 
         public int TransactionId { get; set; }

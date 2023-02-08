@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstradeApi.Entity
 {
     [Table("transactions")]
-    public class Transaction
+    public class Transaction 
     {
         [Key]
         [Column("transaction_id")]

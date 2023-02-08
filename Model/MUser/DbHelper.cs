@@ -1,4 +1,6 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MTransaction;
+using ConstradeApi.Model.Response;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 

@@ -22,7 +22,7 @@ namespace ConstradeApi.Entity
 
         [Required]
         [Column("amount")]
-        public decimal amount { get; set; }
+        public decimal Amount { get; set; }
 
         [Required]
         [Column("date_send")]

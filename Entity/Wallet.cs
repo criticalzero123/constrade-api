@@ -15,8 +15,8 @@ namespace ConstradeApi.Entity
         public int UserId { get; set; }
         public User User { get; set; }
 
-
+        [Required]
         [Column("balance")]
-        public decimal balance { get; set; } = 0;
+        public decimal Balance { get; set; } = 0;
     }
 }

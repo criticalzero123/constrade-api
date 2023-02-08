@@ -17,7 +17,7 @@ namespace ConstradeApi.Entity
 
         [Required]
         [Column("amount")]
-        public decimal amount { get; set; }
+        public decimal Amount { get; set; }
 
         [Column("date_topup")]
         public DateTime DateTopUp { get; set; } = DateTime.Now;

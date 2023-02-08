@@ -34,6 +34,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        // api/wallet/send
         [HttpPost("send")]
         public async Task<IActionResult> SendMoney([FromBody] SendMoneyTransactionModel info)
         {
@@ -50,6 +51,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        // api/wallet/topup
         [HttpPost("topup")]
         public async Task<IActionResult> TopUpMoney([FromBody] TopUpTransactionModel info)
         {
@@ -67,7 +69,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpGet("transcations")]
+        // api/wallet/transactions
+        [HttpGet("transactions/all")]
         public IActionResult GetAllTransactions()
         {
             try
@@ -82,7 +85,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpGet("transcations/receive/{uid}")]
+        // api/wallet/transactions/receive/4
+        [HttpGet("transactions/receive/{uid}")]
         public IActionResult GetReceiveTransaction(int uid) 
         {
             try
@@ -99,7 +103,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpGet("transcations/send/{uid}")]
+        // api/wallet/transactions/send/4
+        [HttpGet("transactions/send/{uid}")]
         public IActionResult GetSendTransaction(int uid)
         {
             try
@@ -116,7 +121,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpGet("transactions/topup/wallet/{walletId}")]
+        // api/wallet/transactions/topup/wid/4
+        [HttpGet("transactions/topup/wid/{walletId}")]
         public IActionResult GetTopUpTransactionByWalletId(int walletId)
         {
             try
@@ -133,6 +139,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        // api/wallet/transactions/topup/4
         [HttpGet("transactions/topup/{id}")]
         public IActionResult GetTopUpTransactionById(int id)
         {
@@ -150,6 +157,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        // api/wallet/transactions/topup
         [HttpGet("transactions/topup")]
         public IActionResult GetAllTopUpTransaction()
         {

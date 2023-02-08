@@ -25,6 +25,8 @@ namespace ConstradeApi.Model.MWallet
             };
 
             await _context.UserWallet.AddAsync(_wallet);
+            await _context.SaveChangesAsync();
+
         }
         /// <summary>
         /// GET: Getting the wallet info of the user
@@ -35,6 +37,7 @@ namespace ConstradeApi.Model.MWallet
         {
             WalletModel? _wallet =  _context.UserWallet.Where(_u => _u.UserId.Equals(uid)).Select(_w => new WalletModel ()
             {
+                WalletId= _w.WalletId,
                 UserId = _w.UserId,
                 Balance = _w.Balance,
             }).FirstOrDefault();
@@ -48,6 +51,7 @@ namespace ConstradeApi.Model.MWallet
         /// <returns>true if the send transaction success otherwise false</returns>
         public async Task<bool> SendMoneyUser(SendMoneyTransactionModel info)
         {
+            if (info.SenderWalletId == info.ReceiverWalletId) return false;
 
             Wallet? _receiver = await _context.UserWallet.FindAsync(info.ReceiverWalletId);
             Wallet? _sender = await _context.UserWallet.FindAsync(info.SenderWalletId);
@@ -192,6 +196,7 @@ namespace ConstradeApi.Model.MWallet
         {
             return _context.TopUpTransactions.Select(_t => new TopUpTransactionModel()
             {
+                TopUpTransactionId = _t.TopUpTransactionId,
                 WalletId = _t.WalletId,
                 Amount = _t.Amount,
                 DateTopUp = _t.DateTopUp,

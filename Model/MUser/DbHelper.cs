@@ -1,8 +1,5 @@
 ﻿using ConstradeApi.Entity;
-using ConstradeApi.Model.MTransaction;
-using ConstradeApi.Model.Response;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace ConstradeApi.Model.MUser
 {
@@ -30,7 +27,6 @@ namespace ConstradeApi.Model.MUser
                 User_status = row.UserStatus,
                 User_type = row.UserType,
                 Authprovider_type = row.AuthProviderType,
-                Subscription_type = row.SubscriptionType,
                 ImageUrl = row.ImageUrl,
                 DateCreated = row.DateCreated,
                 PersonRefId = row.PersonRefId,
@@ -69,7 +65,6 @@ namespace ConstradeApi.Model.MUser
                     PersonRefId = o._user.PersonRefId,
                     Email = o._user.Email,
                     Authprovider_type = o._user.AuthProviderType,
-                    Subscription_type = o._user.SubscriptionType,
                     User_status = o._user.UserStatus,
                     Password = o._user.Password,
                     ImageUrl = o._user.ImageUrl,
@@ -109,7 +104,6 @@ namespace ConstradeApi.Model.MUser
             userTable.UserType = user.User_type;
             userTable.PersonRefId = personTable.Person_id;
             userTable.AuthProviderType = user.Authprovider_type;
-            userTable.SubscriptionType = user.Subscription_type;
             userTable.UserStatus = user.User_status;
             userTable.Email = user.Email;
             userTable.Password = user.Password;

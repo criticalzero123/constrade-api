@@ -14,10 +14,6 @@ namespace ConstradeApi.Model.MUser
 
         public string Authprovider_type { get; set; } = string.Empty;
 
-
-        public string Subscription_type { get; set; } = string.Empty;
-
-
         public string User_status { get; set; } = string.Empty;
 
 

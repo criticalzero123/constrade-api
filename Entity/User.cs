@@ -27,11 +27,6 @@ namespace ConstradeApi.Entity
 
         [Required]
         [StringLength(20)]
-        [Column("subscription_type")]
-        public string SubscriptionType { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(20)]
         [Column("user_status")]
         public string UserStatus { get; set; } = string.Empty;
 

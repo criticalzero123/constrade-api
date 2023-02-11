@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230211081422_AddingStatusInSubscriptionHistory")]
+    partial class AddingStatusInSubscriptionHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -419,26 +422,31 @@ namespace ConstradeApi.Migrations
                     b.ToTable("send_money_transaction");
                 });
 
-            modelBuilder.Entity("ConstradeApi.Entity.Subscription", b =>
+            modelBuilder.Entity("ConstradeApi.Entity.SubscriptionHistory", b =>
                 {
-                    b.Property<int>("SubscriptionId")
+                    b.Property<int>("SubscriptionHistoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("subscription_id");
+                        .HasColumnName("subscription_history_id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SubscriptionId"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("amount");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SubscriptionHistoryId"));
 
                     b.Property<DateTime>("DateEnd")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_end");
 
-                    b.Property<DateTime>("DateStart")
+                    b.Property<DateTime>("DateStarted")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_start");
+                        .HasColumnName("date_started");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_updated");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.Property<string>("SubscriptionType")
                         .IsRequired()
@@ -449,68 +457,9 @@ namespace ConstradeApi.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    b.HasKey("SubscriptionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("subscription");
-                });
-
-            modelBuilder.Entity("ConstradeApi.Entity.SubscriptionHistory", b =>
-                {
-                    b.Property<int>("SubscriptionHistoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("subscription_history_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SubscriptionHistoryId"));
-
-                    b.Property<DateTime>("DateUpdate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_updated");
-
-                    b.Property<decimal>("NewAmount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("new_amount");
-
-                    b.Property<DateTime>("NewDateEnd")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("new_date_end");
-
-                    b.Property<DateTime>("NewDateStart")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("new_date_start");
-
-                    b.Property<string>("NewSubscriptionType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("new_subscription_type");
-
-                    b.Property<decimal>("PreviousAmount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("previous_amount");
-
-                    b.Property<DateTime>("PreviousDateEnd")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("previous_date_end");
-
-                    b.Property<DateTime>("PreviousDateStart")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("previous_date_start");
-
-                    b.Property<string>("PreviousSubscriptionType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("previous_subscription_type");
-
-                    b.Property<int>("SubscriptionId")
-                        .HasColumnType("integer")
-                        .HasColumnName("subscription_id");
-
                     b.HasKey("SubscriptionHistoryId");
 
-                    b.HasIndex("SubscriptionId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("subscription_history");
                 });
@@ -639,6 +588,12 @@ namespace ConstradeApi.Migrations
                     b.Property<int>("PersonRefId")
                         .HasColumnType("integer")
                         .HasColumnName("person_ref_id");
+
+                    b.Property<string>("SubscriptionType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("subscription_type");
 
                     b.Property<string>("UserStatus")
                         .IsRequired()
@@ -820,7 +775,7 @@ namespace ConstradeApi.Migrations
                     b.Navigation("Wallet2");
                 });
 
-            modelBuilder.Entity("ConstradeApi.Entity.Subscription", b =>
+            modelBuilder.Entity("ConstradeApi.Entity.SubscriptionHistory", b =>
                 {
                     b.HasOne("ConstradeApi.Entity.User", "User")
                         .WithMany()
@@ -829,17 +784,6 @@ namespace ConstradeApi.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ConstradeApi.Entity.SubscriptionHistory", b =>
-                {
-                    b.HasOne("ConstradeApi.Entity.Subscription", "Subscription")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.TopUpTransaction", b =>

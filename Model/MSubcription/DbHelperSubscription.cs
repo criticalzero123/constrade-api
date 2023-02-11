@@ -20,27 +20,27 @@ namespace ConstradeApi.Model.MSubcription
         {
             Subscription _s = new Subscription()
             {
-                UserId= uid,
+                UserId = uid,
                 SubscriptionType = "free",
-                DateStart= DateTime.Now,
-                DateEnd= DateTime.Now,
-                Amount= 0,
+                DateStart = DateTime.Now,
+                DateEnd = DateTime.Now,
+                Amount = 0,
             };
             _context.Subscriptions.Add(_s);
             _context.SaveChanges();
 
             SubscriptionHistory _sh = new SubscriptionHistory()
             {
-                SubscriptionId= _s.SubscriptionId,
+                SubscriptionId = _s.SubscriptionId,
                 DateUpdate = DateTime.Now,
                 PreviousSubscriptionType = _s.SubscriptionType,
                 NewSubscriptionType = _s.SubscriptionType,
-                PreviousDateStart= _s.DateStart,
-                PreviousDateEnd=_s.DateEnd,
-                NewDateStart= _s.DateStart,
-                NewDateEnd= _s.DateEnd,
+                PreviousDateStart = _s.DateStart,
+                PreviousDateEnd = _s.DateEnd,
+                NewDateStart = _s.DateStart,
+                NewDateEnd = _s.DateEnd,
                 PreviousAmount = _s.Amount,
-                NewAmount= _s.Amount,
+                NewAmount = _s.Amount,
             };
 
             _context.SubscriptionsHistory.Add(_sh);
@@ -56,6 +56,7 @@ namespace ConstradeApi.Model.MSubcription
         {
             Subscription? sub = await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).FirstOrDefaultAsync();
             if (sub == null) return false;
+            if (sub.SubscriptionType.Equals("premium")) return false;
 
             DateTime datetime = DateTime.Now;
             DateTime expiredDateTime = datetime.AddDays(30);
@@ -109,7 +110,7 @@ namespace ConstradeApi.Model.MSubcription
             subH.NewSubscriptionType = newSubscription;
             subH.PreviousDateStart = subH.NewDateStart;
             subH.NewDateStart = datetime;
-            subH.PreviousDateEnd=subH.NewDateEnd; 
+            subH.PreviousDateEnd = subH.NewDateEnd;
             subH.NewDateEnd = expiredDateTime;
             subH.PreviousAmount = subH.NewAmount;
             subH.NewAmount = amount;
@@ -123,7 +124,7 @@ namespace ConstradeApi.Model.MSubcription
         /// </summary>
         /// <param name="uid"></param>
         /// <returns> SubscriptionHistoryModel or NULL </returns>
-        public async Task<SubscriptionHistoryModel?> GetSubscriptionHistoryByUserId (int uid)
+        public async Task<SubscriptionHistoryModel?> GetSubscriptionHistoryByUserId(int uid)
         {
             Subscription? sub = await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).FirstOrDefaultAsync();
 
@@ -131,16 +132,16 @@ namespace ConstradeApi.Model.MSubcription
 
             return await _context.SubscriptionsHistory.Where(_sh => _sh.SubscriptionId.Equals(sub.SubscriptionId)).Select(_sh => new SubscriptionHistoryModel()
             {
-                SubscriptionHistoryId= _sh.SubscriptionId,
-                SubscriptionId= _sh.SubscriptionId,
+                SubscriptionHistoryId = _sh.SubscriptionId,
+                SubscriptionId = _sh.SubscriptionId,
                 DateUpdate = _sh.DateUpdate,
                 PreviousSubscriptionType = _sh.PreviousSubscriptionType,
                 NewSubscriptionType = _sh.NewSubscriptionType,
                 PreviousDateStart = _sh.PreviousDateStart,
-                NewDateStart= _sh.NewDateStart,
-                PreviousDateEnd= _sh.PreviousDateEnd,
-                NewDateEnd= _sh.NewDateEnd,
-                PreviousAmount= _sh.PreviousAmount,
+                NewDateStart = _sh.NewDateStart,
+                PreviousDateEnd = _sh.PreviousDateEnd,
+                NewDateEnd = _sh.NewDateEnd,
+                PreviousAmount = _sh.PreviousAmount,
                 NewAmount = _sh.NewAmount,
             }).FirstOrDefaultAsync();
         }
@@ -152,14 +153,14 @@ namespace ConstradeApi.Model.MSubcription
         /// <returns>SubscriptionModel or NULL</returns>
         public SubscriptionModel? GetSubscriptionByUserId(int uid)
         {
-            return _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).Select(sub=> new SubscriptionModel()
+            return _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).Select(sub => new SubscriptionModel()
             {
                 SubscriptionId = sub.SubscriptionId,
-                UserId= sub.UserId,
+                UserId = sub.UserId,
                 SubscriptionType = sub.SubscriptionType,
                 DateStart = sub.DateStart,
                 DateEnd = sub.DateEnd,
-                Amount= sub.Amount,
+                Amount = sub.Amount,
             }).FirstOrDefault();
         }
     }

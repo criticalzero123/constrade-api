@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace ConstradeApi.Model.MProduct
 {
-    public class DbHelper
+    public class DbHelperProduct
     {
         private readonly DataContext _context;
 
-        public DbHelper(DataContext context)
+        public DbHelperProduct(DataContext context)
         {
             _context = context;
         }
@@ -55,6 +55,8 @@ namespace ConstradeApi.Model.MProduct
         {
             User? user = await _context.Users.FindAsync(product.PosterUserId);
             if (user == null) return;
+            //Prevent the user that less than 1 count post to post a product
+            if (user.CountPost < 1) return;
 
             user.CountPost -= 1;
             await _context.SaveChangesAsync();

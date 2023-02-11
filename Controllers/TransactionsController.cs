@@ -10,10 +10,10 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class TransactionsController : ControllerBase
     {
-        private readonly DbHelper _dbHelper;
+        private readonly DbHelperTransaction _dbHelper;
         public TransactionsController(DataContext dataContext)
         {
-            _dbHelper= new DbHelper(dataContext);
+            _dbHelper= new DbHelperTransaction(dataContext);
         }
 
         // api/<TransactionsController>/product

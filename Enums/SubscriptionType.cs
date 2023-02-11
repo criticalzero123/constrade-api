@@ -3,8 +3,6 @@
     public enum SubscriptionType
     {
         Free,
-        SemiVerified,
-        FullyVerified,
         Premium
     }
 }

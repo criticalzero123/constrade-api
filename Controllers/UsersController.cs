@@ -1,8 +1,8 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,10 +12,12 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly DbHelper _dbHelper;
+        private readonly DbHelperUser _dbHelper;
+        private readonly DbHelperSubscription _dbHelperSubscription;
         public UsersController(DataContext dataContext)
         {
-            _dbHelper  = new DbHelper(dataContext);
+            _dbHelper  = new DbHelperUser(dataContext);
+            _dbHelperSubscription = new DbHelperSubscription(dataContext);
         }
 
         // GET: api/<UserController>
@@ -97,7 +99,8 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType response= ResponseType.Success;
-                _dbHelper.Save(userModel);
+                int uid = _dbHelper.Save(userModel);
+                _dbHelperSubscription.CreateSubscription(uid);
 
                 return Ok(ResponseHandler.GetApiResponse(response, userModel));
             }catch( Exception ex)

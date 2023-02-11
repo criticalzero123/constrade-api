@@ -3,11 +3,11 @@ using System.Runtime.CompilerServices;
 
 namespace ConstradeApi.Model.MTransaction
 {
-    public class DbHelper
+    public class DbHelperTransaction
     {
         private readonly DataContext _context;
 
-        public DbHelper(DataContext dataContext)
+        public DbHelperTransaction(DataContext dataContext)
         {
             _context = dataContext;
         }

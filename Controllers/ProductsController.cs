@@ -11,11 +11,11 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly DbHelper _dbHelper;
+        private readonly DbHelperProduct _dbHelper;
 
         public ProductsController(DataContext dataContext)
         {
-            _dbHelper = new DbHelper(dataContext);
+            _dbHelper = new DbHelperProduct(dataContext);
         }
 
         // GET: api/<ProductController>

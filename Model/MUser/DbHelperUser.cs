@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConstradeApi.Model.MUser
 {
-    public class DbHelper
+    public class DbHelperUser
     {
         private readonly DataContext _context;
 
-        public DbHelper(DataContext context)
+        public DbHelperUser(DataContext context)
         {
             _context = context;
         }
@@ -34,6 +34,8 @@ namespace ConstradeApi.Model.MUser
                 LastActiveAt = row.LastActiveAt,
                 CountPost = row.CountPost,
             }));
+
+
 
             return response;
         }
@@ -90,7 +92,7 @@ namespace ConstradeApi.Model.MUser
         /// POST for User
         /// </summary>
         /// <param name="user"></param>
-        public void Save(UserModel user)
+        public int Save(UserModel user)
         {
             Person personTable = new Person();
             personTable.FirstName = user.Person.FirstName;
@@ -114,6 +116,8 @@ namespace ConstradeApi.Model.MUser
             _context.Users.Add(userTable);
 
             _context.SaveChanges();
+
+            return userTable.UserId;
         }
 
         /// <summary>

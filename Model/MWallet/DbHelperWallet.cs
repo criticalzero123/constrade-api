@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConstradeApi.Model.MWallet
 {
-    public class DbHelper
+    public class DbHelperWallet
     {
         private readonly DataContext _context;
 
-        public DbHelper(DataContext dataContext)
+        public DbHelperWallet(DataContext dataContext)
         {
             _context = dataContext;
         }

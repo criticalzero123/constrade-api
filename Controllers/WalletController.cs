@@ -9,11 +9,11 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class WalletController : ControllerBase
     {
-        private readonly DbHelper _dbHelper;
+        private readonly DbHelperWallet _dbHelper;
 
         public WalletController(DataContext context)
         {
-            _dbHelper = new DbHelper(context);
+            _dbHelper = new DbHelperWallet(context);
         }
 
         // api/wallet/4

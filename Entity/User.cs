@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstradeApi.Entity
 {
     [Table("user")]
+    [Index(nameof(Email), IsUnique = true)]
     public class User
     {
         [Required, Key]
@@ -28,7 +29,7 @@ namespace ConstradeApi.Entity
         [Required]
         [StringLength(20)]
         [Column("user_status")]
-        public string UserStatus { get; set; } = string.Empty;
+        public string UserStatus { get; set; } = "active";
 
         [Required]
         [StringLength(50)]

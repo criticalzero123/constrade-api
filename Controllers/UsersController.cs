@@ -29,7 +29,6 @@ namespace ConstradeApi.Controllers
             {
                 IEnumerable<UserModel> users = _dbHelper.GetAll();
                 
-                if (!users.Any()) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, users));
             }
@@ -41,7 +40,7 @@ namespace ConstradeApi.Controllers
 
         // GET: api/<UserController>/check/email/johndoe@test.com
         [Route("check/email/{email}")]
-        public async Task<IActionResult> GetUserByEmail(string email)
+        public async Task<IActionResult> CheckUserByEmail(string email)
         {
             ResponseType responseType = ResponseType.Success;
             try
@@ -58,7 +57,7 @@ namespace ConstradeApi.Controllers
 
         // GET: api/<UserController>/check/phone/6399999999
         [Route("check/phone/{phone}")]
-        public async Task<IActionResult> GetUserByPhone(string phone)
+        public async Task<IActionResult> CheckUserByPhone(string phone)
         {
             ResponseType responseType = ResponseType.Success;
             try
@@ -91,16 +90,34 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        
+        // GET api/<UserController>/login/google/johndoe@test.com
+        [HttpGet("login/email/{email}")]
+        public IActionResult LoginByGoogleAuth(string email)
+        {
+            ResponseType responseType = ResponseType.Success;
+
+            try
+            {
+                UserModel? user = _dbHelper.GetUserInfoByEmail(email);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, user));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+
         // POST api/<UserController>
         [HttpPost]
-        public IActionResult Post([FromBody] UserModel userModel)
+        public async Task<IActionResult> Post([FromBody] UserRegistrationInfoModel userModel)
         {
             try
             {
                 ResponseType response= ResponseType.Success;
-                int uid = _dbHelper.Save(userModel);
-                _dbHelperSubscription.CreateSubscription(uid);
+                int uid = await _dbHelper.Save(userModel);
+                await _dbHelperSubscription.CreateSubscription(uid);
 
                 return Ok(ResponseHandler.GetApiResponse(response, userModel));
             }catch( Exception ex)

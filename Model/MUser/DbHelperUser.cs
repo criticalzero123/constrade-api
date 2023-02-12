@@ -89,33 +89,34 @@ namespace ConstradeApi.Model.MUser
         }
 
         /// <summary>
-        /// POST for User
+        /// POST: creating user
         /// </summary>
         /// <param name="user"></param>
-        public int Save(UserModel user)
+        /// <returns>Primary Key of the User</returns>
+        public async Task<int> Save(UserRegistrationInfoModel user)
         {
             Person personTable = new Person();
-            personTable.FirstName = user.Person.FirstName;
-            personTable.LastName = user.Person.LastName;
-            personTable.Birthdate = user.Person.Birthdate;
-            _context.Persons.Add(personTable);
+            personTable.FirstName = user.FirstName;
+            personTable.LastName = user.LastName;
+            personTable.Birthdate = user.Birthdate;
+            await _context.Persons.AddAsync(personTable);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             User userTable = new User();
             userTable.UserType = user.User_type;
             userTable.PersonRefId = personTable.Person_id;
             userTable.AuthProviderType = user.Authprovider_type;
-            userTable.UserStatus = user.User_status;
-            userTable.Email = user.Email;
+            userTable.UserStatus = user.UserStatus;
+            userTable.Email = user.Email.ToLower();
             userTable.Password = user.Password;
             userTable.ImageUrl = user.ImageUrl;
             userTable.CountPost = 0;
             userTable.DateCreated = DateTime.Now;
             userTable.LastActiveAt = DateTime.Now;
-            _context.Users.Add(userTable);
+            await _context.Users.AddAsync(userTable);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return userTable.UserId;
         }
@@ -359,6 +360,30 @@ namespace ConstradeApi.Model.MUser
                 }).ToList();
 
             return data;
+        }
+
+        /// <summary>
+        /// GET: Getting the user info by using email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>UserModel or NULL</returns>
+        /// 
+        //TODO: please make a checker if the user status is active or not
+        public UserModel? GetUserInfoByEmail(string email)
+        {
+            return _context.Users.Where(_u => _u.Email.Equals(email)).Select(_u => new UserModel()
+            {
+                User_id = _u.UserId,
+                PersonRefId = _u.PersonRefId,
+                Email = _u.Email,
+                Authprovider_type = _u.AuthProviderType,
+                User_status= _u.UserStatus,
+                ImageUrl = _u.ImageUrl,
+                LastActiveAt = _u.LastActiveAt,
+                CountPost = _u.CountPost,
+                DateCreated = _u.DateCreated,
+
+            }).FirstOrDefault();
         }
     }
 }

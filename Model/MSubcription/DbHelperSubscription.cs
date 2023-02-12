@@ -16,7 +16,7 @@ namespace ConstradeApi.Model.MSubcription
         /// POST: Creating a user subscription for registration
         /// </summary>
         /// <param name="uid"></param>
-        public void CreateSubscription(int uid)
+        public async Task CreateSubscription(int uid)
         {
             Subscription _s = new Subscription()
             {
@@ -26,8 +26,8 @@ namespace ConstradeApi.Model.MSubcription
                 DateEnd = DateTime.Now,
                 Amount = 0,
             };
-            _context.Subscriptions.Add(_s);
-            _context.SaveChanges();
+            await _context.Subscriptions.AddAsync(_s);
+            await _context.SaveChangesAsync();
 
             SubscriptionHistory _sh = new SubscriptionHistory()
             {
@@ -43,8 +43,8 @@ namespace ConstradeApi.Model.MSubcription
                 NewAmount = _s.Amount,
             };
 
-            _context.SubscriptionsHistory.Add(_sh);
-            _context.SaveChanges();
+            await _context.SubscriptionsHistory.AddAsync(_sh);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>

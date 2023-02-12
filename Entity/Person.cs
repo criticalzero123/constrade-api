@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstradeApi.Entity
 {
     [Table("person")]
+    [Index(nameof(FirstName), nameof(LastName))]
     public class Person
     {
         [Key,Required]
@@ -22,7 +24,7 @@ namespace ConstradeApi.Entity
         [StringLength(100)]
         public string LastName { get; set; } = string.Empty;
 
-        public DateTime? Birthdate { get; set; }
+        public DateTime? Birthdate { get; set; } = DateTime.Now;
 
         [StringLength(50)]
         public string PhoneNumber { get; set; } = string.Empty;

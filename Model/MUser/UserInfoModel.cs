@@ -1,7 +1,9 @@
 ﻿namespace ConstradeApi.Model.MUser
 {
-    public class UserRegistrationInfoModel
+    public class UserInfoModel
     {
+        public int? UserId { get; set; }
+        public int? PersonId { get; set; }
         public string User_type { get; set; } = string.Empty;
         public string Authprovider_type { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
@@ -13,6 +15,6 @@
         public string UserStatus { get; set; } = "active";
         public DateTime LastActiveAt { get; set; } = DateTime.Now;
         public DateTime DateCreated { get; set; } = DateTime.Now;
-        public DateTime Birthdate { get; set; } = DateTime.Now;
+        public DateTime? Birthdate { get; set; } = DateTime.Now;
     }
 }

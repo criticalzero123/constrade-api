@@ -93,7 +93,7 @@ namespace ConstradeApi.Model.MUser
         /// </summary>
         /// <param name="user"></param>
         /// <returns>Primary Key of the User</returns>
-        public async Task<int> Save(UserRegistrationInfoModel user)
+        public async Task<int> Save(UserInfoModel user)
         {
             Person personTable = new Person();
             personTable.FirstName = user.FirstName;
@@ -363,57 +363,73 @@ namespace ConstradeApi.Model.MUser
         }
 
         /// <summary>
-        /// GET: Getting the user info by using google auth
+        /// PUT: Getting the user info by using google auth
         /// </summary>
         /// <param name="email"></param>
         /// <returns>UserModel or NULL</returns>
         /// 
         //TODO: please make a checker if the user status is active or not
-        //make this a put for a update lastActiveAt
-        public UserModel? GetUserInfoByEmail(string email)
+        public async Task<UserInfoModel?> LoginByGoogle(string email)
         {
-            return _context.Users.Where(_u => _u.Email.Equals(email)).Select(_u => new UserModel()
-            {
-                User_id = _u.UserId,
-                PersonRefId = _u.PersonRefId,
-                Email = _u.Email,
-                Authprovider_type = _u.AuthProviderType,
-                User_status= _u.UserStatus,
-                ImageUrl = _u.ImageUrl,
-                LastActiveAt = _u.LastActiveAt,
-                CountPost = _u.CountPost,
-                DateCreated = _u.DateCreated,
+            User? user = _context.Users.Where(_u => _u.Email.Equals(email)).FirstOrDefault();
+            if (user == null) return null;
 
-            }).FirstOrDefault();
+            user.LastActiveAt = DateTime.Now;
+            await _context.SaveChangesAsync();
+
+            Person data = _context.Persons.Find(user.PersonRefId)!;
+
+            return new UserInfoModel()
+            {
+                UserId = user.UserId,
+                PersonId = data.Person_id,
+                User_type = user.UserType,
+                Authprovider_type = user.AuthProviderType,
+                FirstName = data.FirstName,
+                LastName = data.LastName,
+                Email = user.Email,
+                Password = user.Password,
+                ImageUrl = user.ImageUrl,
+                CountPost = user.CountPost,
+                UserStatus = user.UserStatus,
+                LastActiveAt = user.LastActiveAt,
+                DateCreated = user.DateCreated,
+                Birthdate = data.Birthdate,
+            };
         }
 
         /// <summary>
         /// PUT: Gettint the user info by using email and password
         /// </summary>
         /// <param name="info"></param>
-        /// <returns>UserModel or NULL</returns>
-        public UserModel? LoginByEmailAndPassword(UserLoginInfoModel info)
+        /// <returns>UserInfoModel or NULL</returns>
+        public async Task<UserInfoModel?> LoginByEmailAndPassword(UserLoginInfoModel info)
         {
-            UserModel? user  =  _context.Users.Where(_u => _u.Email.Equals(info.Email)).Where(_u => _u.Password.Equals(info.Password)).Select(_u => new UserModel()
-            {
-                User_id = _u.UserId,
-                PersonRefId = _u.PersonRefId,
-                Email = _u.Email,
-                Authprovider_type = _u.AuthProviderType,
-                User_status = _u.UserStatus,
-                ImageUrl = _u.ImageUrl,
-                LastActiveAt = _u.LastActiveAt,
-                CountPost = _u.CountPost,
-                DateCreated = _u.DateCreated,
-
-            }).FirstOrDefault();
-
+            User? user  =  _context.Users.Where(_u => _u.Email.Equals(info.Email)).Where(_u => _u.Password.Equals(info.Password)).FirstOrDefault();
             if (user == null) return null;
 
             user.LastActiveAt= DateTime.Now;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return user;
+            Person data = _context.Persons.Find(user.PersonRefId)!;
+
+            return new UserInfoModel()
+            {
+                UserId = user.UserId,
+                PersonId = data.Person_id,
+                User_type = user.UserType,
+                Authprovider_type = user.AuthProviderType,
+                FirstName = data.FirstName,
+                LastName = data.LastName,
+                Email = user.Email,
+                Password = user.Password,
+                ImageUrl = user.ImageUrl,
+                CountPost = user.CountPost,
+                UserStatus = user.UserStatus,
+                LastActiveAt = user.LastActiveAt,
+                DateCreated = user.DateCreated,
+                Birthdate = data.Birthdate,
+            };
         }
     }
 }

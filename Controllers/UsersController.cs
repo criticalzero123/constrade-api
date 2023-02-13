@@ -90,15 +90,15 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        // GET api/<UserController>/login/google/johndoe@test.com
-        [HttpGet("login/email/{email}")]
-        public IActionResult LoginByGoogleAuth(string email)
+        // Put api/<UserController>/login/google/johndoe@test.com
+        [HttpPut("login/google")]
+        public async Task<IActionResult> LoginByGoogleAuth([FromBody] UserLoginInfoModel data)
         {
             ResponseType responseType = ResponseType.Success;
 
             try
             {
-                UserModel? user = _dbHelper.GetUserInfoByEmail(email);
+                UserInfoModel? user = await _dbHelper.LoginByGoogle(data.Email);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, user));
             }
@@ -109,12 +109,12 @@ namespace ConstradeApi.Controllers
         }
 
         [HttpPut("login")]
-        public IActionResult LoginByEmailAndPassword([FromBody] UserLoginInfoModel info)
+        public async Task<IActionResult> LoginByEmailAndPassword([FromBody] UserLoginInfoModel info)
         {
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                UserModel? user = _dbHelper.LoginByEmailAndPassword(info);
+                UserInfoModel? user = await _dbHelper.LoginByEmailAndPassword(info);
 
                 if (user == null) responseType = ResponseType.NotFound;
 
@@ -128,7 +128,7 @@ namespace ConstradeApi.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UserRegistrationInfoModel userModel)
+        public async Task<IActionResult> Post([FromBody] UserInfoModel userModel)
         {
             try
             {

@@ -363,12 +363,13 @@ namespace ConstradeApi.Model.MUser
         }
 
         /// <summary>
-        /// GET: Getting the user info by using email
+        /// GET: Getting the user info by using google auth
         /// </summary>
         /// <param name="email"></param>
         /// <returns>UserModel or NULL</returns>
         /// 
         //TODO: please make a checker if the user status is active or not
+        //make this a put for a update lastActiveAt
         public UserModel? GetUserInfoByEmail(string email)
         {
             return _context.Users.Where(_u => _u.Email.Equals(email)).Select(_u => new UserModel()
@@ -384,6 +385,35 @@ namespace ConstradeApi.Model.MUser
                 DateCreated = _u.DateCreated,
 
             }).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// PUT: Gettint the user info by using email and password
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns>UserModel or NULL</returns>
+        public UserModel? LoginByEmailAndPassword(UserLoginInfoModel info)
+        {
+            UserModel? user  =  _context.Users.Where(_u => _u.Email.Equals(info.Email)).Where(_u => _u.Password.Equals(info.Password)).Select(_u => new UserModel()
+            {
+                User_id = _u.UserId,
+                PersonRefId = _u.PersonRefId,
+                Email = _u.Email,
+                Authprovider_type = _u.AuthProviderType,
+                User_status = _u.UserStatus,
+                ImageUrl = _u.ImageUrl,
+                LastActiveAt = _u.LastActiveAt,
+                CountPost = _u.CountPost,
+                DateCreated = _u.DateCreated,
+
+            }).FirstOrDefault();
+
+            if (user == null) return null;
+
+            user.LastActiveAt= DateTime.Now;
+            _context.SaveChanges();
+
+            return user;
         }
     }
 }

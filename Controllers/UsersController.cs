@@ -108,6 +108,23 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpPut("login")]
+        public IActionResult LoginByEmailAndPassword([FromBody] UserLoginInfoModel info)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+                UserModel? user = _dbHelper.LoginByEmailAndPassword(info);
+
+                if (user == null) responseType = ResponseType.NotFound;
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, user));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
 
         // POST api/<UserController>
         [HttpPost]

@@ -7,6 +7,8 @@ namespace ConstradeApi.Model.MUser
     {
         public int User_id { get; set; }
 
+        public string FirebaseId { get; set; }
+
         public string User_type { get; set; } = string.Empty;
 
         public int PersonRefId { get; set; }

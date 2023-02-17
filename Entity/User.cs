@@ -5,12 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConstradeApi.Entity
 {
     [Table("user")]
-    [Index(nameof(Email), IsUnique = true)]
+    [Index(nameof(Email), nameof(FirebaseId), IsUnique = true)]
     public class User
     {
         [Required, Key]
         [Column("user_id")]
         public int UserId { get; set; }
+
+        [Required]
+        [Column("uid")]
+        public string FirebaseId { get; set; } = string.Empty;
 
         [ForeignKey("Person")]
         [Column("person_ref_id")]

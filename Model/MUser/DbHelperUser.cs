@@ -24,6 +24,7 @@ namespace ConstradeApi.Model.MUser
             data.ForEach(row => response.Add(new UserModel()
             {
                 User_id = row.UserId,
+                FirebaseId= row.FirebaseId,
                 User_status = row.UserStatus,
                 User_type = row.UserType,
                 Authprovider_type = row.AuthProviderType,
@@ -63,6 +64,7 @@ namespace ConstradeApi.Model.MUser
                 .Select(o => new UserModel()
                 {
                     User_id = o._user.UserId,
+                    FirebaseId = o._user.FirebaseId,
                     User_type = o._user.UserType,
                     PersonRefId = o._user.PersonRefId,
                     Email = o._user.Email,
@@ -104,6 +106,7 @@ namespace ConstradeApi.Model.MUser
             await _context.SaveChangesAsync();
 
             User userTable = new User();
+            userTable.FirebaseId = user.FirebaseId;
             userTable.UserType = user.User_type;
             userTable.PersonRefId = personTable.Person_id;
             userTable.AuthProviderType = user.Authprovider_type;

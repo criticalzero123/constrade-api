@@ -4,6 +4,7 @@
     {
         public int? UserId { get; set; }
         public int? PersonId { get; set; }
+        public string FirebaseId { get; set; }
         public string User_type { get; set; } = string.Empty;
         public string Authprovider_type { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;

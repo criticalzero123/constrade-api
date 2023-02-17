@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace ConstradeApi.Entity
 {
@@ -19,11 +20,11 @@ namespace ConstradeApi.Entity
         [Required, StringLength(50)]
 
         [Column("title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [Required, StringLength(150)]
         [Column("description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [StringLength(50)]
         [Column("model_number")]
@@ -35,15 +36,15 @@ namespace ConstradeApi.Entity
 
         [StringLength(100), Required]
         [Column("game_genre")]
-        public string GameGenre { get; set; }
+        public string GameGenre { get; set; } = string.Empty;
 
         [StringLength(100), Required]
         [Column("platform")]
-        public string Platform { get; set; }
+        public string Platform { get; set; } = string.Empty;
 
         [Required]
         [Column("thumbnail_url")]
-        public string ThumbnailUrl { get; set; }
+        public string ThumbnailUrl { get; set; } = string.Empty;
 
         [Required]
         [Column("cash")]
@@ -51,36 +52,42 @@ namespace ConstradeApi.Entity
 
         [Required]
         [Column("item")]
-        public string Item { get; set; }
+        public string Item { get; set; } = string.Empty;
 
-        [Required]
         [Column("date_created")]
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.Now;
 
         [Required]
         [Column("count_favorite")]
-        public int CountFavorite { get; set; }
+        public int CountFavorite { get; set; } = 0;
 
 
 
         [Required, StringLength(20)]
         [Column("condition")]
-        public string Condition { get; set; }
+        public string Condition { get; set; } = string.Empty;
 
         [Required, StringLength(20)]
         [Column("prefere_trade")]
-        public string PreferTrade { get; set; }
+        public string PreferTrade { get; set; } = string.Empty;
 
         [Required, StringLength(20)]
         [Column("delivery_method")]
-        public string DeliveryMethod { get; set; }
+        public string DeliveryMethod { get; set; } = string.Empty;
 
         [Required]
         [Column("location")]
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
 
-        [Required, StringLength(20)]
+        [StringLength(20)]
         [Column("product_status")]
-        public string ProductStatus { get; set; }
+        public string ProductStatus { get; set; } = "unsold";
+
+        [Required, Column("has_receipts")]
+        public bool HasReceipts { get; set; } = false;
+        
+        [Required, Column("has_warranty")]
+        public bool HasWarranty { get; set; } = false;
+
     }
 }

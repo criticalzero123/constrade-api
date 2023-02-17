@@ -51,7 +51,7 @@ namespace ConstradeApi.Model.MProduct
         /// POST for product
         /// </summary>
         /// <param name="product"></param>
-        public async Task Save(ProductModel product, List<string> imageList)
+        public async Task Save(ProductModel product, IEnumerable<string> imageList)
         {
             User? user = await _context.Users.FindAsync(product.PosterUserId);
             if (user == null) return;
@@ -78,12 +78,13 @@ namespace ConstradeApi.Model.MProduct
                 ThumbnailUrl= product.ThumbnailUrl,
                 Cash= product.Cash,
                 Item= product.Item,
-                DateCreated= product.DateCreated,
                 CountFavorite= product.CountFavorite,
+                HasReceipts = product.HasReceipts,
+                HasWarranty = product.HasWarranty,
             };
 
-            _context.Products.Add( _product );
-            _context.SaveChanges();
+            await _context.Products.AddAsync( _product );
+            await _context.SaveChangesAsync();
 
             // Adding the images in image list table
             foreach ( string item in imageList ) 

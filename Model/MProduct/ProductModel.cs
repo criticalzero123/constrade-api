@@ -41,5 +41,9 @@ namespace ConstradeApi.Model.MProduct
         public string Location { get; set; }
         public string ProductStatus { get; set; }
 
+        public bool HasWarranty { get; set; }
+
+        public bool HasReceipts { get; set; }
+
     }
 }

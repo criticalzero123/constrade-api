@@ -3,6 +3,6 @@
     public class ProductAndImages
     {
         public ProductModel Product { get; set; }
-        public List<string> ImageURLList { get; set; }
+        public IEnumerable<string> ImageURLList { get; set; }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConstradeApi.Model.MUser
+namespace ConstradeApi.Model.MUser.Repository
 {
-    public class DbHelperUser
+    public class UserRepository : IUserRepository
     {
         private readonly DataContext _context;
 
-        public DbHelperUser(DataContext context)
+        public UserRepository(DataContext context)
         {
             _context = context;
         }
@@ -16,15 +16,15 @@ namespace ConstradeApi.Model.MUser
         /// GET
         /// </summary>
         /// <returns>List of Users</returns>
-        public List<UserModel> GetAll()
+        public async Task<IEnumerable<UserModel>> GetAll()
         {
             List<UserModel> response = new List<UserModel>();
 
-            var data = _context.Users.ToList();
+            var data = await _context.Users.ToListAsync();
             data.ForEach(row => response.Add(new UserModel()
             {
                 User_id = row.UserId,
-                FirebaseId= row.FirebaseId,
+                FirebaseId = row.FirebaseId,
                 User_status = row.UserStatus,
                 User_type = row.UserType,
                 Authprovider_type = row.AuthProviderType,
@@ -46,11 +46,11 @@ namespace ConstradeApi.Model.MUser
         /// </summary>
         /// <param name="id"></param>
         /// <returns>null or an UserModel</returns>
-        public UserModel? Get(int id)
+        public async Task<UserModel?> Get(int id)
         {
 
-            var userData = _context.Users.ToList();
-            var personData = _context.Persons.ToList();
+            var userData =  await _context.Users.ToListAsync();
+            var personData = await  _context.Persons.ToListAsync();
 
             var data = userData.Join(personData,
                                     _user => _user.PersonRefId,
@@ -153,17 +153,17 @@ namespace ConstradeApi.Model.MUser
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public  List<FavoriteModel> GetFavorite(int userId)
+        public async Task<IEnumerable<FavoriteModel>> GetFavorite(int userId)
         {
-            List<FavoriteModel> favoriteModels =  _context.UserFavorites.Where(_f => _f.UserId == userId).Select(_f => new FavoriteModel()
+            List<FavoriteModel> favoriteModels = await _context.UserFavorites.Where(_f => _f.UserId == userId).Select(_f => new FavoriteModel()
             {
                 FavoriteId = _f.FavoriteId,
                 UserId = _f.UserId,
                 ProductId = _f.ProductId,
-            }).ToList();
+            }).ToListAsync();
 
             return favoriteModels;
-        }  
+        }
 
         /// <summary>
         /// POST for adding product to favorite
@@ -171,7 +171,7 @@ namespace ConstradeApi.Model.MUser
         /// <param name="productId"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<bool> AddFavorite( int userId, int productId)
+        public async Task<bool> AddFavorite(int userId, int productId)
         {
             Product? product = await _context.Products.FindAsync(productId);
             if (product == null) return false;
@@ -179,7 +179,7 @@ namespace ConstradeApi.Model.MUser
             product.CountFavorite += 1;
             await _context.SaveChangesAsync();
 
-            Favorites favorites= new Favorites();
+            Favorites favorites = new Favorites();
             favorites.ProductId = productId;
             favorites.UserId = userId;
             favorites.Date = DateTime.Now;
@@ -189,7 +189,7 @@ namespace ConstradeApi.Model.MUser
 
             return true;
         }
-        
+
         /// <summary>
         /// DELETE for favorite of user
         /// </summary>
@@ -198,7 +198,7 @@ namespace ConstradeApi.Model.MUser
         public async Task<bool> DeleteFavorite(int id)
         {
             Favorites? favorites = await _context.UserFavorites.FindAsync(id);
-            if(favorites == null) return false;
+            if (favorites == null) return false;
 
             Product? product = await _context.Products.FindAsync(favorites.ProductId);
             if (product == null) return false;
@@ -218,14 +218,14 @@ namespace ConstradeApi.Model.MUser
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>List of Users ID</returns>
-        public List<UserFollowModel> GetUserFollow(int userId)
+        public async Task<IEnumerable<UserFollowModel>> GetUserFollow(int userId)
         {
-            List<UserFollowModel> userFollowModel = _context.UserFollows.Where(_u => _u.FollowedByUserId.Equals(userId)).Select(_u => new UserFollowModel()
+            List<UserFollowModel> userFollowModel = await _context.UserFollows.Where(_u => _u.FollowedByUserId.Equals(userId)).Select(_u => new UserFollowModel()
             {
                 FollowId = _u.FollowId,
                 FollowByUserId = _u.FollowByUserId,
                 DateFollowed = _u.DateFollowed
-            }).ToList();
+            }).ToListAsync();
 
             return userFollowModel;
         }
@@ -235,14 +235,14 @@ namespace ConstradeApi.Model.MUser
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>List of Users ID and date</returns>
-        public List<UserFollowModel> GetUserFollower(int userId)
+        public async Task<IEnumerable<UserFollowModel>> GetUserFollower(int userId)
         {
-            List<UserFollowModel> userFollowModels = _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(userId)).Select(_u => new UserFollowModel()
+            List<UserFollowModel> userFollowModels = await _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(userId)).Select(_u => new UserFollowModel()
             {
                 FollowId = _u.FollowId,
                 FollowedByUserId = _u.FollowedByUserId,
                 DateFollowed = _u.DateFollowed
-            }).ToList();
+            }).ToListAsync();
 
             return userFollowModels;
         }
@@ -252,17 +252,18 @@ namespace ConstradeApi.Model.MUser
         /// </summary>
         /// <param name="followUser"></param>
         /// <param name="followedUser"></param>
-        public  bool FollowUser(int followUser, int followedByUser)
+        public async Task<bool> FollowUser(int followUser, int followedByUser)
         {
-            if(followUser == followedByUser) return false;
+            if (followUser == followedByUser) return false;
 
-            List<Follow> follows =  _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(followUser)).ToList();
-            Follow? flag =  follows.Where(_u => _u.FollowedByUserId.Equals(followedByUser)).FirstOrDefault();
+            List<Follow> follows = await _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(followUser)).ToListAsync();
+            Follow? flag =  follows.FirstOrDefault(_u => _u.FollowedByUserId.Equals(followedByUser));
+
 
             //if the user already follows
-            if(flag != null)
+            if (flag != null)
             {
-                _context.UserFollows.Remove(flag);
+               _context.UserFollows.Remove(flag);
             }
             else
             {
@@ -273,10 +274,10 @@ namespace ConstradeApi.Model.MUser
                     DateFollowed = DateTime.Now,
                 };
 
-                _context.UserFollows.Add(follow);
-               
+                await _context.UserFollows.AddAsync(follow);
+
             }
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
 
         }
@@ -300,7 +301,7 @@ namespace ConstradeApi.Model.MUser
             {
                 TransactionRefId = userReviewModel.TransactionRefId,
                 Rate = userReviewModel.Rate,
-                DateCreated = userReviewModel.DateCreated    
+                DateCreated = userReviewModel.DateCreated
             });
             await _context.SaveChangesAsync();
 
@@ -316,7 +317,7 @@ namespace ConstradeApi.Model.MUser
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<List<UserReviewModel>> GetMyReviews(int userId)
+        public async Task<IEnumerable<UserReviewModel>> GetMyReviews(int userId)
         {
             List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.BuyerUserId.Equals(userId)).Where(_t => _t.IsReviewed == true).ToListAsync();
             List<Review> _reviews = _context.UserReviews.ToList();
@@ -325,7 +326,7 @@ namespace ConstradeApi.Model.MUser
             var data = _reviews.Join(_transaction,
                                       _r => _r.TransactionRefId,
                                       _t => _t.TransactionId,
-                                      (_r, _t) => new {_r,_t}
+                                      (_r, _t) => new { _r, _t }
                                     )
                 .Select(result => new UserReviewModel()
                 {
@@ -343,7 +344,7 @@ namespace ConstradeApi.Model.MUser
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<List<UserReviewModel>> GetReviews(int userId)
+        public async Task<IEnumerable<UserReviewModel>> GetReviews(int userId)
         {
             List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.SellerUserId.Equals(userId)).Where(_t => _t.IsReviewed == true).ToListAsync();
             List<Review> _reviews = _context.UserReviews.ToList();
@@ -408,10 +409,10 @@ namespace ConstradeApi.Model.MUser
         /// <returns>UserInfoModel or NULL</returns>
         public async Task<UserInfoModel?> LoginByEmailAndPassword(UserLoginInfoModel info)
         {
-            User? user  =  _context.Users.Where(_u => _u.Email.Equals(info.Email)).Where(_u => _u.Password.Equals(info.Password)).FirstOrDefault();
+            User? user = _context.Users.Where(_u => _u.Email.Equals(info.Email)).Where(_u => _u.Password.Equals(info.Password)).FirstOrDefault();
             if (user == null) return null;
 
-            user.LastActiveAt= DateTime.Now;
+            user.LastActiveAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
             Person data = _context.Persons.Find(user.PersonRefId)!;

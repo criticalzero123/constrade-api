@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MSubcription;
+using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,10 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class SubscriptionController : ControllerBase
     {
-        private readonly DbHelperSubscription _dbHelper;
-        public SubscriptionController(DataContext dataContext)
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        public SubscriptionController(ISubscriptionRepository subscriptionRepository)
         {
-            _dbHelper= new DbHelperSubscription(dataContext);
+            _subscriptionRepository = subscriptionRepository;
         }
 
         [HttpPut("cancel/{uid}")]
@@ -21,7 +22,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                bool sub = await _dbHelper.CancelPremium(uid);
+                bool sub = await _subscriptionRepository.CancelPremium(uid);
 
                 if (!sub) return NotFound();
 
@@ -38,7 +39,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                bool sub = await _dbHelper.SubscribePremium(uid);
+                bool sub = await _subscriptionRepository.SubscribePremium(uid);
 
                 if (!sub) return NotFound();
 
@@ -51,11 +52,11 @@ namespace ConstradeApi.Controllers
         }
 
         [HttpGet("user/{uid}")]
-        public IActionResult GetUserSubscription(int uid)
+        public async Task<IActionResult> GetUserSubscription(int uid)
         {
             try
             {
-                var sub = _dbHelper.GetSubscriptionByUserId(uid);
+                var sub = await _subscriptionRepository.GetSubscriptionByUserId(uid);
 
                 if (sub == null) return NotFound();
 
@@ -72,7 +73,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                var sub = await _dbHelper.GetSubscriptionHistoryByUserId(uid);
+                var sub = await _subscriptionRepository.GetSubscriptionHistoryByUserId(uid);
 
                 if (sub == null) return NotFound();
 

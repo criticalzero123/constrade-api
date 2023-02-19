@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MWallet;
+using ConstradeApi.Model.MWallet.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,20 +10,20 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class WalletController : ControllerBase
     {
-        private readonly DbHelperWallet _dbHelper;
+        private readonly IWalletRepository _walletRepository;
 
-        public WalletController(DataContext context)
+        public WalletController(IWalletRepository walletRepository)
         {
-            _dbHelper = new DbHelperWallet(context);
+            _walletRepository = walletRepository;
         }
 
         // api/wallet/4
         [HttpGet("{userId}")]
-        public IActionResult GetWallet(int userId)
+        public async Task<IActionResult> GetWallet(int userId)
         {
             try
             {
-                WalletModel? data = _dbHelper.GetWalletUser(userId);
+                WalletModel? data = await _walletRepository.GetWalletUser(userId);
 
                 if(data == null) return NotFound();
 
@@ -36,11 +37,11 @@ namespace ConstradeApi.Controllers
 
         // api/wallet/id/4
         [HttpGet("id/{walletId}")]
-        public IActionResult GetWalletById(int walletId)
+        public async Task<IActionResult> GetWalletById(int walletId)
         {
             try
             {
-                WalletModel? data = _dbHelper.GetWalletById(walletId);
+                WalletModel? data = await _walletRepository.GetWalletById(walletId);
 
                 if (data == null) return NotFound();
 
@@ -58,7 +59,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                bool _send = await _dbHelper.SendMoneyUser(info);
+                bool _send = await _walletRepository.SendMoneyUser(info);
                 if (!_send) return BadRequest("User Not found or Balance is insuffecient");
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, _send));
@@ -75,7 +76,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                bool flag = await _dbHelper.TopUpMoney(info);
+                bool flag = await _walletRepository.TopUpMoney(info);
 
                 if (!flag) return BadRequest("Wallet Not Found");
 
@@ -89,11 +90,11 @@ namespace ConstradeApi.Controllers
 
         // api/wallet/transactions
         [HttpGet("transactions/all")]
-        public IActionResult GetAllTransactions()
+        public async  Task<IActionResult> GetAllTransactions()
         {
             try
             {
-                var data = _dbHelper.GetAllMoneyTransaction();
+                var data = await _walletRepository.GetAllMoneyTransaction();
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
             }
@@ -105,13 +106,13 @@ namespace ConstradeApi.Controllers
 
         // api/wallet/transactions/receive/4
         [HttpGet("transactions/receive/{walletId}")]
-        public IActionResult GetReceiveTransaction(int walletId) 
+        public async Task<IActionResult> GetReceiveTransaction(int walletId) 
         {
             try
             {
-                var data = _dbHelper.GetReceiveMoneyTransaction(walletId);
+                var data = await _walletRepository.GetReceiveMoneyTransaction(walletId);
 
-                if (data.Count == 0) return NotFound();
+                if (data.Count() == 0) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
             }
@@ -123,13 +124,13 @@ namespace ConstradeApi.Controllers
 
         // api/wallet/transactions/send/4
         [HttpGet("transactions/send/{walletId}")]
-        public IActionResult GetSendTransaction(int walletId)
+        public async Task<IActionResult> GetSendTransaction(int walletId)
         {
             try
             {
-                var data = _dbHelper.GetSendMoneyTransaction(walletId);
+                var data = await _walletRepository.GetSendMoneyTransaction(walletId);
 
-                if (data.Count == 0) return NotFound();
+                if (data.Count() == 0) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
             }
@@ -140,11 +141,11 @@ namespace ConstradeApi.Controllers
         }
 
         [HttpGet("transactions/id/{id}")]
-        public IActionResult GetTransactionByWalletId(int id)
+        public async Task<IActionResult> GetTransactionByWalletId(int id)
         {
             try
             {
-                SendMoneyTransactionModel? data = _dbHelper.GetWalletTransactionById(id);
+                SendMoneyTransactionModel? data = await _walletRepository.GetWalletTransactionById(id);
 
                 if (data == null) return NotFound();
 
@@ -158,13 +159,13 @@ namespace ConstradeApi.Controllers
 
         // api/wallet/transactions/topup/wid/4
         [HttpGet("transactions/topup/wid/{walletId}")]
-        public IActionResult GetTopUpTransactionByWalletId(int walletId)
+        public async Task<IActionResult> GetTopUpTransactionByWalletId(int walletId)
         {
             try
             {
-                var data = _dbHelper.GetTopUpByWalletId(walletId);
+                var data = await _walletRepository.GetTopUpByWalletId(walletId);
 
-                if(data.Count== 0) return NotFound();
+                if(data.Count() == 0) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
             }
@@ -176,11 +177,11 @@ namespace ConstradeApi.Controllers
 
         // api/wallet/transactions/topup/4
         [HttpGet("transactions/topup/{id}")]
-        public IActionResult GetTopUpTransactionById(int id)
+        public async Task<IActionResult> GetTopUpTransactionById(int id)
         {
             try
             {
-                var data = _dbHelper.GetTopUpById(id);
+                var data = await _walletRepository.GetTopUpById(id);
 
                 if (data == null) return NotFound();
 
@@ -194,11 +195,11 @@ namespace ConstradeApi.Controllers
 
         // api/wallet/transactions/topup
         [HttpGet("transactions/topup")]
-        public IActionResult GetAllTopUpTransaction()
+        public async Task<IActionResult> GetAllTopUpTransaction()
         {
             try
             {
-                var data = _dbHelper.GetAllTopUpTransaction();
+                var data = await _walletRepository.GetAllTopUpTransaction();
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
             }

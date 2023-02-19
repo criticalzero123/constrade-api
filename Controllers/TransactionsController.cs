@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MTransaction;
+using ConstradeApi.Model.MTransaction.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,19 +11,19 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class TransactionsController : ControllerBase
     {
-        private readonly DbHelperTransaction _dbHelper;
-        public TransactionsController(DataContext dataContext)
+        private readonly ITransactionRepository _transactionRespository;
+        public TransactionsController(ITransactionRepository transactionRespository)
         {
-            _dbHelper= new DbHelperTransaction(dataContext);
-        }
+            _transactionRespository= transactionRespository;
+    }
 
         // api/<TransactionsController>/product
         [HttpGet("product")]
-        public IActionResult GetAllTransaction()
+        public async Task<IActionResult> GetAllTransaction()
         {
             try
             {
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, _dbHelper.GetAllTransaction()));
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, await _transactionRespository.GetAllTransaction()));
             }
             catch (Exception ex)
             {
@@ -32,11 +33,11 @@ namespace ConstradeApi.Controllers
 
         // api/<TransactionsController>/product/4
         [HttpGet("product/{id}")]
-        public IActionResult GetTransaction(int id)
+        public async Task<IActionResult> GetTransaction(int id)
         {
             try
             {
-                TransactionModel? transactionModel = _dbHelper.GetTransaction(id);
+                TransactionModel? transactionModel = await _transactionRespository.GetTransaction(id);
 
                 if (transactionModel == null) return NotFound();
 
@@ -54,7 +55,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                bool flag = await _dbHelper.SoldProduct(transactionModel);
+                bool flag = await _transactionRespository.SoldProduct(transactionModel);
 
                 if (!flag) return BadRequest("Something Went Wrong");
 

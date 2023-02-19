@@ -1,6 +1,8 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MSubcription;
+using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.MUser;
+using ConstradeApi.Model.MUser.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,22 +14,22 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly DbHelperUser _dbHelper;
-        private readonly DbHelperSubscription _dbHelperSubscription;
-        public UsersController(DataContext dataContext)
+        private readonly IUserRepository _userRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        public UsersController(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository)
         {
-            _dbHelper  = new DbHelperUser(dataContext);
-            _dbHelperSubscription = new DbHelperSubscription(dataContext);
+            _userRepository = userRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
         // GET: api/<UserController>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             ResponseType responseType = ResponseType.Success;
             try
             {
-                IEnumerable<UserModel> users = _dbHelper.GetAll();
+                IEnumerable<UserModel> users = await _userRepository.GetAll();
                 
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, users));
@@ -45,7 +47,7 @@ namespace ConstradeApi.Controllers
             ResponseType responseType = ResponseType.Success;
             try
             {
-                bool userExist = await _dbHelper.CheckEmailExist(email);
+                bool userExist = await _userRepository.CheckEmailExist(email);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, userExist));
             }
@@ -62,7 +64,7 @@ namespace ConstradeApi.Controllers
             ResponseType responseType = ResponseType.Success;
             try
             {
-                bool userExist = await _dbHelper.CheckPhoneExist(phone);
+                bool userExist = await _userRepository.CheckPhoneExist(phone);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, userExist));
             }
@@ -74,13 +76,13 @@ namespace ConstradeApi.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             ResponseType responseType = ResponseType.Success;
 
             try
             {
-                UserModel? user= _dbHelper.Get(id);
+                UserModel? user= await _userRepository.Get(id);
                 if (user == null) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, user));
@@ -98,7 +100,7 @@ namespace ConstradeApi.Controllers
 
             try
             {
-                UserInfoModel? user = await _dbHelper.LoginByGoogle(data.Email);
+                UserInfoModel? user = await _userRepository.LoginByGoogle(data.Email);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, user));
             }
@@ -114,7 +116,7 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                UserInfoModel? user = await _dbHelper.LoginByEmailAndPassword(info);
+                UserInfoModel? user = await _userRepository.LoginByEmailAndPassword(info);
 
                 if (user == null) responseType = ResponseType.NotFound;
 
@@ -133,8 +135,8 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType response= ResponseType.Success;
-                int uid = await _dbHelper.Save(userModel);
-                await _dbHelperSubscription.CreateSubscription(uid);
+                int uid = await _userRepository.Save(userModel);
+                await _subscriptionRepository.CreateSubscription(uid);
 
                 return Ok(ResponseHandler.GetApiResponse(response, userModel));
             }catch( Exception ex)
@@ -151,15 +153,15 @@ namespace ConstradeApi.Controllers
 
         //GET api/<UserController>/4/favorite
         [HttpGet("{userId}/favorite")]
-        public IActionResult GetFavorite(int userId)
+        public async Task<IActionResult> GetFavorite(int userId)
         {
             try
             {
                 ResponseType responseType = ResponseType.Success;
 
-                List<FavoriteModel> result =  _dbHelper.GetFavorite(userId);
+                var result = await _userRepository.GetFavorite(userId);
 
-                if (result.Count == 0) return NotFound();
+                if (result.Count() == 0) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, result));
             }
@@ -177,7 +179,7 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType responseType = ResponseType.Success;
 
-                bool result = await _dbHelper.AddFavorite(userId, favoriteModel.ProductId);
+                bool result = await _userRepository.AddFavorite(userId, favoriteModel.ProductId);
                 if(!result) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, favoriteModel));
@@ -196,7 +198,7 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType responseType = ResponseType.Success;
 
-                bool result = await _dbHelper.DeleteFavorite(id);
+                bool result = await _userRepository.DeleteFavorite(id);
                 if(!result) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, id));
@@ -209,12 +211,12 @@ namespace ConstradeApi.Controllers
 
         //POST api/<UserController>/4/follow
         [HttpPost("{userId}/follow")]
-        public IActionResult Follow(int userId, [FromBody] UserFollowModel userFollow)
+        public async Task<IActionResult> Follow(int userId, [FromBody] UserFollowModel userFollow)
         {
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                bool flag = _dbHelper.FollowUser(userId, userFollow.FollowedByUserId);
+                bool flag = await _userRepository.FollowUser(userId, userFollow.FollowedByUserId);
 
                 if (!flag) responseType = ResponseType.Failure;
                 
@@ -228,14 +230,14 @@ namespace ConstradeApi.Controllers
 
         //GET api/<Usercontroller>/4/follow
         [HttpGet("{userId}/follow")]
-        public IActionResult GetFollows(int userId)
+        public async Task<IActionResult> GetFollows(int userId)
         {
             try
             {
                 ResponseType responseType = ResponseType.Success;
 
-                List<UserFollowModel> followers = _dbHelper.GetUserFollower(userId);
-                List<UserFollowModel> follows = _dbHelper.GetUserFollow(userId);
+                var followers = await _userRepository.GetUserFollower(userId);
+                var follows = await _userRepository.GetUserFollow(userId);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, new { followers, follows }));
             }
@@ -251,7 +253,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                bool flag = await _dbHelper.AddReview(uid, userReviewModel);
+                bool flag = await _userRepository.AddReview(uid, userReviewModel);
 
                 if (!flag) return BadRequest("Transaction is not found or You already Reviewed");
 
@@ -280,8 +282,8 @@ namespace ConstradeApi.Controllers
 
                 //if (userExist == null) return NotFound();
 
-                var myReviews = await _dbHelper.GetMyReviews(userId);
-                var reviews = await _dbHelper.GetReviews(userId);
+                var myReviews = await _userRepository.GetMyReviews(userId);
+                var reviews = await _userRepository.GetReviews(userId);
                 
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, new { myReviews, reviews }));

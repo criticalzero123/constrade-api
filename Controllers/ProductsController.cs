@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MProduct;
+using ConstradeApi.Model.MProduct.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,21 +12,21 @@ namespace ConstradeApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly DbHelperProduct _dbHelper;
+        private readonly IProductRepository _productRepository;
 
-        public ProductsController(DataContext dataContext)
+        public ProductsController(IProductRepository productRepository)
         {
-            _dbHelper = new DbHelperProduct(dataContext);
+            _productRepository = productRepository;
         }
 
         // GET: api/<ProductController>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
                 ResponseType responseType= ResponseType.Success;
-                List<ProductModel> products = _dbHelper.GetAllProducts();
+                var products = await _productRepository.GetAllProducts();
 
                 if (!products.Any()) return NotFound();
 
@@ -46,7 +47,7 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType responseType= ResponseType.Success;
 
-                var product = await _dbHelper.Get(id,uid);
+                var product = await _productRepository.Get(id,uid);
 
                 if(product == null) responseType = ResponseType.NotFound;
 
@@ -65,7 +66,7 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                await _dbHelper.Save(productModel.Product, productModel.ImageURLList);
+                await _productRepository.Save(productModel.Product, productModel.ImageURLList);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, productModel));
             }catch(Exception ex)
@@ -82,7 +83,7 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType responseType = ResponseType.Success;
 
-                bool result = await _dbHelper.UpdateProduct(id, productModel);
+                bool result = await _productRepository.UpdateProduct(id, productModel);
 
                 if (!result) return NotFound();
 
@@ -101,7 +102,7 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                bool _result = await _dbHelper.DeleteProduct(id);
+                bool _result = await _productRepository.DeleteProduct(id);
 
                 if (!_result) return NotFound(); 
 
@@ -122,7 +123,7 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType response = ResponseType.Success;
 
-                List<ProductCommentModel> _comments = await _dbHelper.GetProductComment(productId);
+                List<ProductCommentModel> _comments = await _productRepository.GetProductComment(productId);
 
                 if (_comments.Count == 0) return NotFound();
 
@@ -142,7 +143,7 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType responseType = ResponseType.Success;
 
-                bool _result = await _dbHelper.AddCommentProduct(productId, productCommentModel.UserId, productCommentModel.Comment);
+                bool _result = await _productRepository.AddCommentProduct(productId, productCommentModel.UserId, productCommentModel.Comment);
                 return Ok(ResponseHandler.GetApiResponse(responseType, productCommentModel));
             }
             catch (Exception ex)
@@ -159,7 +160,7 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType responseType = ResponseType.Success;
 
-                bool _result = await _dbHelper.UpdateCommentProduct(productId, id, newMessage.UserId, newMessage.NewComment);
+                bool _result = await _productRepository.UpdateCommentProduct(productId, id, newMessage.UserId, newMessage.NewComment);
 
                 if (!_result) return NotFound();
 
@@ -180,7 +181,7 @@ namespace ConstradeApi.Controllers
                 ResponseType responseType = ResponseType.Success;
                 
 
-                bool _result = await _dbHelper.DeleteCommentProduct( id);
+                bool _result = await _productRepository.DeleteCommentProduct( id);
 
                 if(!_result) return NotFound();
 

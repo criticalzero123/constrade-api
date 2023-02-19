@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
-namespace ConstradeApi.Model.MProduct
+namespace ConstradeApi.Model.MProduct.Repository
 {
-    public class DbHelperProduct
+    public class ProductRepository : IProductRepository
     {
         private readonly DataContext _context;
 
-        public DbHelperProduct(DataContext context)
+        public ProductRepository(DataContext context)
         {
             _context = context;
         }
@@ -17,33 +17,33 @@ namespace ConstradeApi.Model.MProduct
         ///  GET All
         /// </summary>
         /// <returns>List of Products</returns>
-        public List<ProductModel> GetAllProducts()
+        public async Task<IEnumerable<ProductModel>> GetAllProducts()
         {
             List<ProductModel> _products = new List<ProductModel>();
 
-            List<Product> data = _context.Products.ToList();
+            List<Product> data = await _context.Products.ToListAsync();
 
             data.ForEach(row => _products.Add(new ProductModel()
             {
                 ProductId = row.ProductId,
                 Title = row.Title,
                 Description = row.Description,
-                Condition= row.Condition,
-                PreferTrade= row.PreferTrade,
-                DeliveryMethod= row.DeliveryMethod,
-                ProductStatus= row.ProductStatus,
-                Location= row.Location,
-                ModelNumber= row.ModelNumber,
-                SerialNumber= row.SerialNumber,
-                GameGenre= row.GameGenre,
-                Platform= row.Platform,
-                ThumbnailUrl= row.ThumbnailUrl,
-                Cash= row.Cash,
-                Item= row.Item,
-                DateCreated= row.DateCreated,
-                CountFavorite= row.CountFavorite,
-            })) ;
-           
+                Condition = row.Condition,
+                PreferTrade = row.PreferTrade,
+                DeliveryMethod = row.DeliveryMethod,
+                ProductStatus = row.ProductStatus,
+                Location = row.Location,
+                ModelNumber = row.ModelNumber,
+                SerialNumber = row.SerialNumber,
+                GameGenre = row.GameGenre,
+                Platform = row.Platform,
+                ThumbnailUrl = row.ThumbnailUrl,
+                Cash = row.Cash,
+                Item = row.Item,
+                DateCreated = row.DateCreated,
+                CountFavorite = row.CountFavorite,
+            }));
+
             return _products;
         }
 
@@ -63,31 +63,31 @@ namespace ConstradeApi.Model.MProduct
 
             Product _product = new Product()
             {
-                PosterUserId= product.PosterUserId,
+                PosterUserId = product.PosterUserId,
                 Title = product.Title,
                 Description = product.Description,
-                Condition= product.Condition,
-                PreferTrade= product.PreferTrade,
-                DeliveryMethod= product.DeliveryMethod,
-                ProductStatus= product.ProductStatus,
-                Location= product.Location,
-                ModelNumber= product.ModelNumber,
-                SerialNumber= product.SerialNumber,
-                GameGenre   = product.GameGenre,
-                Platform= product.Platform,
-                ThumbnailUrl= product.ThumbnailUrl,
-                Cash= product.Cash,
-                Item= product.Item,
-                CountFavorite= product.CountFavorite,
+                Condition = product.Condition,
+                PreferTrade = product.PreferTrade,
+                DeliveryMethod = product.DeliveryMethod,
+                ProductStatus = product.ProductStatus,
+                Location = product.Location,
+                ModelNumber = product.ModelNumber,
+                SerialNumber = product.SerialNumber,
+                GameGenre = product.GameGenre,
+                Platform = product.Platform,
+                ThumbnailUrl = product.ThumbnailUrl,
+                Cash = product.Cash,
+                Item = product.Item,
+                CountFavorite = product.CountFavorite,
                 HasReceipts = product.HasReceipts,
                 HasWarranty = product.HasWarranty,
             };
 
-            await _context.Products.AddAsync( _product );
+            await _context.Products.AddAsync(_product);
             await _context.SaveChangesAsync();
 
             // Adding the images in image list table
-            foreach ( string item in imageList ) 
+            foreach (string item in imageList)
             {
                 _context.Images.Add(new ImageList()
                 {
@@ -130,7 +130,7 @@ namespace ConstradeApi.Model.MProduct
             }).FirstOrDefaultAsync();
 
             if (_data == null) return null;
-            if(!userId.HasValue) return _data;
+            if (!userId.HasValue) return _data;
 
             //check if the user exist in database to avoid database failure
             User? userExist = await _context.Users.FindAsync(userId);
@@ -138,16 +138,16 @@ namespace ConstradeApi.Model.MProduct
 
             List<ProductView> list = await _context.ProductViews.Where(_p => _p.ProductId.Equals(_data.ProductId)).ToListAsync();
             bool exist = list.Any(_p => _p.UserId == userId);
-            if(!exist)
+            if (!exist)
             {
-                _context.ProductViews.Add(new ProductView() 
+                _context.ProductViews.Add(new ProductView()
                 {
-                    ProductId= _data.ProductId,
+                    ProductId = _data.ProductId,
                     UserId = (int)userId
                 });
 
                 await _context.SaveChangesAsync();
-                    
+
             }
 
             return _data;
@@ -162,8 +162,8 @@ namespace ConstradeApi.Model.MProduct
         {
             Product? product = await _context.Products.FindAsync(id);
 
-            if(product == null) return false;
-            
+            if (product == null) return false;
+
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return true;
@@ -178,10 +178,10 @@ namespace ConstradeApi.Model.MProduct
         public async Task<bool> UpdateProduct(int id, ProductModel product)
         {
             Product? _product = await _context.Products.FindAsync(id);
-            if(_product == null) return false;
+            if (_product == null) return false;
 
             _product.Title = product.Title;
-            _product.Description= product.Description;
+            _product.Description = product.Description;
             _product.ModelNumber = product.ModelNumber;
             _product.SerialNumber = product.SerialNumber;
             _product.GameGenre = product.GameGenre;
@@ -191,7 +191,7 @@ namespace ConstradeApi.Model.MProduct
             _product.Item = product.Item;
             _product.Location = product.Location;
             _product.Condition = product.Condition;
-            _product.PreferTrade= product.PreferTrade;
+            _product.PreferTrade = product.PreferTrade;
             _product.ThumbnailUrl = product.ThumbnailUrl;
             _product.DeliveryMethod = product.DeliveryMethod;
 
@@ -214,10 +214,10 @@ namespace ConstradeApi.Model.MProduct
 
             var comments = await _context.ProductComments.Where(_p => _p.ProductId == productId).Select(_p => new ProductCommentModel()
             {
-                ProductCommentId= _p.ProductCommentId,
+                ProductCommentId = _p.ProductCommentId,
                 ProductId = _p.ProductId,
-                UserId= _p.UserId,
-                Comment= _p.Comment,
+                UserId = _p.UserId,
+                Comment = _p.Comment,
                 DateCreated = _p.DateCreated,
             }).ToListAsync();
 
@@ -256,7 +256,7 @@ namespace ConstradeApi.Model.MProduct
         public async Task<bool> DeleteCommentProduct(int id)
         {
             ProductComment? _commentExist = await _context.ProductComments.FindAsync(id);
-            if(_commentExist == null) return false;
+            if (_commentExist == null) return false;
 
             _context.Remove(_commentExist);
             await _context.SaveChangesAsync();
@@ -270,7 +270,7 @@ namespace ConstradeApi.Model.MProduct
         /// <param name="id"></param>
         /// <param name="newComment"></param>
         /// <returns></returns>
-        public async Task<bool> UpdateCommentProduct(int productId,int id, int userId,string newComment)
+        public async Task<bool> UpdateCommentProduct(int productId, int id, int userId, string newComment)
         {
             ProductComment? productComment = await _context.ProductComments.FindAsync(id);
             if (productComment == null) throw new IndexOutOfRangeException("Comment not found");

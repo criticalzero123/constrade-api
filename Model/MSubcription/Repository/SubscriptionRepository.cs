@@ -1,13 +1,13 @@
 ﻿using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConstradeApi.Model.MSubcription
+namespace ConstradeApi.Model.MSubcription.Repository
 {
-    public class DbHelperSubscription
+    public class SubscriptionRepository : ISubscriptionRepository
     {
         private readonly DataContext _context;
 
-        public DbHelperSubscription(DataContext dataContext)
+        public SubscriptionRepository(DataContext dataContext)
         {
             _context = dataContext;
         }
@@ -151,9 +151,9 @@ namespace ConstradeApi.Model.MSubcription
         /// </summary>
         /// <param name="uid"></param>
         /// <returns>SubscriptionModel or NULL</returns>
-        public SubscriptionModel? GetSubscriptionByUserId(int uid)
+        public async Task<SubscriptionModel?> GetSubscriptionByUserId(int uid)
         {
-            return _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).Select(sub => new SubscriptionModel()
+            return await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).Select(sub => new SubscriptionModel()
             {
                 SubscriptionId = sub.SubscriptionId,
                 UserId = sub.UserId,
@@ -161,7 +161,7 @@ namespace ConstradeApi.Model.MSubcription
                 DateStart = sub.DateStart,
                 DateEnd = sub.DateEnd,
                 Amount = sub.Amount,
-            }).FirstOrDefault();
+            }).FirstOrDefaultAsync();
         }
     }
 }

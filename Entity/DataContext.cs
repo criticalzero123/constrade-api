@@ -21,6 +21,7 @@ namespace ConstradeApi.Entity
         public DbSet<TopUpTransaction> TopUpTransactions { get; set; }
         public DbSet<SendMoneyTransaction> SendMoneyTransactions { get; set; }  
         public DbSet<Subscription> Subscriptions { get; set; }
-        public DbSet<SubscriptionHistory> SubscriptionsHistory { get; set; }    
+        public DbSet<SubscriptionHistory> SubscriptionsHistory { get; set; }  
+        public DbSet<OneTimePassword> Otp { get; set; }
     }
 }

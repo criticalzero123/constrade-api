@@ -1,4 +1,5 @@
 using ConstradeApi.Entity;
+using ConstradeApi.Model.MOtp.Repository;
 using ConstradeApi.Model.MProduct.Repository;
 using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.MTransaction.Repository;
@@ -21,11 +22,15 @@ namespace ConstradeApi
             // Add services to the container.
             builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgressDB"]));
 
+            
+
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ITransactionRepository, TrsanctionRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+
+            builder.Services.AddTransient<IOtpRepository, OtpRepository>();
 
             builder.Services.AddControllers();
             var app = builder.Build();

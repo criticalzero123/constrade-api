@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Services.Email;
 using ConstradeApi.Services.OTP;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,8 @@ namespace ConstradeApi.Model.MOtp.Repository
                 await _dataContext.Otp.AddAsync(otp);
                 await _dataContext.SaveChangesAsync();
 
+                await EmailService.SendOtpEmail(otp.SendTo, otp.OTP);
+
                 return true;
             }
             catch (Exception)
@@ -58,6 +61,9 @@ namespace ConstradeApi.Model.MOtp.Repository
             OneTimePassword? _otp = await _dataContext.Otp.FirstOrDefaultAsync(_u => _u.SendTo.Equals(userValue));
 
             if (_otp == null || !_otp.OTP.Equals(code) || DateTime.UtcNow > _otp.ExpirationTime) return false;
+
+            _dataContext.Otp.Remove(_otp);
+            await _dataContext.SaveChangesAsync();
 
             return true;
         }

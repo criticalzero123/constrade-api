@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Services.Email;
 using ConstradeApi.Services.OTP;
 using Microsoft.EntityFrameworkCore;
@@ -50,22 +51,42 @@ namespace ConstradeApi.Model.MOtp.Repository
             }
         }
 
+        public async Task<OtpResponseType> ResendOtpCode(string userValue)
+        {
+            OneTimePassword? _otp = await _dataContext.Otp.FirstOrDefaultAsync(_u => _u.SendTo.Equals(userValue));
+
+            if (_otp == null) return OtpResponseType.NotFound;
+            if (DateTime.UtcNow < _otp.ExpirationTime) return OtpResponseType.Active;
+
+            string _otpValue = OtpService.GenerateOtp();
+
+            _otp.OTP = _otpValue;
+            _otp.ExpirationTime = DateTime.UtcNow.AddMinutes(5);
+
+            await _dataContext.SaveChangesAsync();
+            await EmailService.SendOtpEmail(_otp.SendTo, _otp.OTP);
+
+            return OtpResponseType.Success;
+        }
+
         /// <summary>
         /// GET: Verifying the otp code 
         /// </summary>
         /// <param name="userValue"></param>
         /// <param name="code"></param>
         /// <returns>True if the otp is correct and is not exceed in the expiration time or False</returns>
-        public async Task<bool> VerifyOtpCode(string userValue, string code)
+        public async Task<OtpResponseType> VerifyOtpCode(string userValue, string code)
         {
             OneTimePassword? _otp = await _dataContext.Otp.FirstOrDefaultAsync(_u => _u.SendTo.Equals(userValue));
 
-            if (_otp == null || !_otp.OTP.Equals(code) || DateTime.UtcNow > _otp.ExpirationTime) return false;
+            if (_otp == null) return OtpResponseType.NotFound;
+            if(DateTime.UtcNow > _otp.ExpirationTime) return OtpResponseType.Expired;
+            if (!_otp.OTP.Equals(code)) return OtpResponseType.WrongCode;
 
             _dataContext.Otp.Remove(_otp);
             await _dataContext.SaveChangesAsync();
 
-            return true;
+            return OtpResponseType.Success;
         }
     }
 }

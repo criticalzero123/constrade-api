@@ -265,6 +265,38 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        //GET api/<UserController>/review
+        [HttpGet("{userId}/review")]
+        public async Task<IActionResult> GetReviews(int userId)
+        {
+            try
+            {
+                var reviews = await _userRepository.GetReviews(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, reviews));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        //GET api/<UserController>/review
+        [HttpGet("{userId}/review/my")]
+        public async Task<IActionResult> GetMyReviews(int userId)
+        {
+            try
+            {
+                var reviews = await _userRepository.GetMyReviews(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, reviews));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         /// <summary>
         /// Getting the Reviews of the user and User Review
         /// </summary>
@@ -278,10 +310,6 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                //UserModel?  userExist =  _dbHelper.Get(userId);
-
-                //if (userExist == null) return NotFound();
-
                 var myReviews = await _userRepository.GetMyReviews(userId);
                 var reviews = await _userRepository.GetReviews(userId);
                 

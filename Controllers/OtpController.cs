@@ -41,9 +41,9 @@ namespace ConstradeApi.Controllers
 
                 if (flag == OtpResponseType.NotFound) return NotFound(ResponseHandler.GetApiResponse(ResponseType.NotFound, $"{flag}"));
                 if (flag == OtpResponseType.Expired) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{flag}"));
-                if (flag == OtpResponseType.WrongCode) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{flag}"));
+                if (flag == OtpResponseType.WrongCode) return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, $"{flag}"));
 
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, $"{flag}"));
             }
             catch (Exception ex)
             {

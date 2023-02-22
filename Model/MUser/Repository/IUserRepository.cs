@@ -18,5 +18,6 @@
         Task<IEnumerable<UserReviewModel>> GetReviews(int userId);
         Task<UserInfoModel?> LoginByGoogle(string email);
         Task<UserInfoModel?> LoginByEmailAndPassword(UserLoginInfoModel info);
+        Task<UserInfoModel?> UpdatePersonInfo(UserInfoModel info);
     }
 }

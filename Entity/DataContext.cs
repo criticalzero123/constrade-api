@@ -23,5 +23,6 @@ namespace ConstradeApi.Entity
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<SubscriptionHistory> SubscriptionsHistory { get; set; }  
         public DbSet<OneTimePassword> Otp { get; set; }
+        public DbSet<ApiKey> ApiKey { get; set; }
     }
 }

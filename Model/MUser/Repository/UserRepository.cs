@@ -48,7 +48,6 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns>null or an UserModel</returns>
         public async Task<UserModel?> Get(int id)
         {
-
             var userData =  await _context.Users.ToListAsync();
             var personData = await  _context.Persons.ToListAsync();
 
@@ -100,7 +99,7 @@ namespace ConstradeApi.Model.MUser.Repository
             Person personTable = new Person();
             personTable.FirstName = user.FirstName;
             personTable.LastName = user.LastName;
-            personTable.Birthdate = user.Birthdate;
+            personTable.Birthdate = null;
             await _context.Persons.AddAsync(personTable);
 
             await _context.SaveChangesAsync();
@@ -399,6 +398,7 @@ namespace ConstradeApi.Model.MUser.Repository
                 UserStatus = user.UserStatus,
                 LastActiveAt = user.LastActiveAt,
                 DateCreated = user.DateCreated,
+                Gender = data.Gender,
                 Birthdate = data.Birthdate,
             };
         }
@@ -432,10 +432,47 @@ namespace ConstradeApi.Model.MUser.Repository
                 ImageUrl = user.ImageUrl,
                 CountPost = user.CountPost,
                 UserStatus = user.UserStatus,
+                Gender = data.Gender,
                 LastActiveAt = user.LastActiveAt,
                 DateCreated = user.DateCreated,
                 Birthdate = data.Birthdate,
             };
+        }
+
+        public async Task<UserInfoModel?> UpdatePersonInfo(UserInfoModel info)
+        {
+            Person? person = await _context.Persons.FindAsync(info.PersonId);
+            if (person == null) return null;
+            User user = await _context.Users.Where(_u => _u.PersonRefId.Equals(info.PersonId)).FirstAsync();
+
+            user.ImageUrl = info.ImageUrl;
+            await _context.SaveChangesAsync();
+
+            person.FirstName= info.FirstName;
+            person.LastName= info.LastName; 
+            person.Birthdate = info.Birthdate;
+            person.Gender = info.Gender;
+
+            await _context.SaveChangesAsync();
+
+            return new UserInfoModel()
+            {
+                UserId = user.UserId,
+                PersonId = person.Person_id,
+                User_type = user.UserType,
+                FirebaseId = user.FirebaseId,
+                Authprovider_type = user.AuthProviderType,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                Email = user.Email,
+                ImageUrl = user.ImageUrl,
+                CountPost = user.CountPost,
+                UserStatus = user.UserStatus,
+                Gender = person.Gender,
+                LastActiveAt = user.LastActiveAt,
+                DateCreated = user.DateCreated,
+                Birthdate = person.Birthdate,
+            }; ;
         }
     }
 }

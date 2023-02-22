@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230221171005_AddingGenderInPersonTable")]
+    partial class AddingGenderInPersonTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,41 +71,6 @@ namespace ConstradeApi.Migrations
                     b.HasKey("Address_id");
 
                     b.ToTable("address");
-                });
-
-            modelBuilder.Entity("ConstradeApi.Entity.ApiKey", b =>
-                {
-                    b.Property<int>("ApiKeyId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("api_key_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ApiKeyId"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_created");
-
-                    b.Property<DateTime>("Expires")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_expires");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("token");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("ApiKeyId");
-
-                    b.HasIndex("Token");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("api_key");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Favorites", b =>
@@ -768,17 +736,6 @@ namespace ConstradeApi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_wallet");
-                });
-
-            modelBuilder.Entity("ConstradeApi.Entity.ApiKey", b =>
-                {
-                    b.HasOne("ConstradeApi.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Favorites", b =>

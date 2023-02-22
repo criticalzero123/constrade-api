@@ -3,7 +3,9 @@ using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
+using ConstradeApi.Model.MUserAuthorize.Repository;
 using ConstradeApi.Model.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,15 +18,18 @@ namespace ConstradeApi.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
-        public UsersController(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository)
+        private readonly IUserAuthorizeRepository _sessionRepository; 
+        public UsersController(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IUserAuthorizeRepository sessionRepository)
         {
             _userRepository = userRepository;
             _subscriptionRepository = subscriptionRepository;
+            _sessionRepository = sessionRepository;
         }
 
         // GET: api/<UserController>
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             ResponseType responseType = ResponseType.Success;
             try
@@ -91,7 +96,6 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
-
         // Put api/<UserController>/login/google/johndoe@test.com
         [HttpPut("login/google")]
         public async Task<IActionResult> LoginByGoogleAuth([FromBody] UserLoginInfoModel data)
@@ -102,7 +106,12 @@ namespace ConstradeApi.Controllers
             {
                 UserInfoModel? user = await _userRepository.LoginByGoogle(data.Email);
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, user));
+                if (user == null) return Unauthorized();
+
+                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(user.UserId);
+
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { user, sessionInfo.Token }));
             }
             catch (Exception ex)
             {
@@ -110,6 +119,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        // PUT api/<UserController>/login
         [HttpPut("login")]
         public async Task<IActionResult> LoginByEmailAndPassword([FromBody] UserLoginInfoModel info)
         {
@@ -118,9 +128,11 @@ namespace ConstradeApi.Controllers
                 ResponseType responseType = ResponseType.Success;
                 UserInfoModel? user = await _userRepository.LoginByEmailAndPassword(info);
 
-                if (user == null) responseType = ResponseType.NotFound;
+                if (user == null) return Unauthorized();
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, user));
+                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(user.UserId);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { user, sessionInfo.Token}));
             }
             catch (Exception ex)
             {
@@ -319,6 +331,24 @@ namespace ConstradeApi.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
+
+        //PUT api/<UserController/person
+        [HttpPut("person")]
+        public async Task<IActionResult> UpdatePersonInfo([FromBody] UserInfoModel info)
+        {
+            try
+            {
+                var flag = await _userRepository.UpdatePersonInfo(info);
+
+                if (flag == null) return NotFound();
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
     }

@@ -24,9 +24,12 @@ namespace ConstradeApi.Entity
         [StringLength(100)]
         public string LastName { get; set; } = string.Empty;
 
-        public DateTime? Birthdate { get; set; } = DateTime.Now;
+        public DateTime? Birthdate { get; set; }
 
         [StringLength(50)]
         public string PhoneNumber { get; set; } = string.Empty;
+
+        [StringLength(10)]
+        public string Gender { get; set; } = string.Empty;
     }
 }

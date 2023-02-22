@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConstradeApi.Model.MSubcription.Repository
@@ -130,20 +131,8 @@ namespace ConstradeApi.Model.MSubcription.Repository
 
             if (sub == null) return null;
 
-            return await _context.SubscriptionsHistory.Where(_sh => _sh.SubscriptionId.Equals(sub.SubscriptionId)).Select(_sh => new SubscriptionHistoryModel()
-            {
-                SubscriptionHistoryId = _sh.SubscriptionId,
-                SubscriptionId = _sh.SubscriptionId,
-                DateUpdate = _sh.DateUpdate,
-                PreviousSubscriptionType = _sh.PreviousSubscriptionType,
-                NewSubscriptionType = _sh.NewSubscriptionType,
-                PreviousDateStart = _sh.PreviousDateStart,
-                NewDateStart = _sh.NewDateStart,
-                PreviousDateEnd = _sh.PreviousDateEnd,
-                NewDateEnd = _sh.NewDateEnd,
-                PreviousAmount = _sh.PreviousAmount,
-                NewAmount = _sh.NewAmount,
-            }).FirstOrDefaultAsync();
+            return await _context.SubscriptionsHistory.Where(_sh => _sh.SubscriptionId.Equals(sub.SubscriptionId))
+                .Select(_sh => _sh.ToModel()).FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -153,15 +142,8 @@ namespace ConstradeApi.Model.MSubcription.Repository
         /// <returns>SubscriptionModel or NULL</returns>
         public async Task<SubscriptionModel?> GetSubscriptionByUserId(int uid)
         {
-            return await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).Select(sub => new SubscriptionModel()
-            {
-                SubscriptionId = sub.SubscriptionId,
-                UserId = sub.UserId,
-                SubscriptionType = sub.SubscriptionType,
-                DateStart = sub.DateStart,
-                DateEnd = sub.DateEnd,
-                Amount = sub.Amount,
-            }).FirstOrDefaultAsync();
+            return await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid))
+                .Select(sub => sub.ToModel()).FirstOrDefaultAsync();
         }
     }
 }

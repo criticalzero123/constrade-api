@@ -24,7 +24,7 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                bool flag = await _userRepository.FollowUser(userFollow.FollowId, userFollow.FollowedByUserId);
+                bool flag = await _userRepository.FollowUser(userFollow.FollowByUserId, userFollow.FollowedByUserId);
 
                 if (!flag) responseType = ResponseType.Failure;
 

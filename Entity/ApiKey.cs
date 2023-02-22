@@ -26,6 +26,5 @@ namespace ConstradeApi.Entity
 
         [Column("date_expires")]
         public DateTime Expires { get; set; }
-
     }
 }

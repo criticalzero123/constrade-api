@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConstradeApi.Model.MUserAuthorize.Repository
@@ -22,13 +23,7 @@ namespace ConstradeApi.Model.MUserAuthorize.Repository
                 exist.Expires = DateTime.Now.AddHours(12);
                 await _context.SaveChangesAsync();
 
-                return new UserAuthorizeModel
-                {
-                    Token = exist.Token,
-                    UserId = exist.UserId,
-                    Created = exist.Created,
-                    Expires = exist.Expires,
-                };
+                return exist.ToModel();
             }
             
             ApiKey session = new ApiKey
@@ -43,26 +38,13 @@ namespace ConstradeApi.Model.MUserAuthorize.Repository
             await _context.ApiKey.AddAsync(session);
             await _context.SaveChangesAsync();
 
-            return new UserAuthorizeModel
-            {
-                Token = session.Token,
-                UserId = session.UserId,
-                Created = session.Created,
-                Expires = session.Expires,
-            };
+            return session.ToModel();
         }
 
         public async Task<UserAuthorizeModel?> GetApiKeyAsync(string token)
         {
             UserAuthorizeModel? session = await _context.ApiKey.Where(x => x.Token == token && x.Expires > DateTime.Now)
-                .Select(_s => new UserAuthorizeModel()
-                {
-                    ApiKeyId = _s.ApiKeyId,
-                    Token = _s.Token,
-                    UserId = _s.UserId,
-                    Created = _s.Created,
-                    Expires = _s.Expires,
-                }).FirstOrDefaultAsync();
+                .Select(_s => _s.ToModel()).FirstOrDefaultAsync();
 
             return session;
         }

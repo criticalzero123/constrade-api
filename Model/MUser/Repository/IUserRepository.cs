@@ -3,8 +3,8 @@
     public interface IUserRepository
     {
         Task<IEnumerable<UserModel>> GetAll();
-        Task<UserModel?> Get(int id);
-        Task<int>Save(UserInfoModel user);
+        Task<UserAndPersonModel?> Get(int id);
+        Task<int>Save(UserAndPersonModel user);
         Task<bool> CheckEmailExist(string email);
         Task<bool> CheckPhoneExist(string phone);
         Task<IEnumerable<FavoriteModel>> GetFavorite(int userId);
@@ -16,8 +16,8 @@
         Task<bool> AddReview(int reviewerId, UserReviewModel userReviewModel);
         Task<IEnumerable<UserReviewModel>> GetMyReviews(int userId);
         Task<IEnumerable<UserReviewModel>> GetReviews(int userId);
-        Task<UserInfoModel?> LoginByGoogle(string email);
-        Task<UserInfoModel?> LoginByEmailAndPassword(UserLoginInfoModel info);
-        Task<UserInfoModel?> UpdatePersonInfo(UserInfoModel info);
+        Task<UserAndPersonModel?> LoginByGoogle(string email);
+        Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info);
+        Task<UserAndPersonModel?> UpdatePersonInfo(UserAndPersonModel info);
     }
 }

@@ -7,42 +7,23 @@ namespace ConstradeApi.Model.MProduct
        
         public int ProductId { get; set; }
         public int PosterUserId { get; set; }
-
-        public string Title { get; set; }
-       
-        public string Description { get; set; }
-      
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public string? ModelNumber { get; set; }
-      
         public string? SerialNumber { get; set; }
-
-        public string GameGenre { get; set; }
-       
-        public string Platform { get; set; }
-
-        public string ThumbnailUrl { get; set; }
-
+        public string GameGenre { get; set; } = string.Empty;
+        public string Platform { get; set; } = string.Empty;
+        public string ThumbnailUrl { get; set; } = string.Empty;
         public decimal Cash { get; set; }
-
-        public string Item { get; set; }
-       
+        public string Item { get; set; } = string.Empty;
         public DateTime DateCreated { get; set; }
-
         public int CountFavorite { get; set; }
-
-        public string Condition { get; set; }
-
-       
-        public string PreferTrade { get; set; }
-
-       
-        public string DeliveryMethod { get; set; }
-
-        public string Location { get; set; }
-        public string ProductStatus { get; set; }
-
+        public string Condition { get; set; } = string.Empty;
+        public string PreferTrade { get; set; } = string.Empty;
+        public string DeliveryMethod { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public string ProductStatus { get; set; } = string.Empty;
         public bool HasWarranty { get; set; }
-
         public bool HasReceipts { get; set; }
 
     }

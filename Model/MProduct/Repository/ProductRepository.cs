@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -23,26 +24,7 @@ namespace ConstradeApi.Model.MProduct.Repository
 
             List<Product> data = await _context.Products.ToListAsync();
 
-            data.ForEach(row => _products.Add(new ProductModel()
-            {
-                ProductId = row.ProductId,
-                Title = row.Title,
-                Description = row.Description,
-                Condition = row.Condition,
-                PreferTrade = row.PreferTrade,
-                DeliveryMethod = row.DeliveryMethod,
-                ProductStatus = row.ProductStatus,
-                Location = row.Location,
-                ModelNumber = row.ModelNumber,
-                SerialNumber = row.SerialNumber,
-                GameGenre = row.GameGenre,
-                Platform = row.Platform,
-                ThumbnailUrl = row.ThumbnailUrl,
-                Cash = row.Cash,
-                Item = row.Item,
-                DateCreated = row.DateCreated,
-                CountFavorite = row.CountFavorite,
-            }));
+            data.ForEach(row => _products.Add(row.ToModel()));
 
             return _products;
         }
@@ -107,27 +89,8 @@ namespace ConstradeApi.Model.MProduct.Repository
         /// <returns>ProductModel</returns>
         public async Task<ProductModel?> Get(int id, int? userId)
         {
-            var _data = await _context.Products.Where(p => p.ProductId == id).Select(product => new ProductModel()
-            {
-                ProductId = product.ProductId,
-                PosterUserId = product.PosterUserId,
-                Title = product.Title,
-                Description = product.Description,
-                Condition = product.Condition,
-                PreferTrade = product.PreferTrade,
-                DeliveryMethod = product.DeliveryMethod,
-                ProductStatus = product.ProductStatus,
-                Location = product.Location,
-                ModelNumber = product.ModelNumber,
-                SerialNumber = product.SerialNumber,
-                GameGenre = product.GameGenre,
-                Platform = product.Platform,
-                ThumbnailUrl = product.ThumbnailUrl,
-                Cash = product.Cash,
-                Item = product.Item,
-                DateCreated = product.DateCreated,
-                CountFavorite = product.CountFavorite,
-            }).FirstOrDefaultAsync();
+            var _data = await _context.Products.Where(p => p.ProductId == id)
+                .Select(product => product.ToModel()).FirstOrDefaultAsync();
 
             if (_data == null) return null;
             if (!userId.HasValue) return _data;
@@ -207,19 +170,14 @@ namespace ConstradeApi.Model.MProduct.Repository
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
-        public async Task<List<ProductCommentModel>> GetProductComment(int productId)
+        public async Task<IEnumerable<ProductCommentModel>> GetProductComment(int productId)
         {
             bool product = await _context.Products.AnyAsync(_p => _p.ProductId.Equals(productId));
             if (!product) return new List<ProductCommentModel>();
 
-            var comments = await _context.ProductComments.Where(_p => _p.ProductId == productId).Select(_p => new ProductCommentModel()
-            {
-                ProductCommentId = _p.ProductCommentId,
-                ProductId = _p.ProductId,
-                UserId = _p.UserId,
-                Comment = _p.Comment,
-                DateCreated = _p.DateCreated,
-            }).ToListAsync();
+            var comments = await _context.ProductComments
+                .Where(_p => _p.ProductId == productId)
+                .Select(_p => _p.ToModel()).ToListAsync();
 
             return comments;
         }

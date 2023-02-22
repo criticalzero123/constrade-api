@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 
@@ -50,17 +51,7 @@ namespace ConstradeApi.Model.MTransaction.Repository
         /// <returns></returns>
         public async Task<IEnumerable<TransactionModel>> GetAllTransaction()
         {
-            return await _context.Transactions.Select(_t => new TransactionModel()
-            {
-                TransactionId = _t.TransactionId,
-                ProductId = _t.ProductId,
-                BuyerUserId = _t.BuyerUserId,
-                SellerUserId = _t.SellerUserId,
-                InAppTransaction = _t.InAppTransaction,
-                IsReviewed = _t.IsReviewed,
-                GetWanted = _t.GetWanted,
-                DateTransaction = _t.DateTransaction
-            }).ToListAsync();
+            return await _context.Transactions.Select(_t => _t.ToModel()).ToListAsync();
         }
 
         /// <summary>
@@ -73,19 +64,7 @@ namespace ConstradeApi.Model.MTransaction.Repository
             Transaction? data = await _context.Transactions.FindAsync(id);
             if (data == null) return null;
 
-            TransactionModel transaction = new TransactionModel()
-            {
-                TransactionId = data.TransactionId,
-                ProductId = data.ProductId,
-                BuyerUserId = data.BuyerUserId,
-                SellerUserId = data.SellerUserId,
-                IsReviewed = data.IsReviewed,
-                InAppTransaction = data.InAppTransaction,
-                GetWanted = data.GetWanted,
-                DateTransaction = data.DateTransaction
-            };
-
-            return transaction;
+            return data.ToModel();
         }
 
         //public async Task<List<TransactionModel>> GetTransactionByUser(int uid)

@@ -87,7 +87,7 @@ namespace ConstradeApi.Controllers
 
             try
             {
-                UserModel? user= await _userRepository.Get(id);
+                UserAndPersonModel? user= await _userRepository.Get(id);
                 if (user == null) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, user));
@@ -104,11 +104,11 @@ namespace ConstradeApi.Controllers
 
             try
             {
-                UserInfoModel? user = await _userRepository.LoginByGoogle(data.Email);
+                UserAndPersonModel? user = await _userRepository.LoginByGoogle(data.Email);
 
                 if (user == null) return Unauthorized();
 
-                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(user.UserId);
+                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(user.User.UserId);
 
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, new { user, sessionInfo.Token }));
@@ -126,11 +126,11 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                UserInfoModel? user = await _userRepository.LoginByEmailAndPassword(info);
+                UserAndPersonModel? user = await _userRepository.LoginByEmailAndPassword(info);
 
                 if (user == null) return Unauthorized();
 
-                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(user.UserId);
+                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(user.User.UserId);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, new { user, sessionInfo.Token}));
             }
@@ -142,7 +142,7 @@ namespace ConstradeApi.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UserInfoModel userModel)
+        public async Task<IActionResult> Post([FromBody] UserAndPersonModel userModel)
         {
             try
             {
@@ -224,7 +224,7 @@ namespace ConstradeApi.Controllers
 
         //PUT api/<UserController/person
         [HttpPut("person")]
-        public async Task<IActionResult> UpdatePersonInfo([FromBody] UserInfoModel info)
+        public async Task<IActionResult> UpdatePersonInfo([FromBody] UserAndPersonModel info)
         {
             try
             {

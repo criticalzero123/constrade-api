@@ -123,9 +123,9 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType response = ResponseType.Success;
 
-                List<ProductCommentModel> _comments = await _productRepository.GetProductComment(productId);
+                IEnumerable<ProductCommentModel> _comments = await _productRepository.GetProductComment(productId);
 
-                if (_comments.Count == 0) return NotFound();
+                if (_comments.Count() == 0) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(response, _comments));
             }

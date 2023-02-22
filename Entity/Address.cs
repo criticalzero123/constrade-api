@@ -11,26 +11,26 @@ namespace ConstradeApi.Entity
 
         [Required]
         [StringLength(50)]
-        public string Street { get; set; }
+        public string Street { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
-        public string Barangay { get; set; }
+        public string Barangay { get; set; } = string.Empty;
 
         [StringLength(50)]
-        public string City { get; set; }
+        public string City { get; set; } = string.Empty;
 
         [StringLength(50)]
-        public string Province { get; set; }
+        public string Province { get; set; } = string.Empty;
 
         [StringLength(50)]
-        public string Postal_code { get; set; }
+        public string Postal_code { get; set; } = string.Empty;
 
         [StringLength(50)]
-        public string House_number { get; set; }
+        public string House_number { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
-        public string Updated_at { get; set; }
+        public string Updated_at { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConstradeApi.Model.MWallet.Repository
@@ -35,12 +36,7 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <returns>Null if the userid not exist, WalletModel if the user found</returns>
         public async Task<WalletModel?> GetWalletUser(int uid)
         {
-            WalletModel? _wallet = await _context.UserWallet.Where(_u => _u.UserId.Equals(uid)).Select(_w => new WalletModel()
-            {
-                WalletId = _w.WalletId,
-                UserId = _w.UserId,
-                Balance = _w.Balance,
-            }).FirstOrDefaultAsync();
+            WalletModel? _wallet = await _context.UserWallet.Where(_u => _u.UserId.Equals(uid)).Select(_w => _w.ToModel()).FirstOrDefaultAsync();
 
             return _wallet;
         }
@@ -56,13 +52,7 @@ namespace ConstradeApi.Model.MWallet.Repository
 
             if (data == null) return null;
 
-            return new WalletModel()
-            {
-
-                WalletId = data.WalletId,
-                UserId = data.UserId,
-                Balance = data.Balance,
-            };
+            return data.ToModel();
         }
         /// <summary>
         /// POST: Sending money 
@@ -89,7 +79,6 @@ namespace ConstradeApi.Model.MWallet.Repository
 
             SendMoneyTransaction _transaction = new SendMoneyTransaction()
             {
-
                 SenderWalletId = info.SenderWalletId,
                 ReceiverWalletId = info.ReceiverWalletId,
                 Amount = info.Amount,
@@ -107,14 +96,9 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <returns>List of SendMoneyTransactionModel</returns>
         public async Task<IEnumerable<SendMoneyTransactionModel>> GetReceiveMoneyTransaction(int walletId)
         {
-            List<SendMoneyTransactionModel> data = await _context.SendMoneyTransactions.Where(_t => _t.ReceiverWalletId.Equals(walletId)).Select(_t => new SendMoneyTransactionModel()
-            {
-                SendMoneyTransactionId = _t.SendMoneyTransactionId,
-                ReceiverWalletId = _t.ReceiverWalletId,
-                SenderWalletId = _t.SenderWalletId,
-                Amount = _t.Amount,
-                DateSend = _t.DateSend,
-            }).ToListAsync();
+            List<SendMoneyTransactionModel> data = await _context.SendMoneyTransactions
+                .Where(_t => _t.ReceiverWalletId.Equals(walletId))
+                .Select(_t => _t.ToModel()).ToListAsync();
 
             return data;
         }
@@ -125,14 +109,9 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <returns>List of SendMoneyTransactionModel</returns>
         public async Task<IEnumerable<SendMoneyTransactionModel>> GetSendMoneyTransaction(int walletId)
         {
-            List<SendMoneyTransactionModel> data = await _context.SendMoneyTransactions.Where(_t => _t.SenderWalletId.Equals(walletId)).Select(_t => new SendMoneyTransactionModel()
-            {
-                SendMoneyTransactionId = _t.SendMoneyTransactionId,
-                ReceiverWalletId = _t.ReceiverWalletId,
-                SenderWalletId = _t.SenderWalletId,
-                Amount = _t.Amount,
-                DateSend = _t.DateSend,
-            }).ToListAsync();
+            List<SendMoneyTransactionModel> data = await _context.SendMoneyTransactions
+                .Where(_t => _t.SenderWalletId.Equals(walletId))
+                .Select(_t => _t.ToModel()).ToListAsync();
 
             return data;
         }
@@ -142,14 +121,7 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <returns>List of SendMoneyTransactionModel</returns>
         public async Task<IEnumerable<SendMoneyTransactionModel>> GetAllMoneyTransaction()
         {
-            return await _context.SendMoneyTransactions.Select(_t => new SendMoneyTransactionModel()
-            {
-                SendMoneyTransactionId = _t.SendMoneyTransactionId,
-                ReceiverWalletId = _t.ReceiverWalletId,
-                SenderWalletId = _t.SenderWalletId,
-                Amount = _t.Amount,
-                DateSend = _t.DateSend,
-            }).ToListAsync();
+            return await _context.SendMoneyTransactions.Select(_t => _t.ToModel()).ToListAsync();
         }
         /// <summary>
         /// GET: Getting the wallet transaction using SendMoneyTransaction id
@@ -162,14 +134,7 @@ namespace ConstradeApi.Model.MWallet.Repository
 
             if (_transaction == null) return null;
 
-            return new SendMoneyTransactionModel()
-            {
-                SendMoneyTransactionId = _transaction.SendMoneyTransactionId,
-                Amount = _transaction.Amount,
-                DateSend = _transaction.DateSend,
-                ReceiverWalletId = _transaction.ReceiverWalletId,
-                SenderWalletId = _transaction.SenderWalletId,
-            };
+            return _transaction.ToModel();
         }
         /// <summary>
         /// POST: Creating a TopUpMoney Transaction and Updating the wallet amount
@@ -201,12 +166,9 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <returns>List of TopUpTransactionModel</returns>
         public async Task<IEnumerable<TopUpTransactionModel>> GetTopUpByWalletId(int walletId)
         {
-            return await _context.TopUpTransactions.Where(_t => _t.WalletId.Equals(walletId)).Select(_t => new TopUpTransactionModel()
-            {
-                WalletId = _t.WalletId,
-                Amount = _t.Amount,
-                DateTopUp = _t.DateTopUp,
-            }).ToListAsync();
+            return await _context.TopUpTransactions
+                .Where(_t => _t.WalletId.Equals(walletId))
+                .Select(_t => _t.ToModel()).ToListAsync();
         }
         /// <summary>
         /// GET: Getting all the top up transactions by the users
@@ -214,13 +176,8 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <returns>List of TopUpTransactionModel</returns>
         public async Task<IEnumerable<TopUpTransactionModel>> GetAllTopUpTransaction()
         {
-            return await _context.TopUpTransactions.Select(_t => new TopUpTransactionModel()
-            {
-                TopUpTransactionId = _t.TopUpTransactionId,
-                WalletId = _t.WalletId,
-                Amount = _t.Amount,
-                DateTopUp = _t.DateTopUp,
-            }).ToListAsync();
+            return await _context.TopUpTransactions
+                .Select(_t => _t.ToModel()).ToListAsync();
         }
         /// <summary>
         /// GET: Getting a specific top-up transaction by id
@@ -233,12 +190,7 @@ namespace ConstradeApi.Model.MWallet.Repository
             if (_transaction == null) return null;
 
 
-            return new TopUpTransactionModel()
-            {
-                WalletId = _transaction.WalletId,
-                Amount = _transaction.Amount,
-                DateTopUp = _transaction.DateTopUp,
-            };
+            return _transaction.ToModel();
         }
     }
 }

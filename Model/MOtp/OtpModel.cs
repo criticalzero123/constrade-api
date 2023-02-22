@@ -1,4 +1,6 @@
-﻿namespace ConstradeApi.Model.MOtp
+﻿using ConstradeApi.Entity;
+
+namespace ConstradeApi.Model.MOtp
 {
     public class OtpModel
     {
@@ -7,4 +9,6 @@
         public string OTP { get; set; } = string.Empty;
         public DateTime ExpirationTime { get; set; }
     }
+
+   
 }

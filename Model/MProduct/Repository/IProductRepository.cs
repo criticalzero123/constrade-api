@@ -13,7 +13,7 @@ namespace ConstradeApi.Model.MProduct.Repository
 
         Task<bool> UpdateProduct(int id, ProductModel product);
 
-        Task<List<ProductCommentModel>> GetProductComment(int productId);
+        Task<IEnumerable<ProductCommentModel>> GetProductComment(int productId);
 
         Task<bool> AddCommentProduct(int productId, int userId, string comment);
 

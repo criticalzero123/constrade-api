@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConstradeApi.Model.MUser.Repository
@@ -21,22 +22,7 @@ namespace ConstradeApi.Model.MUser.Repository
             List<UserModel> response = new List<UserModel>();
 
             var data = await _context.Users.ToListAsync();
-            data.ForEach(row => response.Add(new UserModel()
-            {
-                User_id = row.UserId,
-                FirebaseId = row.FirebaseId,
-                User_status = row.UserStatus,
-                User_type = row.UserType,
-                Authprovider_type = row.AuthProviderType,
-                ImageUrl = row.ImageUrl,
-                DateCreated = row.DateCreated,
-                PersonRefId = row.PersonRefId,
-                Email = row.Email,
-                LastActiveAt = row.LastActiveAt,
-                CountPost = row.CountPost,
-            }));
-
-
+            data.ForEach(row => response.Add(row.ToModel()));
 
             return response;
         }
@@ -46,7 +32,7 @@ namespace ConstradeApi.Model.MUser.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns>null or an UserModel</returns>
-        public async Task<UserModel?> Get(int id)
+        public async Task<UserAndPersonModel?> Get(int id)
         {
             var userData =  await _context.Users.ToListAsync();
             var personData = await  _context.Persons.ToListAsync();
@@ -60,29 +46,10 @@ namespace ConstradeApi.Model.MUser.Repository
                                         _person
                                     })
                 .Where(o => o._user.UserId == id)
-                .Select(o => new UserModel()
+                .Select(o => new UserAndPersonModel()
                 {
-                    User_id = o._user.UserId,
-                    FirebaseId = o._user.FirebaseId,
-                    User_type = o._user.UserType,
-                    PersonRefId = o._user.PersonRefId,
-                    Email = o._user.Email,
-                    Authprovider_type = o._user.AuthProviderType,
-                    User_status = o._user.UserStatus,
-                    Password = o._user.Password,
-                    ImageUrl = o._user.ImageUrl,
-                    LastActiveAt = o._user.LastActiveAt,
-                    CountPost = o._user.CountPost,
-                    DateCreated = o._user.DateCreated,
-                    Person = new PersonModel()
-                    {
-                        Person_id = o._person.Person_id,
-                        FirstName = o._person.FirstName,
-                        LastName = o._person.LastName,
-                        AddressReference_id = o._person.AddressRef_id,
-                        Birthdate = o._person.Birthdate,
-                        PhoneNumber = o._person.PhoneNumber,
-                    }
+                    User = o._user.ToModel(),
+                    Person = o._person.ToModel(),
                 }).FirstOrDefault();
 
 
@@ -92,27 +59,27 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <summary>
         /// POST: creating user
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="info"></param>
         /// <returns>Primary Key of the User</returns>
-        public async Task<int> Save(UserInfoModel user)
+        public async Task<int> Save(UserAndPersonModel info)
         {
             Person personTable = new Person();
-            personTable.FirstName = user.FirstName;
-            personTable.LastName = user.LastName;
+            personTable.FirstName = info.Person.FirstName;
+            personTable.LastName = info.Person.LastName;
             personTable.Birthdate = null;
             await _context.Persons.AddAsync(personTable);
 
             await _context.SaveChangesAsync();
 
             User userTable = new User();
-            userTable.FirebaseId = user.FirebaseId;
-            userTable.UserType = user.User_type;
+            userTable.FirebaseId = info.User.FirebaseId;
+            userTable.UserType = info.User.UserType;
             userTable.PersonRefId = personTable.Person_id;
-            userTable.AuthProviderType = user.Authprovider_type;
-            userTable.UserStatus = user.UserStatus;
-            userTable.Email = user.Email.ToLower();
-            userTable.Password = user.Password;
-            userTable.ImageUrl = user.ImageUrl;
+            userTable.AuthProviderType = info.User.AuthProviderType;
+            userTable.UserStatus = info.User.UserStatus;
+            userTable.Email = info.User.Email.ToLower();
+            userTable.Password = info.User.Password!;
+            userTable.ImageUrl = info.User.ImageUrl;
             userTable.CountPost = 0;
             userTable.DateCreated = DateTime.Now;
             userTable.LastActiveAt = DateTime.Now;
@@ -154,12 +121,10 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns></returns>
         public async Task<IEnumerable<FavoriteModel>> GetFavorite(int userId)
         {
-            List<FavoriteModel> favoriteModels = await _context.UserFavorites.Where(_f => _f.UserId == userId).Select(_f => new FavoriteModel()
-            {
-                FavoriteId = _f.FavoriteId,
-                UserId = _f.UserId,
-                ProductId = _f.ProductId,
-            }).ToListAsync();
+            List<FavoriteModel> favoriteModels = await _context.UserFavorites
+                .Where(_f => _f.UserId == userId)
+                .Select(_f => _f.ToModel())
+                .ToListAsync();
 
             return favoriteModels;
         }
@@ -219,12 +184,9 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns>List of Users ID</returns>
         public async Task<IEnumerable<UserFollowModel>> GetUserFollow(int userId)
         {
-            List<UserFollowModel> userFollowModel = await _context.UserFollows.Where(_u => _u.FollowedByUserId.Equals(userId)).Select(_u => new UserFollowModel()
-            {
-                FollowId = _u.FollowId,
-                FollowByUserId = _u.FollowByUserId,
-                DateFollowed = _u.DateFollowed
-            }).ToListAsync();
+            List<UserFollowModel> userFollowModel = await _context.UserFollows
+                .Where(_u => _u.FollowedByUserId.Equals(userId))
+                .Select(_u => _u.ToModel()).ToListAsync();
 
             return userFollowModel;
         }
@@ -236,12 +198,9 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns>List of Users ID and date</returns>
         public async Task<IEnumerable<UserFollowModel>> GetUserFollower(int userId)
         {
-            List<UserFollowModel> userFollowModels = await _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(userId)).Select(_u => new UserFollowModel()
-            {
-                FollowId = _u.FollowId,
-                FollowedByUserId = _u.FollowedByUserId,
-                DateFollowed = _u.DateFollowed
-            }).ToListAsync();
+            List<UserFollowModel> userFollowModels = await _context.UserFollows
+                .Where(_u => _u.FollowByUserId.Equals(userId))
+                .Select(_u => _u.ToModel()).ToListAsync();
 
             return userFollowModels;
         }
@@ -327,13 +286,7 @@ namespace ConstradeApi.Model.MUser.Repository
                                       _t => _t.TransactionId,
                                       (_r, _t) => new { _r, _t }
                                     )
-                .Select(result => new UserReviewModel()
-                {
-                    ReviewId = result._r.ReviewId,
-                    TransactionRefId = result._t.TransactionId,
-                    Rate = result._r.Rate,
-                    DateCreated = result._r.DateCreated
-                }).ToList();
+                .Select(result => result._r.ToModel()).ToList();
 
             return data;
         }
@@ -354,13 +307,7 @@ namespace ConstradeApi.Model.MUser.Repository
                                       _t => _t.TransactionId,
                                       (_r, _t) => new { _r, _t }
                                     )
-                .Select(result => new UserReviewModel()
-                {
-                    ReviewId = result._r.ReviewId,
-                    TransactionRefId = result._t.TransactionId,
-                    Rate = result._r.Rate,
-                    DateCreated = result._r.DateCreated
-                }).ToList();
+                .Select(result => result._r.ToModel()).ToList();
 
             return data;
         }
@@ -372,7 +319,7 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns>UserModel or NULL</returns>
         /// 
         //TODO: please make a checker if the user status is active or not
-        public async Task<UserInfoModel?> LoginByGoogle(string email)
+        public async Task<UserAndPersonModel?> LoginByGoogle(string email)
         {
             User? user = _context.Users.Where(_u => _u.Email.Equals(email)).FirstOrDefault();
             if (user == null) return null;
@@ -382,24 +329,10 @@ namespace ConstradeApi.Model.MUser.Repository
 
             Person data = _context.Persons.Find(user.PersonRefId)!;
 
-            return new UserInfoModel()
+            return new UserAndPersonModel()
             {
-                UserId = user.UserId,
-                PersonId = data.Person_id,
-                User_type = user.UserType,
-                FirebaseId = user.FirebaseId,
-                Authprovider_type = user.AuthProviderType,
-                FirstName = data.FirstName,
-                LastName = data.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                ImageUrl = user.ImageUrl,
-                CountPost = user.CountPost,
-                UserStatus = user.UserStatus,
-                LastActiveAt = user.LastActiveAt,
-                DateCreated = user.DateCreated,
-                Gender = data.Gender,
-                Birthdate = data.Birthdate,
+                User = user.ToModel(),
+                Person = data.ToModel()
             };
         }
 
@@ -408,7 +341,7 @@ namespace ConstradeApi.Model.MUser.Repository
         /// </summary>
         /// <param name="info"></param>
         /// <returns>UserInfoModel or NULL</returns>
-        public async Task<UserInfoModel?> LoginByEmailAndPassword(UserLoginInfoModel info)
+        public async Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info)
         {
             User? user = _context.Users.Where(_u => _u.Email.Equals(info.Email)).Where(_u => _u.Password.Equals(info.Password)).FirstOrDefault();
             if (user == null) return null;
@@ -418,61 +351,35 @@ namespace ConstradeApi.Model.MUser.Repository
 
             Person data = _context.Persons.Find(user.PersonRefId)!;
 
-            return new UserInfoModel()
+            return new UserAndPersonModel()
             {
-                UserId = user.UserId,
-                PersonId = data.Person_id,
-                User_type = user.UserType,
-                FirebaseId = user.FirebaseId,
-                Authprovider_type = user.AuthProviderType,
-                FirstName = data.FirstName,
-                LastName = data.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                ImageUrl = user.ImageUrl,
-                CountPost = user.CountPost,
-                UserStatus = user.UserStatus,
-                Gender = data.Gender,
-                LastActiveAt = user.LastActiveAt,
-                DateCreated = user.DateCreated,
-                Birthdate = data.Birthdate,
+                User = user.ToModel(),
+                Person = data.ToModel()
             };
         }
 
-        public async Task<UserInfoModel?> UpdatePersonInfo(UserInfoModel info)
+        public async Task<UserAndPersonModel?> UpdatePersonInfo(UserAndPersonModel info)
         {
-            Person? person = await _context.Persons.FindAsync(info.PersonId);
+            Person? person = await _context.Persons.FindAsync(info.Person.PersonId);
+
             if (person == null) return null;
-            User user = await _context.Users.Where(_u => _u.PersonRefId.Equals(info.PersonId)).FirstAsync();
 
-            user.ImageUrl = info.ImageUrl;
+            User user = await _context.Users.Where(_u => _u.PersonRefId.Equals(info.Person.PersonId)).FirstAsync();
+
+            user.ImageUrl = info.User.ImageUrl;
             await _context.SaveChangesAsync();
 
-            person.FirstName= info.FirstName;
-            person.LastName= info.LastName; 
-            person.Birthdate = info.Birthdate;
-            person.Gender = info.Gender;
-
+            person.FirstName= info.Person.FirstName;
+            person.LastName= info.Person.LastName; 
+            person.Birthdate = info.Person.Birthdate;
+            person.Gender = info.Person.Gender;
             await _context.SaveChangesAsync();
 
-            return new UserInfoModel()
+            return new UserAndPersonModel()
             {
-                UserId = user.UserId,
-                PersonId = person.Person_id,
-                User_type = user.UserType,
-                FirebaseId = user.FirebaseId,
-                Authprovider_type = user.AuthProviderType,
-                FirstName = person.FirstName,
-                LastName = person.LastName,
-                Email = user.Email,
-                ImageUrl = user.ImageUrl,
-                CountPost = user.CountPost,
-                UserStatus = user.UserStatus,
-                Gender = person.Gender,
-                LastActiveAt = user.LastActiveAt,
-                DateCreated = user.DateCreated,
-                Birthdate = person.Birthdate,
-            }; ;
+                User = user.ToModel(),
+                Person = person.ToModel()
+            }; 
         }
     }
 }

@@ -64,23 +64,6 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        // POST api/<UserController>
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UserAndPersonModel userModel)
-        {
-            try
-            {
-                ResponseType response= ResponseType.Success;
-                int uid = await _userRepository.Save(userModel);
-                await _subscriptionRepository.CreateSubscription(uid);
-
-                return Ok(ResponseHandler.GetApiResponse(response, userModel));
-            }catch( Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
-            }
-        }
-
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] UserModel userModel)

@@ -8,6 +8,9 @@ using ConstradeApi.Model.MTransaction.Repository;
 using ConstradeApi.Model.MUser.Repository;
 using ConstradeApi.Model.MWallet.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace ConstradeApi
 {
@@ -35,13 +38,27 @@ namespace ConstradeApi
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
 
             builder.Services.AddControllers();
-            builder.Services.AddDistributedMemoryCache();
 
-            builder.Services.AddSession(options =>
+            //for the Jwt Auth
+            builder.Services.AddAuthentication(option =>
             {
-                options.IdleTimeout = TimeSpan.FromSeconds(10);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata= false;
+                o.SaveToken = true;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    //When in production specify the website in the appsettings.json
+                    //ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    //ValidAudience = builder.Configuration["Jwt:Audience"],
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+                    ValidateIssuerSigningKey = true,
+                };
             });
 
             var app = builder.Build();
@@ -50,9 +67,9 @@ namespace ConstradeApi
             // Configure the HTTP request pipeline.
             
            
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection(); 
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.UseSession();
 
             app.UseWhen(httpContext => !httpContext.Request.Path.StartsWithSegments("/api/auth"), 
                         subApp => subApp.UseMiddleware<CheckApiKeyMiddleware>());

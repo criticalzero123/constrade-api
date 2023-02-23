@@ -15,14 +15,11 @@ namespace ConstradeApi.Model.MUserApiKey.Repository
 
         public async Task<ApiKeyModel> CreateApiKeyAsync(int userId)
         {
-            ApiKey exist = await _context.ApiKey.Where(_u => _u.UserId == userId).FirstAsync();
-
-
-            
             ApiKey session = new ApiKey
             {
                Token = Guid.NewGuid().ToString(),
                UserId = userId,
+               DateCreated= DateTime.UtcNow,
                IsActive = true,
             };
 

@@ -6,6 +6,8 @@ using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
 using ConstradeApi.Model.MUserApiKey.Repository;
 using ConstradeApi.Model.Response;
+using ConstradeApi.Services.Jwt;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,20 +18,21 @@ namespace ConstradeApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly IApiKeyRepository _sessionRepository;
+        private readonly IApiKeyRepository _apiKeyRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IOtpRepository _otpRepository;
 
         public AuthController(IUserRepository userRepository, IApiKeyRepository userAuthorize, ISubscriptionRepository subscription, IOtpRepository otpRepository)
         {
             _userRepository = userRepository;
-            _sessionRepository = userAuthorize;
+            _apiKeyRepository = userAuthorize;
             _subscriptionRepository = subscription;
             _otpRepository = otpRepository;
           
         }
 
         //GET: api/<AuthController>
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Index()
         {
@@ -38,6 +41,7 @@ namespace ConstradeApi.Controllers
 
         // GET: api/<AuthController>/check/email/johndoe@test.com
         [HttpGet("check/email/{email}")]
+        [AllowAnonymous]
         public async Task<IActionResult> CheckUserByEmail(string email)
         {
             ResponseType responseType = ResponseType.Success;
@@ -54,6 +58,7 @@ namespace ConstradeApi.Controllers
         }
 
         // GET: api/<AuthController>/check/phone/6399999999
+        [AllowAnonymous]
         [HttpGet("check/phone/{phone}")]
         public async Task<IActionResult> CheckUserByPhone(string phone)
         {
@@ -71,6 +76,7 @@ namespace ConstradeApi.Controllers
         }
 
         // Put api/<AuthController>/login/google/johndoe@test.com
+        [AllowAnonymous]
         [HttpPut("login/google")]
         public async Task<IActionResult> LoginByGoogleAuth([FromBody] UserLoginInfoModel data)
         {
@@ -82,10 +88,8 @@ namespace ConstradeApi.Controllers
 
                 if (userInfo == null) return Unauthorized();
 
-                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(userInfo.User.UserId);
-
-
-                return Ok(ResponseHandler.GetApiResponse(responseType, new { userInfo, sessionInfo.Token }));
+                string token = JwtAuthentication.CreateToken(userInfo.User.Email);
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { userInfo, token}));
             }
             catch (Exception ex)
             {
@@ -94,6 +98,7 @@ namespace ConstradeApi.Controllers
         }
 
         // PUT api/<AuthController>/login
+        [AllowAnonymous]
         [HttpPut("login")]
         public async Task<IActionResult> LoginByEmailAndPassword([FromBody] UserLoginInfoModel info)
         {
@@ -104,9 +109,9 @@ namespace ConstradeApi.Controllers
 
                 if (userInfo == null) return Unauthorized();
 
-                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(userInfo.User.UserId);
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, new { userInfo, sessionInfo.Token }));
+                string token = JwtAuthentication.CreateToken(userInfo.User.Email);
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { userInfo, token}));
             }
             catch (Exception ex)
             {
@@ -116,6 +121,7 @@ namespace ConstradeApi.Controllers
 
 
         // POST api/<AuthController>
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserAndPersonModel userModel)
         {
@@ -124,6 +130,7 @@ namespace ConstradeApi.Controllers
                 ResponseType response = ResponseType.Success;
                 int uid = await _userRepository.Save(userModel);
                 await _subscriptionRepository.CreateSubscription(uid);
+                await _apiKeyRepository.CreateApiKeyAsync(uid);
 
                 return Ok(ResponseHandler.GetApiResponse(response, userModel));
             }
@@ -134,6 +141,7 @@ namespace ConstradeApi.Controllers
         }
 
         // POST api/<AuthController>/otp/{email}
+        [AllowAnonymous]
         [HttpPost("otp/email")]
         public async Task<IActionResult> GenerateOtpEmail([FromBody] OtpModel otpModel)
         {
@@ -150,6 +158,7 @@ namespace ConstradeApi.Controllers
         }
 
         //GET api/<AuthController>/otp/verify?user={user}&code={code}
+        [AllowAnonymous]
         [HttpGet("otp/verify")]
         public async Task<IActionResult> VerifyOtp(string user, string code)
         {
@@ -171,6 +180,7 @@ namespace ConstradeApi.Controllers
 
         //GET api/<AuthController>/otp/resend/email/{userValue}
 
+        [AllowAnonymous]
         [HttpPut("otp/resend/email/{userValue}")]
         public async Task<IActionResult> ResendOtp(string userValue)
         {

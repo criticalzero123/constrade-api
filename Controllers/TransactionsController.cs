@@ -2,6 +2,7 @@
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Model.MTransaction.Repository;
 using ConstradeApi.Model.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ namespace ConstradeApi.Controllers
     }
 
         // api/<TransactionsController>/product
+        [Authorize]
         [HttpGet("product")]
         public async Task<IActionResult> GetAllTransaction()
         {
@@ -32,6 +34,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/<TransactionsController>/product/4
+        [Authorize]
         [HttpGet("product/{id}")]
         public async Task<IActionResult> GetTransaction(int id)
         {
@@ -50,6 +53,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/<TransactionController>/product
+        [Authorize]
         [HttpPost("product")]
         public async Task<IActionResult> SoldProduct([FromBody] TransactionModel transactionModel)
         {

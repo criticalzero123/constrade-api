@@ -2,6 +2,7 @@
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProduct.Repository;
 using ConstradeApi.Model.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,6 +21,7 @@ namespace ConstradeApi.Controllers
         }
 
         // GET: api/<ProductController>
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -40,6 +42,7 @@ namespace ConstradeApi.Controllers
 
         // GET api/<ProductController>/5
         // Get api/<ProductController>/5?uid=5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id, int? uid)
         {
@@ -60,6 +63,7 @@ namespace ConstradeApi.Controllers
         }
 
         // POST api/<ProductController>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductAndImages productModel)
         {
@@ -76,6 +80,7 @@ namespace ConstradeApi.Controllers
         }
 
         // PUT api/<ProductController>/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ProductModel productModel)
         {
@@ -96,6 +101,7 @@ namespace ConstradeApi.Controllers
         }
 
         // DELETE api/<ProductController>/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -116,6 +122,7 @@ namespace ConstradeApi.Controllers
         }
 
         // GET api/<ProductsController>/1/comment
+        [Authorize]
         [HttpGet("{productId}/comment")]
         public async Task<IActionResult> GetComments(int productId)
         {
@@ -136,6 +143,7 @@ namespace ConstradeApi.Controllers
         }
 
         // POST api/<ProductsController>/1/comment
+        [Authorize]
         [HttpPost("{productId}/comment")]
         public async Task<IActionResult> AddComment(int productId, [FromBody] ProductCommentModel productCommentModel)
         {
@@ -153,6 +161,7 @@ namespace ConstradeApi.Controllers
         }
 
         //PUT api/<ProductsController/1/comment/1
+        [Authorize]
         [HttpPut("{productId}/comment/{id}")]
         public async Task<IActionResult> UpdateComment(int productId, int id, [FromBody] ProductUpdateNewComment newMessage)
         {
@@ -173,6 +182,7 @@ namespace ConstradeApi.Controllers
         }
 
         // DELETE api/<ProductsController>/1/comment/5
+        [Authorize]
         [HttpDelete("{productId}/comment/{id}")]
         public async Task<IActionResult> DeleleComment( int id)
         {

@@ -1,6 +1,7 @@
 ﻿using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
 using ConstradeApi.Model.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,7 @@ namespace ConstradeApi.Controllers
 
         //POST api/<FollowController>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Follow( [FromBody] UserFollowModel userFollow)
         {
             try
@@ -37,6 +39,7 @@ namespace ConstradeApi.Controllers
         }
 
         //GET api/<FollowController>/4
+        [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetFollows(int userId)
         {

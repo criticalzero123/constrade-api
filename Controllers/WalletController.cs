@@ -2,6 +2,7 @@
 using ConstradeApi.Model.MWallet;
 using ConstradeApi.Model.MWallet.Repository;
 using ConstradeApi.Model.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConstradeApi.Controllers
@@ -18,6 +19,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/4
+        [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetWallet(int userId)
         {
@@ -36,6 +38,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/id/4
+        [Authorize]
         [HttpGet("id/{walletId}")]
         public async Task<IActionResult> GetWalletById(int walletId)
         {
@@ -54,6 +57,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/send
+        [Authorize]
         [HttpPost("send")]
         public async Task<IActionResult> SendMoney([FromBody] SendMoneyTransactionModel info)
         {
@@ -71,6 +75,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/topup
+        [Authorize]
         [HttpPost("topup")]
         public async Task<IActionResult> TopUpMoney([FromBody] TopUpTransactionModel info)
         {
@@ -89,6 +94,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions
+        [Authorize]
         [HttpGet("transactions/all")]
         public async  Task<IActionResult> GetAllTransactions()
         {
@@ -105,6 +111,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/receive/4
+        [Authorize]
         [HttpGet("transactions/receive/{walletId}")]
         public async Task<IActionResult> GetReceiveTransaction(int walletId) 
         {
@@ -123,6 +130,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/send/4
+        [Authorize]
         [HttpGet("transactions/send/{walletId}")]
         public async Task<IActionResult> GetSendTransaction(int walletId)
         {
@@ -140,6 +148,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("transactions/id/{id}")]
         public async Task<IActionResult> GetTransactionByWalletId(int id)
         {
@@ -158,6 +167,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/topup/wid/4
+        [Authorize]
         [HttpGet("transactions/topup/wid/{walletId}")]
         public async Task<IActionResult> GetTopUpTransactionByWalletId(int walletId)
         {
@@ -176,6 +186,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/topup/4
+        [Authorize]
         [HttpGet("transactions/topup/{id}")]
         public async Task<IActionResult> GetTopUpTransactionById(int id)
         {
@@ -194,6 +205,7 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/topup
+        [Authorize]
         [HttpGet("transactions/topup")]
         public async Task<IActionResult> GetAllTopUpTransaction()
         {

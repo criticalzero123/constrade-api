@@ -1,6 +1,7 @@
 ﻿using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
 using ConstradeApi.Model.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ namespace ConstradeApi.Controllers
         /// <param name="review">if true the reviews of the user will be fetch</param>
         /// <returns>object</returns>
         //GET api/<ReviewController>/4/all
+        [Authorize]
         [HttpGet("{userId}/all")]
         public async Task<IActionResult> GetAllReviews(int userId)
         {
@@ -43,6 +45,7 @@ namespace ConstradeApi.Controllers
         }
 
         //GET api/<ReviewController>/4/my
+        [Authorize]
         [HttpGet("{userId}/my")]
         public async Task<IActionResult> GetMyReviews(int userId)
         {
@@ -59,6 +62,7 @@ namespace ConstradeApi.Controllers
         }
 
         //POST api/<Usercontroller>
+        [Authorize]
         [HttpPost("{userId}")]
         public async Task<IActionResult> AddReview(int uid, [FromBody] UserReviewModel userReviewModel)
         {
@@ -77,6 +81,7 @@ namespace ConstradeApi.Controllers
         }
 
         //GET api/<UserController>
+        [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetReviews(int userId)
         {

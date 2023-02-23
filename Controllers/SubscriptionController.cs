@@ -2,6 +2,7 @@
 using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace ConstradeApi.Controllers
             _subscriptionRepository = subscriptionRepository;
         }
 
+        [Authorize]
         [HttpPut("cancel/{uid}")]
         public async Task<IActionResult> CancelSubscribeUser(int uid)
         {
@@ -34,6 +36,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("subscribe/{uid}")]
         public async Task<IActionResult> SubscribeUser(int uid)
         {
@@ -51,6 +54,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("user/{uid}")]
         public async Task<IActionResult> GetUserSubscription(int uid)
         {
@@ -68,6 +72,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("history/user/{uid}")]
         public async Task<IActionResult> GetUserSubscriptionHistory(int uid)
         {

@@ -27,7 +27,7 @@ namespace ConstradeApi.Controllers
         }
 
         // GET: api/<UserController>
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -46,6 +46,7 @@ namespace ConstradeApi.Controllers
         }
 
         // GET api/<AuthController>/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -65,12 +66,14 @@ namespace ConstradeApi.Controllers
         }
 
         // PUT api/<UserController>/5
+        [Authorize]
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] UserModel userModel)
         {
         }
 
         //GET api/<UserController>/4/favorite
+        [Authorize]
         [HttpGet("{userId}/favorite")]
         public async Task<IActionResult> GetFavorite(int userId)
         {
@@ -91,6 +94,7 @@ namespace ConstradeApi.Controllers
         }
 
         //POST api/<UserController>/4/favorite
+        [Authorize]
         [HttpPost("{userId}/favorite")]
         public async Task<IActionResult> AddFavorite(int userId, [FromBody] FavoriteModel favoriteModel)
         {
@@ -110,6 +114,7 @@ namespace ConstradeApi.Controllers
         }
 
         //GET api/<UserController>/4/favorite/4
+        [Authorize]
         [HttpDelete("{userId}/favorite/{id}")]
         public async Task<IActionResult> DeleteFavorite(int id)
         {
@@ -130,6 +135,7 @@ namespace ConstradeApi.Controllers
 
 
         //PUT api/<UserController/person
+        [Authorize]
         [HttpPut("person")]
         public async Task<IActionResult> UpdatePersonInfo([FromBody] UserAndPersonModel info)
         {

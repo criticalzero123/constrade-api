@@ -13,7 +13,7 @@ namespace ConstradeApi.Model.MUserApiKey.Repository
             _context = context;
         }
 
-        public async Task<ApiKeyModel> CreateApiKeyAsync(int userId)
+        public async Task<int> CreateApiKeyAsync(int userId)
         {
             ApiKey session = new ApiKey
             {
@@ -26,15 +26,32 @@ namespace ConstradeApi.Model.MUserApiKey.Repository
             await _context.ApiKey.AddAsync(session);
             await _context.SaveChangesAsync();
 
-            return session.ToModel();
+            return session.ApiKeyId;
         }
 
-        public async Task<ApiKeyModel?> GetApiKeyAsync(string token)
+        public async Task<ApiKeyModel?> GetApiKeyByIdAsync(int id)
         {
-            ApiKeyModel? session = await _context.ApiKey.Where(x => x.Token == token && x.IsActive)
+            var result = await _context.ApiKey.FindAsync(id);
+
+            return result?.ToModel();
+        }
+
+        public async Task<ApiKeyModel?> GetApiKeyByTokenAsync(string token)
+        {
+            ApiKeyModel? apiKey = await _context.ApiKey.Where(x => x.Token == token && x.IsActive)
                 .Select(_s => _s.ToModel()).FirstOrDefaultAsync();
 
-            return session;
+            return apiKey;
+        }
+
+        public async Task<string?> GetApiKeyByUserIdAsync(int userId)
+        {
+            ApiKeyModel? apiKey = await _context.ApiKey.Where(x => x.UserId == userId && x.IsActive)
+                .Select(_s => _s.ToModel()).FirstOrDefaultAsync();
+
+            if (apiKey == null) return null;
+
+            return apiKey.Token;
         }
     }
 }

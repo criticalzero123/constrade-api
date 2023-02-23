@@ -8,7 +8,7 @@ namespace ConstradeApi.Services.Jwt
     public class JwtAuthentication
     {
         private readonly IConfiguration configuration;
-        public string JwtKey { get; set; }
+        private string JwtKey { get; set; }
 
         public JwtAuthentication()
         {
@@ -26,7 +26,7 @@ namespace ConstradeApi.Services.Jwt
         {
             JwtAuthentication authentication = new JwtAuthentication();
 
-            var key = Encoding.ASCII.GetBytes(authentication.JwtKey);
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(authentication.JwtKey));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -36,7 +36,7 @@ namespace ConstradeApi.Services.Jwt
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

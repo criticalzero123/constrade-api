@@ -8,8 +8,8 @@ using ConstradeApi.Model.MUserApiKey.Repository;
 using ConstradeApi.Model.Response;
 using ConstradeApi.Services.Jwt;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace ConstradeApi.Controllers
 {
@@ -21,14 +21,15 @@ namespace ConstradeApi.Controllers
         private readonly IApiKeyRepository _apiKeyRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IOtpRepository _otpRepository;
+        private readonly ILogger<AuthController> _logger; 
 
-        public AuthController(IUserRepository userRepository, IApiKeyRepository userAuthorize, ISubscriptionRepository subscription, IOtpRepository otpRepository)
+        public AuthController(IUserRepository userRepository, IApiKeyRepository userAuthorize, ISubscriptionRepository subscription, IOtpRepository otpRepository, ILogger<AuthController> logger)
         {
             _userRepository = userRepository;
             _apiKeyRepository = userAuthorize;
             _subscriptionRepository = subscription;
             _otpRepository = otpRepository;
-          
+            _logger = logger;
         }
 
         //GET: api/<AuthController>
@@ -84,12 +85,14 @@ namespace ConstradeApi.Controllers
 
             try
             {
-                UserAndPersonModel? userInfo = await _userRepository.LoginByGoogle(data.Email);
+                UserAndPersonModel? user = await _userRepository.LoginByGoogle(data.Email);
 
-                if (userInfo == null) return Unauthorized();
+                if (user == null) return Unauthorized();
 
-                string token = JwtAuthentication.CreateToken(userInfo.User.Email);
-                return Ok(ResponseHandler.GetApiResponse(responseType, new { userInfo, token}));
+                string token = JwtAuthentication.CreateToken(user.User.Email);
+                var apiKey = await _apiKeyRepository.GetApiKeyByUserIdAsync(user.User.UserId);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { user, token, apiKey }));
             }
             catch (Exception ex)
             {
@@ -105,13 +108,14 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                UserAndPersonModel? userInfo = await _userRepository.LoginByEmailAndPassword(info);
+                UserAndPersonModel? user = await _userRepository.LoginByEmailAndPassword(info);
 
-                if (userInfo == null) return Unauthorized();
+                if (user == null) return Unauthorized();
 
+                string token = JwtAuthentication.CreateToken(user.User.Email);
+                var apiKey = await _apiKeyRepository.GetApiKeyByUserIdAsync(user.User.UserId);
 
-                string token = JwtAuthentication.CreateToken(userInfo.User.Email);
-                return Ok(ResponseHandler.GetApiResponse(responseType, new { userInfo, token}));
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { user, token, apiKey}));
             }
             catch (Exception ex)
             {
@@ -129,10 +133,19 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType response = ResponseType.Success;
                 int uid = await _userRepository.Save(userModel);
-                await _subscriptionRepository.CreateSubscription(uid);
-                await _apiKeyRepository.CreateApiKeyAsync(uid);
+                int apiId = await _apiKeyRepository.CreateApiKeyAsync(uid);
 
-                return Ok(ResponseHandler.GetApiResponse(response, userModel));
+                var api = await _apiKeyRepository.GetApiKeyByIdAsync(apiId);
+                var user = await _userRepository.Get(uid);
+
+                await _subscriptionRepository.CreateSubscription(uid);
+                string token = JwtAuthentication.CreateToken(userModel.User.Email);
+                return Ok(ResponseHandler.GetApiResponse(response, new 
+                {
+                    user,
+                    token,
+                    apiKey=api?.Token
+                }));
             }
             catch (Exception ex)
             {

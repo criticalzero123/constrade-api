@@ -24,7 +24,7 @@ namespace ConstradeApi.Middleware
                     return;
                 }
 
-                var session = await sessionRepository.GetApiKeyAsync(key);
+                var session = await sessionRepository.GetApiKeyByTokenAsync(key);
                 if (session == null)
                 {
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;

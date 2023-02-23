@@ -24,7 +24,6 @@ namespace ConstradeApi
             builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("Secrets.json", optional:true);
             builder.Services.AddControllers();
 
-
             // Add services to the container.
             builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgressDB"]));
 

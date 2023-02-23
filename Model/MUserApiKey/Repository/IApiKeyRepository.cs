@@ -2,7 +2,9 @@
 {
     public interface IApiKeyRepository
     {
-        Task<ApiKeyModel> CreateApiKeyAsync(int userId);
-        Task<ApiKeyModel?> GetApiKeyAsync(string token);
+        Task<int> CreateApiKeyAsync(int userId);
+        Task<ApiKeyModel?> GetApiKeyByTokenAsync(string token);
+        Task<string?> GetApiKeyByUserIdAsync(int userId);
+        Task<ApiKeyModel?> GetApiKeyByIdAsync(int id);
     }
 }

@@ -54,7 +54,7 @@ namespace ConstradeApi
             app.UseAuthorization();
             app.UseSession();
 
-            app.UseWhen(httpContext => !httpContext.Request.Path.StartsWithSegments("/api/users"), 
+            app.UseWhen(httpContext => !httpContext.Request.Path.StartsWithSegments("/api/auth"), 
                         subApp => subApp.UseMiddleware<UserAuthorizeMiddleware>());
 
             app.MapControllers();

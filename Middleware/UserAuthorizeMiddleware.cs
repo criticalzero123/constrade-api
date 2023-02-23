@@ -15,10 +15,6 @@ namespace ConstradeApi.Middleware
         {
             try
             {
-                var route = context.Request.Path.Value;
-
-                Console.Write(route);
-
                 var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(',').Last();
                 if (token == null)
                 {

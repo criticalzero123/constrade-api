@@ -3,7 +3,7 @@
     "ConstradeApi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/users",
+      "launchUrl": "api/auth",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
@@ -13,7 +13,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/users",
+      "launchUrl": "api/auth",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

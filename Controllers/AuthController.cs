@@ -4,7 +4,7 @@ using ConstradeApi.Model.MOtp.Repository;
 using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
-using ConstradeApi.Model.MUserAuthorize.Repository;
+using ConstradeApi.Model.MUserApiKey.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,16 +16,17 @@ namespace ConstradeApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly IUserAuthorizeRepository _sessionRepository;
+        private readonly IApiKeyRepository _sessionRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IOtpRepository _otpRepository;
 
-        public AuthController(IUserRepository userRepository, IUserAuthorizeRepository userAuthorize, ISubscriptionRepository subscription, IOtpRepository otpRepository)
+        public AuthController(IUserRepository userRepository, IApiKeyRepository userAuthorize, ISubscriptionRepository subscription, IOtpRepository otpRepository)
         {
             _userRepository = userRepository;
             _sessionRepository = userAuthorize;
             _subscriptionRepository = subscription;
             _otpRepository = otpRepository;
+          
         }
 
         //GET: api/<AuthController>
@@ -77,14 +78,14 @@ namespace ConstradeApi.Controllers
 
             try
             {
-                UserAndPersonModel? user = await _userRepository.LoginByGoogle(data.Email);
+                UserAndPersonModel? userInfo = await _userRepository.LoginByGoogle(data.Email);
 
-                if (user == null) return Unauthorized();
+                if (userInfo == null) return Unauthorized();
 
-                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(user.User.UserId);
+                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(userInfo.User.UserId);
 
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, new { user, sessionInfo.Token }));
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { userInfo, sessionInfo.Token }));
             }
             catch (Exception ex)
             {
@@ -99,13 +100,13 @@ namespace ConstradeApi.Controllers
             try
             {
                 ResponseType responseType = ResponseType.Success;
-                UserAndPersonModel? user = await _userRepository.LoginByEmailAndPassword(info);
+                UserAndPersonModel? userInfo = await _userRepository.LoginByEmailAndPassword(info);
 
-                if (user == null) return Unauthorized();
+                if (userInfo == null) return Unauthorized();
 
-                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(user.User.UserId);
+                var sessionInfo = await _sessionRepository.CreateApiKeyAsync(userInfo.User.UserId);
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, new { user, sessionInfo.Token }));
+                return Ok(ResponseHandler.GetApiResponse(responseType, new { userInfo, sessionInfo.Token }));
             }
             catch (Exception ex)
             {
@@ -114,7 +115,7 @@ namespace ConstradeApi.Controllers
         }
 
 
-        // POST api/<UserController>
+        // POST api/<AuthController>
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserAndPersonModel userModel)
         {
@@ -132,7 +133,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpPost("email")]
+        // POST api/<AuthController>/otp/{email}
+        [HttpPost("otp/email")]
         public async Task<IActionResult> GenerateOtpEmail([FromBody] OtpModel otpModel)
         {
             try
@@ -147,7 +149,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpGet("verify")]
+        //GET api/<AuthController>/otp/verify?user={user}&code={code}
+        [HttpGet("otp/verify")]
         public async Task<IActionResult> VerifyOtp(string user, string code)
         {
             try
@@ -166,7 +169,9 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpPut("resend/email/{userValue}")]
+        //GET api/<AuthController>/otp/resend/email/{userValue}
+
+        [HttpPut("otp/resend/email/{userValue}")]
         public async Task<IActionResult> ResendOtp(string userValue)
         {
             try

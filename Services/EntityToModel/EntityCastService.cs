@@ -4,7 +4,7 @@ using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Model.MUser;
-using ConstradeApi.Model.MUserAuthorize;
+using ConstradeApi.Model.MUserApiKey;
 using ConstradeApi.Model.MWallet;
 
 namespace ConstradeApi.Services.EntityToModel
@@ -191,15 +191,15 @@ namespace ConstradeApi.Services.EntityToModel
                 ExpirationTime = otp.ExpirationTime
             };
         }
-        public static UserAuthorizeModel ToModel(this ApiKey apiKey)
+        public static ApiKeyModel ToModel(this ApiKey apiKey)
         {
-            return new UserAuthorizeModel
+            return new ApiKeyModel
             {
                 ApiKeyId = apiKey.ApiKeyId,
                 UserId = apiKey.UserId,
                 Token = apiKey.Token,
-                Created = apiKey.Created,
-                Expires = apiKey.Expires,
+                DateCreated = apiKey.DateCreated,
+                IsActive = apiKey.IsActive,
             };
         }
     }

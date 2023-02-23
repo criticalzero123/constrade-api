@@ -20,11 +20,10 @@ namespace ConstradeApi.Entity
         [Column("token")]
         public string Token { get; set; } = string.Empty;
 
-
         [Column("date_created")]
-        public DateTime Created { get; set; }
+        public DateTime DateCreated { get; set; }
 
-        [Column("date_expires")]
-        public DateTime Expires { get; set; }
+        [Column("is_active")]
+        public bool IsActive { get; set; } 
     }
 }

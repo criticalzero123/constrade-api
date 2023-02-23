@@ -3,7 +3,7 @@ using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
-using ConstradeApi.Model.MUserAuthorize.Repository;
+using ConstradeApi.Model.MUserApiKey.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,8 +18,8 @@ namespace ConstradeApi.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
-        private readonly IUserAuthorizeRepository _sessionRepository; 
-        public UsersController(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IUserAuthorizeRepository sessionRepository)
+        private readonly IApiKeyRepository _sessionRepository; 
+        public UsersController(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IApiKeyRepository sessionRepository)
         {
             _userRepository = userRepository;
             _subscriptionRepository = subscriptionRepository;

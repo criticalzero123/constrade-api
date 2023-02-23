@@ -1,6 +1,6 @@
 using ConstradeApi.Entity;
 using ConstradeApi.Middleware;
-using ConstradeApi.Model.MUserAuthorize.Repository;
+using ConstradeApi.Model.MUserApiKey.Repository;
 using ConstradeApi.Model.MOtp.Repository;
 using ConstradeApi.Model.MProduct.Repository;
 using ConstradeApi.Model.MSubcription.Repository;
@@ -30,7 +30,7 @@ namespace ConstradeApi
             builder.Services.AddScoped<ITransactionRepository, TrsanctionRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
-            builder.Services.AddScoped<IUserAuthorizeRepository, UserAuthorizeRepository>();
+            builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
 
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
 
@@ -55,7 +55,7 @@ namespace ConstradeApi
             app.UseSession();
 
             app.UseWhen(httpContext => !httpContext.Request.Path.StartsWithSegments("/api/auth"), 
-                        subApp => subApp.UseMiddleware<UserAuthorizeMiddleware>());
+                        subApp => subApp.UseMiddleware<CheckApiKeyMiddleware>());
 
             app.MapControllers();
 

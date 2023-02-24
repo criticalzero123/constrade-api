@@ -1,11 +1,12 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using ConstradeApi.Entity;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace ConstradeApi.Services.Jwt
 {
-    public class JwtAuthentication
+    public class JwtAuthentication 
     {
         private readonly IConfiguration configuration;
         private string JwtKey { get; set; }
@@ -31,6 +32,8 @@ namespace ConstradeApi.Services.Jwt
             {
                 Subject = new ClaimsIdentity(new[]
                 {
+                    new Claim(JwtRegisteredClaimNames.Sub, email),
+                    new Claim(ClaimTypes.NameIdentifier, email),
                     new Claim("Id", Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
@@ -42,7 +45,7 @@ namespace ConstradeApi.Services.Jwt
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var jwtToken = tokenHandler.WriteToken(token);
-
+            
             return jwtToken;
         }
     }

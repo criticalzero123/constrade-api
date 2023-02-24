@@ -5,6 +5,8 @@ using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUserApiKey;
+using ConstradeApi.Model.MUserChat;
+using ConstradeApi.Model.MUserMessage;
 using ConstradeApi.Model.MWallet;
 
 namespace ConstradeApi.Services.EntityToModel
@@ -200,6 +202,28 @@ namespace ConstradeApi.Services.EntityToModel
                 Token = apiKey.Token,
                 DateCreated = apiKey.DateCreated,
                 IsActive = apiKey.IsActive,
+            };
+        }
+        public static UserChatModel ToModel(this UserChat userChat)
+        {
+            return new UserChatModel()
+            {
+                UserChatId = userChat.UserChatId,
+                UserId1= userChat.UserId1,
+                UserId2= userChat.UserId2,
+                LastMessage= userChat.LastMessage,
+                LastMessageDate= userChat.LastMessageDate,
+            };
+        }
+        public static UserMessageModel ToModel(this UserMessage userMessage)
+        {
+            return new UserMessageModel()
+            {
+                UserMessageId = userMessage.UserMessageId,
+                UserChatId = userMessage.UserChatId,
+                Message = userMessage.Message,
+                DateSent = userMessage.DateSent,
+
             };
         }
     }

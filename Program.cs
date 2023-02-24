@@ -11,6 +11,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ConstradeApi.Model.MUserChat.Repository;
+using ConstradeApi.Hubs;
+using ConstradeApi.Model.MUserMessage.Repository;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace ConstradeApi
 {
@@ -23,6 +29,8 @@ namespace ConstradeApi
             // Add services to the container.
             builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("Secrets.json", optional:true);
             builder.Services.AddControllers();
+            builder.Services.AddSignalR();
+      
 
             // Add services to the container.
             builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgressDB"]));
@@ -35,6 +43,9 @@ namespace ConstradeApi
             builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
 
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
+            builder.Services.AddTransient<IUserChatRepository, UserChatRepository>();
+            builder.Services.AddTransient<IUserMessageRepository, UserMessageRepository>();
+
 
             builder.Services.AddControllers();
 
@@ -46,10 +57,30 @@ namespace ConstradeApi
                 option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(o =>
             {
+                //for signal R
+                o.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/userChatHub")))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+
                 o.RequireHttpsMetadata= false;
                 o.SaveToken = true;
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
+                    
+                    NameClaimType = ClaimTypes.Name,
+                    RoleClaimType = ClaimTypes.Role,
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
@@ -63,14 +94,21 @@ namespace ConstradeApi
             // Configure the HTTP request pipeline.
             
            
+            app.UseRouting();
+            
             app.UseHttpsRedirection(); 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseWhen(httpContext => !httpContext.Request.Path.StartsWithSegments("/api/auth"), 
+            app.UseWhen(httpContext => !httpContext.Request.Path.StartsWithSegments("/api/auth"),
                         subApp => subApp.UseMiddleware<CheckApiKeyMiddleware>());
+            app.UseEndpoints(e =>
+            {
+                e.MapHub<UserChatHub>("/userChatHub");
+            });
 
             app.MapControllers();
+
 
             app.Run();
         }

@@ -11,7 +11,7 @@ namespace ConstradeApi.Middleware
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, IApiKeyRepository sessionRepository)
+        public async Task InvokeAsync(HttpContext context, IApiKeyRepository apiRepository)
         {
             try
             {
@@ -24,8 +24,8 @@ namespace ConstradeApi.Middleware
                     return;
                 }
 
-                var session = await sessionRepository.GetApiKeyByTokenAsync(key);
-                if (session == null)
+                var api = await apiRepository.GetApiKeyByTokenAsync(key);
+                if (api == null)
                 {
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     await context.Response.WriteAsync("Invalid Api Key or the Key is not active");

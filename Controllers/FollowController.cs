@@ -30,7 +30,7 @@ namespace ConstradeApi.Controllers
 
                 if (!flag) responseType = ResponseType.Failure;
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, userFollow));
+                return Ok(ResponseHandler.GetApiResponse(responseType, flag));
             }
             catch (Exception ex)
             {
@@ -55,6 +55,23 @@ namespace ConstradeApi.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
+
+        //GET api/<FollowController>/4
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> IsFollow(int otherUserId, int currentUserId)
+        {
+            try
+            {
+                bool flag = await _userRepository.IsFollowUser(otherUserId, currentUserId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
     }

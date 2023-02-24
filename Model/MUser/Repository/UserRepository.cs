@@ -214,7 +214,9 @@ namespace ConstradeApi.Model.MUser.Repository
         {
             if (followUser == followedByUser) return false;
 
+            //Get the users followers
             List<Follow> follows = await _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(followUser)).ToListAsync();
+            //Check if the current user follows him
             Follow? flag =  follows.FirstOrDefault(_u => _u.FollowedByUserId.Equals(followedByUser));
 
 
@@ -380,6 +382,15 @@ namespace ConstradeApi.Model.MUser.Repository
                 User = user.ToModel(),
                 Person = person.ToModel()
             }; 
+        }
+
+        public async Task<bool> IsFollowUser(int otherUserId, int currentUserId)
+        {
+            Follow? flag = await _context.UserFollows.Where(_f => _f.FollowByUserId == otherUserId && _f.FollowedByUserId == currentUserId).FirstOrDefaultAsync();
+
+            if (flag == null) return false;
+
+            return true;
         }
     }
 }

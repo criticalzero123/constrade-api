@@ -1,6 +1,8 @@
 ﻿
 
 
+using System.Security.Cryptography;
+
 namespace ConstradeApi.Model.MUser
 {
     public class UserModel

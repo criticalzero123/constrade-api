@@ -89,7 +89,7 @@ namespace ConstradeApi.Controllers
 
                 if (user == null) return Unauthorized();
 
-                string token = JwtAuthentication.CreateToken(user.User.Email);
+                string token = JwtAuthentication.CreateToken(user.User.Email, user.User.UserId);
                 var apiKey = await _apiKeyRepository.GetApiKeyByUserIdAsync(user.User.UserId);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, new { user, token, apiKey }));
@@ -112,7 +112,7 @@ namespace ConstradeApi.Controllers
 
                 if (user == null) return Unauthorized();
 
-                string token = JwtAuthentication.CreateToken(user.User.Email);
+                string token = JwtAuthentication.CreateToken(user.User.Email, user.User.UserId);
                 var apiKey = await _apiKeyRepository.GetApiKeyByUserIdAsync(user.User.UserId);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, new { user, token, apiKey}));
@@ -139,7 +139,7 @@ namespace ConstradeApi.Controllers
                 var user = await _userRepository.Get(uid);
 
                 await _subscriptionRepository.CreateSubscription(uid);
-                string token = JwtAuthentication.CreateToken(userModel.User.Email);
+                string token = JwtAuthentication.CreateToken(userModel.User.Email, userModel.User.UserId);
                 return Ok(ResponseHandler.GetApiResponse(response, new 
                 {
                     user,

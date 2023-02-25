@@ -4,7 +4,8 @@ namespace ConstradeApi.Model.MUserMessage.Repository
 {
     public interface IUserMessageRepository
     {
-        Task AddMessage(UserMessageModel userMessage);
-        Task<IEnumerable<UserMessageModel>> GetByUserChatId(int id);
+        Task<UserMessageModel> AddMessage(UserMessageModel userMessage);
+        Task<UserMessageModel?> GetMessageById(int id);
+        Task<IEnumerable<UserMessageModel>> GetMessageByUserChatId(int id, int index);
     }
 }

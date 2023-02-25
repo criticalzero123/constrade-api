@@ -39,6 +39,16 @@ namespace ConstradeApi.Model.MUserChat.Repository
             if(userChat == null) return null;
             return userChat.ToModel();
         }
+
+        public async Task<int?> GetUserChatIdByUId(int userId1, int userId2)
+        {
+            UserChat? userChat = await _context.UserChats.Where(_u => (_u.UserId1 == userId1 && _u.UserId2 == userId2) ||
+                                                          (_u.UserId1 == userId2 && _u.UserId2 == userId1)).FirstOrDefaultAsync();
+
+            if (userChat == null) return null;
+            return userChat.UserChatId;
+        }
+
         public async Task UpdateLastMessage(int chatId, string message)
         {
             UserChat? chat = await _context.UserChats.FindAsync(chatId);

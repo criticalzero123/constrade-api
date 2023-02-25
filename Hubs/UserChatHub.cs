@@ -21,32 +21,42 @@ namespace ConstradeApi.Hubs
             _userMessageRepository = chatRepo;
         }
 
-        public async Task SendMessage(int senderId, int receiverId, string receiverEmail, string message)
+        public async Task SendMessage(int senderId, int receiverId, string message)
         {
-            UserChatModel? userChat = await _userChatRepository.GetUserChatById(senderId, receiverId);
-
-            
-            int chatId = userChat == null ? await _userChatRepository.AddUserChat(senderId, receiverId, message) : 
-                                           userChat.UserChatId;
-
-            UserMessageModel _message = new UserMessageModel
+            try
             {
-                UserChatId = chatId,
-                SenderId = senderId,
-                Message = message,
-                DateSent= DateTime.UtcNow
-            };
-
-            await _userMessageRepository.AddMessage(_message);
-            await _userChatRepository.UpdateLastMessage(chatId, message);
+                UserChatModel? userChat = await _userChatRepository.GetUserChatById(senderId, receiverId);
 
 
-            var userId = Context.User.FindFirst(ClaimTypes.Name)?.Value;
-            var fromUserEmail = Context.User.FindFirst(ClaimTypes.Email)?.Value;
+                int chatId = userChat == null ? await _userChatRepository.AddUserChat(senderId, receiverId, message) :
+                                               userChat.UserChatId;
 
-            var fromUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            await Clients.User(receiverEmail).SendAsync("ReceiveMessage", message);
-            await Clients.User(fromUserId).SendAsync("ReceiveMessage", message);
+                UserMessageModel _message = new UserMessageModel
+                {
+                    UserChatId = chatId,
+                    SenderId = senderId,
+                    Message = message,
+                    DateSent = DateTime.UtcNow
+                };
+
+                //
+                var _messageNew = await _userMessageRepository.AddMessage(_message);
+                await _userChatRepository.UpdateLastMessage(chatId, message);
+
+
+
+                var fromUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                //var fromUserEmail = Context.User.FindFirst(ClaimTypes.Email)?.Value;
+                await Clients.User(receiverId.ToString()).SendAsync("ReceiveMessage", _messageNew);
+                await Clients.User(senderId.ToString()).SendAsync("ReceiveMessage", _messageNew);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
 
 
         }

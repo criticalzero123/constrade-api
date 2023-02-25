@@ -221,10 +221,12 @@ namespace ConstradeApi.Services.EntityToModel
             {
                 UserMessageId = userMessage.UserMessageId,
                 UserChatId = userMessage.UserChatId,
+                SenderId = userMessage.SenderId,
                 Message = userMessage.Message,
                 DateSent = userMessage.DateSent,
 
             };
         }
+        
     }
 }

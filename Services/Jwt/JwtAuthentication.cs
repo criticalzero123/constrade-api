@@ -23,7 +23,7 @@ namespace ConstradeApi.Services.Jwt
         /// </summary>
         /// <param name="email"></param>
         /// <returns>Token Generated</returns>
-        public static string CreateToken(string email)
+        public static string CreateToken(string email, int userId)
         {
             JwtAuthentication authentication = new JwtAuthentication();
 
@@ -32,8 +32,12 @@ namespace ConstradeApi.Services.Jwt
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, email),
-                    new Claim(ClaimTypes.NameIdentifier, email),
+                    //if you want to use email as a name identifier and this is recommended in the documentation
+                    //new Claim(JwtRegisteredClaimNames.Sub, email),
+                    //new Claim(ClaimTypes.NameIdentifier, email),
+
+                    new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                     new Claim("Id", Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

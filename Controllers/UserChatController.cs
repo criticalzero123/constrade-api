@@ -22,8 +22,8 @@ namespace ConstradeApi.Controllers
             _userMessageRepo = userMessageRepository;
         }
 
-        // api/<UserChatController/4?otherId=4&index=0
-        [HttpGet("{currentUserId}")]
+        // api/<UserChatController/messages/4?otherId=4&index=0
+        [HttpGet("messages/{currentUserId}")]
         public async Task<IActionResult> GetMessages(int currentUserId, int otherId,  int index)
         {
             try
@@ -34,6 +34,21 @@ namespace ConstradeApi.Controllers
                 IEnumerable<UserMessageModel> messages = await _userMessageRepo.GetMessageByUserChatId((int)chatId, index);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, messages));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+        // api/<UserChatController/4
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetChatListUser(int userId)
+        {
+            try
+            {
+                var messagesList = await _userChatRepo.GetUserChatListByUId(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, messagesList));
             }
             catch (Exception ex)
             {

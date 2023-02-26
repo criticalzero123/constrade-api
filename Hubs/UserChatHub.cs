@@ -25,11 +25,11 @@ namespace ConstradeApi.Hubs
         {
             try
             {
-                UserChatModel? userChat = await _userChatRepository.GetUserChatById(senderId, receiverId);
+                int? userChat = await _userChatRepository.GetUserChatIdByUId(senderId, receiverId);
 
 
                 int chatId = userChat == null ? await _userChatRepository.AddUserChat(senderId, receiverId, message) :
-                                               userChat.UserChatId;
+                                               (int)userChat;
 
                 UserMessageModel _message = new UserMessageModel
                 {
@@ -45,7 +45,7 @@ namespace ConstradeApi.Hubs
 
 
 
-                var fromUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var fromUserId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                 //var fromUserEmail = Context.User.FindFirst(ClaimTypes.Email)?.Value;
                 await Clients.User(receiverId.ToString()).SendAsync("ReceiveMessage", _messageNew);

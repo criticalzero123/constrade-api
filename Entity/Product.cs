@@ -68,7 +68,7 @@ namespace ConstradeApi.Entity
         public string Condition { get; set; } = string.Empty;
 
         [Required, StringLength(20)]
-        [Column("prefere_trade")]
+        [Column("prefer_trade")]
         public string PreferTrade { get; set; } = string.Empty;
 
         [Required, StringLength(20)]

@@ -1,5 +1,7 @@
 ﻿
 
+using ConstradeApi.Entity;
+
 namespace ConstradeApi.Model.MProduct
 {
     public class ProductModel
@@ -7,6 +9,7 @@ namespace ConstradeApi.Model.MProduct
        
         public int ProductId { get; set; }
         public int PosterUserId { get; set; }
+        public User? User { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string? ModelNumber { get; set; }

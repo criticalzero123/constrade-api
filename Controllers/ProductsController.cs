@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProduct.Repository;
 using ConstradeApi.Model.Response;
@@ -11,6 +12,7 @@ namespace ConstradeApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
@@ -21,7 +23,7 @@ namespace ConstradeApi.Controllers
         }
 
         // GET: api/<ProductController>
-        [Authorize]
+        
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -40,9 +42,23 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            try
+            {
+                var products = await _productRepository.GetProductsByUserId(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, products));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         // GET api/<ProductController>/5
         // Get api/<ProductController>/5?uid=5
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id, int? uid)
         {
@@ -63,16 +79,18 @@ namespace ConstradeApi.Controllers
         }
 
         // POST api/<ProductController>
-        [Authorize]
+        
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductAndImages productModel)
         {
             try
             {
-                ResponseType responseType = ResponseType.Success;
-                await _productRepository.Save(productModel.Product, productModel.ImageURLList);
+                ProductAddResponseType response = await _productRepository.Save(productModel.Product, productModel.ImageURLList);
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, productModel));
+                if (response == ProductAddResponseType.UserNotFound) return NotFound();
+                if (response == ProductAddResponseType.NoPostCount) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{response}"));
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, productModel));
             }catch(Exception ex)
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
@@ -80,7 +98,7 @@ namespace ConstradeApi.Controllers
         }
 
         // PUT api/<ProductController>/5
-        [Authorize]
+    
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ProductModel productModel)
         {
@@ -101,7 +119,7 @@ namespace ConstradeApi.Controllers
         }
 
         // DELETE api/<ProductController>/5
-        [Authorize]
+     
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -122,7 +140,7 @@ namespace ConstradeApi.Controllers
         }
 
         // GET api/<ProductsController>/1/comment
-        [Authorize]
+    
         [HttpGet("{productId}/comment")]
         public async Task<IActionResult> GetComments(int productId)
         {
@@ -143,7 +161,7 @@ namespace ConstradeApi.Controllers
         }
 
         // POST api/<ProductsController>/1/comment
-        [Authorize]
+     
         [HttpPost("{productId}/comment")]
         public async Task<IActionResult> AddComment(int productId, [FromBody] ProductCommentModel productCommentModel)
         {
@@ -161,7 +179,7 @@ namespace ConstradeApi.Controllers
         }
 
         //PUT api/<ProductsController/1/comment/1
-        [Authorize]
+     
         [HttpPut("{productId}/comment/{id}")]
         public async Task<IActionResult> UpdateComment(int productId, int id, [FromBody] ProductUpdateNewComment newMessage)
         {
@@ -182,7 +200,7 @@ namespace ConstradeApi.Controllers
         }
 
         // DELETE api/<ProductsController>/1/comment/5
-        [Authorize]
+        
         [HttpDelete("{productId}/comment/{id}")]
         public async Task<IActionResult> DeleleComment( int id)
         {

@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -30,15 +31,30 @@ namespace ConstradeApi.Model.MProduct.Repository
         }
 
         /// <summary>
+        /// GET: Getting all the product posted by user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<IEnumerable<ProductModel>> GetProductsByUserId(int userId)
+        {
+            IEnumerable<ProductModel> products = await _context.Products.Where(_p => _p.PosterUserId == userId)
+                                                                        .Select(_p => _p.ToModel())
+                                                                        .ToListAsync();
+
+            return products;
+        }
+
+        /// <summary>
         /// POST for product
         /// </summary>
         /// <param name="product"></param>
-        public async Task Save(ProductModel product, IEnumerable<string> imageList)
+        public async Task<ProductAddResponseType> Save(ProductModel product, IEnumerable<string> imageList)
         {
             User? user = await _context.Users.FindAsync(product.PosterUserId);
-            if (user == null) return;
+            if (user == null) return ProductAddResponseType.UserNotFound;
             //Prevent the user that less than 1 count post to post a product
-            if (user.CountPost < 1) return;
+            if (user.CountPost < 1) return ProductAddResponseType.NoPostCount;
 
             user.CountPost -= 1;
             await _context.SaveChangesAsync();
@@ -79,10 +95,12 @@ namespace ConstradeApi.Model.MProduct.Repository
             }
 
             _context.SaveChanges();
+
+            return ProductAddResponseType.Success;
         }
 
         /// <summary>
-        /// GET for specific product and putting a view if the user is logged in
+        /// GET for specific product and add the product view count if the user is logged in
         /// </summary>
         /// <param name="id"></param>
         /// <param name="userId"></param>
@@ -239,6 +257,8 @@ namespace ConstradeApi.Model.MProduct.Repository
 
             return true;
         }
+
+     
         //End of Product Comment
     }
 }

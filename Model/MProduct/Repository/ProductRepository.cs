@@ -31,11 +31,10 @@ namespace ConstradeApi.Model.MProduct.Repository
         }
 
         /// <summary>
-        /// GET: Getting all the product posted by user
+        ///  GET: Getting all the product posted by user
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <returns>List of Products</returns>
         public async Task<IEnumerable<ProductModel>> GetProductsByUserId(int userId)
         {
             IEnumerable<ProductModel> products = await _context.Products.Where(_p => _p.PosterUserId == userId)

@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Model.MWallet;
 using ConstradeApi.Model.MWallet.Repository;
 using ConstradeApi.Model.Response;
@@ -9,6 +10,7 @@ namespace ConstradeApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WalletController : ControllerBase
     {
         private readonly IWalletRepository _walletRepository;
@@ -19,7 +21,6 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/4
-        [Authorize]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetWallet(int userId)
         {
@@ -37,8 +38,23 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpGet("user/all")]
+        public async Task<IActionResult> GetAllUserWalletDetails()
+        {
+            try
+            {
+                var data = await _walletRepository.GetAllWalletUserDetails();
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+                
+            }
+        }
+
         // api/wallet/id/4
-        [Authorize]
         [HttpGet("id/{walletId}")]
         public async Task<IActionResult> GetWalletById(int walletId)
         {
@@ -57,16 +73,20 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/send
-        [Authorize]
         [HttpPost("send")]
         public async Task<IActionResult> SendMoney([FromBody] SendMoneyTransactionModel info)
         {
             try
             {
-                bool _send = await _walletRepository.SendMoneyUser(info);
-                if (!_send) return BadRequest("User Not found or Balance is insuffecient");
+                WalletResponseType _send = await _walletRepository.SendMoneyUser(info);
 
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, _send));
+                if (_send == WalletResponseType.UserNotFound) return Ok(ResponseHandler.GetApiResponse(ResponseType.NotFound, $"{_send}"));
+                if (_send == WalletResponseType.Error) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{_send}"));
+                if (_send == WalletResponseType.NotEnough) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{_send}"));
+
+
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, $"{_send}"));
             }
             catch (Exception ex)
             {
@@ -75,7 +95,6 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/topup
-        [Authorize]
         [HttpPost("topup")]
         public async Task<IActionResult> TopUpMoney([FromBody] TopUpTransactionModel info)
         {
@@ -94,7 +113,6 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions
-        [Authorize]
         [HttpGet("transactions/all")]
         public async  Task<IActionResult> GetAllTransactions()
         {
@@ -110,8 +128,23 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        // api/wallet/transactions/all/4
+        [HttpGet("transactions/all/{userId}")]
+        public async Task<IActionResult> GetWalletAllTransaction(int userId)
+        {
+            try
+            {
+                var data = await _walletRepository.GetAllTransactionWallet(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         // api/wallet/transactions/receive/4
-        [Authorize]
         [HttpGet("transactions/receive/{walletId}")]
         public async Task<IActionResult> GetReceiveTransaction(int walletId) 
         {
@@ -130,7 +163,6 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/send/4
-        [Authorize]
         [HttpGet("transactions/send/{walletId}")]
         public async Task<IActionResult> GetSendTransaction(int walletId)
         {
@@ -148,7 +180,6 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet("transactions/id/{id}")]
         public async Task<IActionResult> GetTransactionByWalletId(int id)
         {
@@ -167,7 +198,6 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/topup/wid/4
-        [Authorize]
         [HttpGet("transactions/topup/wid/{walletId}")]
         public async Task<IActionResult> GetTopUpTransactionByWalletId(int walletId)
         {
@@ -186,7 +216,6 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/topup/4
-        [Authorize]
         [HttpGet("transactions/topup/{id}")]
         public async Task<IActionResult> GetTopUpTransactionById(int id)
         {
@@ -205,7 +234,6 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/topup
-        [Authorize]
         [HttpGet("transactions/topup")]
         public async Task<IActionResult> GetAllTopUpTransaction()
         {

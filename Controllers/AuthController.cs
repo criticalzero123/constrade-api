@@ -5,6 +5,7 @@ using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
 using ConstradeApi.Model.MUserApiKey.Repository;
+using ConstradeApi.Model.MWallet.Repository;
 using ConstradeApi.Model.Response;
 using ConstradeApi.Services.Jwt;
 using Microsoft.AspNetCore.Authorization;
@@ -21,14 +22,18 @@ namespace ConstradeApi.Controllers
         private readonly IApiKeyRepository _apiKeyRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IOtpRepository _otpRepository;
+        private readonly IWalletRepository _walletRepository;
         private readonly ILogger<AuthController> _logger; 
 
-        public AuthController(IUserRepository userRepository, IApiKeyRepository userAuthorize, ISubscriptionRepository subscription, IOtpRepository otpRepository, ILogger<AuthController> logger)
+        public AuthController(IUserRepository userRepository, IApiKeyRepository userAuthorize, 
+                              ISubscriptionRepository subscription, IOtpRepository otpRepository, 
+                              IWalletRepository walletRepository,ILogger<AuthController> logger)
         {
             _userRepository = userRepository;
             _apiKeyRepository = userAuthorize;
             _subscriptionRepository = subscription;
             _otpRepository = otpRepository;
+            _walletRepository = walletRepository;
             _logger = logger;
         }
 
@@ -134,6 +139,7 @@ namespace ConstradeApi.Controllers
                 ResponseType response = ResponseType.Success;
                 int uid = await _userRepository.Save(userModel);
                 int apiId = await _apiKeyRepository.CreateApiKeyAsync(uid);
+                await _walletRepository.CreateWalletUser(uid);
 
                 var api = await _apiKeyRepository.GetApiKeyByIdAsync(apiId);
                 var user = await _userRepository.Get(uid);

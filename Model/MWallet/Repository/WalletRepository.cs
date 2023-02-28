@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,9 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <returns>Null if the userid not exist, WalletModel if the user found</returns>
         public async Task<WalletModel?> GetWalletUser(int uid)
         {
-            WalletModel? _wallet = await _context.UserWallet.Where(_u => _u.UserId.Equals(uid)).Select(_w => _w.ToModel()).FirstOrDefaultAsync();
+            WalletModel? _wallet = await _context.UserWallet.Where(_u => _u.UserId.Equals(uid))
+                                                            .Select(_w => _w.ToModel())
+                                                            .FirstOrDefaultAsync();
 
             return _wallet;
         }
@@ -59,15 +62,15 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// </summary>
         /// <param name="info"></param>
         /// <returns>true if the send transaction success otherwise false</returns>
-        public async Task<bool> SendMoneyUser(SendMoneyTransactionModel info)
+        public async Task<WalletResponseType> SendMoneyUser(SendMoneyTransactionModel info)
         {
-            if (info.SenderWalletId == info.ReceiverWalletId) return false;
+            if (info.SenderWalletId == info.ReceiverWalletId) return WalletResponseType.Error;
 
             Wallet? _receiver = await _context.UserWallet.FindAsync(info.ReceiverWalletId);
             Wallet? _sender = await _context.UserWallet.FindAsync(info.SenderWalletId);
 
-            if (_receiver == null || _sender == null) return false;
-            if (_sender.Balance < info.Amount) return false;
+            if (_receiver == null || _sender == null) return WalletResponseType.UserNotFound;
+            if (_sender.Balance < info.Amount) return WalletResponseType.NotEnough;
 
             //Deducting the balance of the sender
             _sender.Balance -= info.Amount;
@@ -87,7 +90,7 @@ namespace ConstradeApi.Model.MWallet.Repository
             await _context.SendMoneyTransactions.AddAsync(_transaction);
             await _context.SaveChangesAsync();
 
-            return true;
+            return WalletResponseType.Success;
         }
         /// <summary>
         /// GET: Getting the receive transactions in wallet
@@ -192,5 +195,26 @@ namespace ConstradeApi.Model.MWallet.Repository
 
             return _transaction.ToModel();
         }
+
+        public async Task<IEnumerable<SendMoneyTransactionModel>> GetAllTransactionWallet(int userId)
+        {
+            IEnumerable<SendMoneyTransactionModel> _data = await _context.SendMoneyTransactions.Where(_t => _t.ReceiverWalletId == userId || 
+                                                                                                      _t.SenderWalletId == userId)
+                                                                                         .Select(_t => _t.ToModel()).ToListAsync();
+
+            return _data;
+        }
+
+        public async Task<IEnumerable<WalletUserDetailModel>> GetAllWalletUserDetails()
+        {
+            IEnumerable<WalletUserDetailModel> data = await _context.UserWallet.Select(_w => new WalletUserDetailModel
+            {
+                WalletId = _w.WalletId,
+                User = _w.User,
+            }).ToListAsync();
+
+            return data;
+        }
+
     }
 }

@@ -67,7 +67,6 @@ namespace ConstradeApi
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs")))
                         {
-                            ;
                             context.Token = accessToken;
                         }
 
@@ -81,7 +80,6 @@ namespace ConstradeApi
                 {
                     
                     NameClaimType = ClaimTypes.Name,
-                    RoleClaimType = ClaimTypes.Role,
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),

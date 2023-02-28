@@ -68,14 +68,16 @@ namespace ConstradeApi.Model.MUserChat.Repository
 
             return chatList;
         }
-        public async Task UpdateLastMessage(int chatId, string message)
+        public async Task<UserChatModel> UpdateLastMessage(int chatId, string message)
         {
             UserChat? chat = await _context.UserChats.FindAsync(chatId);
-
-            chat.LastMessage = message;
-            chat.LastMessageDate = DateTime.UtcNow;
+            
+            chat!.LastMessage = message;
+            chat!.LastMessageDate = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+
+            return chat.ToModel();
         }
     }
 }

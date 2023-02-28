@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConstradeApi.Model.MWallet.Repository
@@ -7,11 +8,12 @@ namespace ConstradeApi.Model.MWallet.Repository
     {
          Task CreateWalletUser(int uid);
          Task<WalletModel?> GetWalletUser(int uid);
+         Task<IEnumerable<WalletUserDetailModel>> GetAllWalletUserDetails();
 
          Task<WalletModel?> GetWalletById(int id);
 
-         Task<bool> SendMoneyUser(SendMoneyTransactionModel info);
-
+         Task<WalletResponseType> SendMoneyUser(SendMoneyTransactionModel info);
+         Task<IEnumerable<SendMoneyTransactionModel>> GetAllTransactionWallet(int userId);
          Task<IEnumerable<SendMoneyTransactionModel>> GetReceiveMoneyTransaction(int walletId);
 
          Task<IEnumerable<SendMoneyTransactionModel>> GetSendMoneyTransaction(int walletId);

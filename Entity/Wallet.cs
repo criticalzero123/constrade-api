@@ -6,7 +6,7 @@ namespace ConstradeApi.Entity
     [Table("user_wallet")]
     public class Wallet
     {
-        [Key, Required]
+        [Key]
         [Column("wallet_id")]
         public int WalletId { get; set; }
 

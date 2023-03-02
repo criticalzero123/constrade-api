@@ -19,7 +19,7 @@ namespace ConstradeApi.Model.MUserApiKey.Repository
             {
                Token = Guid.NewGuid().ToString(),
                UserId = userId,
-               DateCreated= DateTime.UtcNow,
+               DateCreated= DateTime.Now,
                IsActive = true,
             };
 

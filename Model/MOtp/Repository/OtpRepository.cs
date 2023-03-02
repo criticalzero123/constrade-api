@@ -34,7 +34,7 @@ namespace ConstradeApi.Model.MOtp.Repository
                 {
                     SendTo = userValue,
                     OTP = _otpValue,
-                    ExpirationTime = DateTime.UtcNow.AddMinutes(5)
+                    ExpirationTime = DateTime.Now.AddMinutes(5)
                 };
 
                 await _dataContext.Otp.AddAsync(otp);
@@ -56,12 +56,12 @@ namespace ConstradeApi.Model.MOtp.Repository
             OneTimePassword? _otp = await _dataContext.Otp.FirstOrDefaultAsync(_u => _u.SendTo.Equals(userValue));
 
             if (_otp == null) return OtpResponseType.NotFound;
-            if (DateTime.UtcNow < _otp.ExpirationTime) return OtpResponseType.Active;
+            if (DateTime.Now < _otp.ExpirationTime) return OtpResponseType.Active;
 
             string _otpValue = OtpService.GenerateOtp();
 
             _otp.OTP = _otpValue;
-            _otp.ExpirationTime = DateTime.UtcNow.AddMinutes(5);
+            _otp.ExpirationTime = DateTime.Now.AddMinutes(5);
 
             await _dataContext.SaveChangesAsync();
             await EmailService.SendOtpEmail(_otp.SendTo, _otp.OTP);
@@ -80,7 +80,7 @@ namespace ConstradeApi.Model.MOtp.Repository
             OneTimePassword? _otp = await _dataContext.Otp.FirstOrDefaultAsync(_u => _u.SendTo.Equals(userValue));
 
             if (_otp == null) return OtpResponseType.NotFound;
-            if(DateTime.UtcNow > _otp.ExpirationTime) return OtpResponseType.Expired;
+            if(DateTime.Now > _otp.ExpirationTime) return OtpResponseType.Expired;
             if (!_otp.OTP.Equals(code)) return OtpResponseType.WrongCode;
 
             _dataContext.Otp.Remove(_otp);

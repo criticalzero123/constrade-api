@@ -108,6 +108,7 @@ namespace ConstradeApi
             app.UseEndpoints(e =>
             {
                 e.MapHub<UserChatHub>("/hubs/userChatHub");
+                e.MapHub<ProductChatHub>("/hubs/productChatHub");
             });
 
             app.MapControllers();

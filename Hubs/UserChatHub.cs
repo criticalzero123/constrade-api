@@ -43,8 +43,7 @@ namespace ConstradeApi.Hubs
                 var _messageNew = await _userMessageRepository.AddMessage(_message);
                 UserChatModel _updated = await _userChatRepository.UpdateLastMessage(chatId, message);
 
-                var fromUserId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+                //var fromUserId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 //var fromUserEmail = Context.User.FindFirst(ClaimTypes.Email)?.Value;
 
                 await Clients.User(receiverId.ToString()).SendAsync("ReceiveMessage", _messageNew);

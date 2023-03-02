@@ -20,7 +20,7 @@ namespace ConstradeApi.Model.MUserChat.Repository
                 UserId1 = userId1,
                 UserId2 = userId2,
                 LastMessage = message,
-                LastMessageDate = DateTime.UtcNow
+                LastMessageDate = DateTime.Now
             };
 
             await _context.UserChats.AddAsync(chat);
@@ -73,7 +73,7 @@ namespace ConstradeApi.Model.MUserChat.Repository
             UserChat? chat = await _context.UserChats.FindAsync(chatId);
             
             chat!.LastMessage = message;
-            chat!.LastMessageDate = DateTime.UtcNow;
+            chat!.LastMessageDate = DateTime.Now;
 
             await _context.SaveChangesAsync();
 

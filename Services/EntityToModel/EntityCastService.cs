@@ -1,6 +1,8 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MOtp;
 using ConstradeApi.Model.MProduct;
+using ConstradeApi.Model.MProductChat;
+using ConstradeApi.Model.MProductMessage;
 using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Model.MUser;
@@ -225,6 +227,39 @@ namespace ConstradeApi.Services.EntityToModel
                 Message = userMessage.Message,
                 DateSent = userMessage.DateSent,
 
+            };
+        }
+        public static ImageListModel ToModel(this ImageList imageList)
+        {
+            return new ImageListModel()
+            {
+                ImageId = imageList.ImageId,
+                ProductId = imageList.ProductId,
+                ImageURL = imageList.ImageURL,
+            };
+        }
+        public static ProductChatModel ToModel(this ProductChat productChat)
+        {
+            return new ProductChatModel()
+            {
+                ProductChatId = productChat.ProductChatId,
+                UserId1 = productChat.UserId1,
+                UserId2= productChat.UserId2,
+                ProductId = productChat.ProductId,
+                LastMessage = productChat.LastMessage,
+                LastMessageDate = productChat.LastMessageDate,
+                ChatCreated = productChat.ChatCreated,
+            };
+        }
+        public static ProductMessageModel ToModel(this ProductMessage productMessage)
+        {
+            return new ProductMessageModel()
+            {
+                ProductMessageId= productMessage.ProductMessageId,
+                ProductChatId = productMessage.ProductChatId,
+                SenderId = productMessage.SenderId,
+                Message = productMessage.Message,
+                DateSent = productMessage.DateSent,
             };
         }
         

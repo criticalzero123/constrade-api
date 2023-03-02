@@ -104,10 +104,16 @@ namespace ConstradeApi.Model.MProduct.Repository
         /// <param name="id"></param>
         /// <param name="userId"></param>
         /// <returns>ProductModel</returns>
-        public async Task<ProductModel?> Get(int id, int? userId)
+        public async Task<ProductFullDetails?> Get(int id, int? userId)
         {
             var _data = await _context.Products.Where(p => p.ProductId == id)
-                .Select(product => product.ToModel()).FirstOrDefaultAsync();
+                .Select(product => new ProductFullDetails
+                {
+                    User = product.User.ToModel(),
+                    Product = product.ToModel(),
+                    Person = product.User.Person.ToModel(),
+                    Images = _context.Images.Where(_i => _i.ProductId == product.ProductId).Select(_i => _i.ToModel()).ToList()
+                }).FirstOrDefaultAsync();
 
             if (_data == null) return null;
             if (!userId.HasValue) return _data;
@@ -116,13 +122,13 @@ namespace ConstradeApi.Model.MProduct.Repository
             User? userExist = await _context.Users.FindAsync(userId);
             if (userExist == null) return _data;
 
-            List<ProductView> list = await _context.ProductViews.Where(_p => _p.ProductId.Equals(_data.ProductId)).ToListAsync();
+            List<ProductView> list = await _context.ProductViews.Where(_p => _p.ProductId.Equals(_data.Product.ProductId)).ToListAsync();
             bool exist = list.Any(_p => _p.UserId == userId);
             if (!exist)
             {
                 _context.ProductViews.Add(new ProductView()
                 {
-                    ProductId = _data.ProductId,
+                    ProductId = _data.Product.ProductId,
                     UserId = (int)userId
                 });
 

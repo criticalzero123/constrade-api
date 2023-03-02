@@ -17,6 +17,8 @@ using ConstradeApi.Model.MUserMessage.Repository;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using ConstradeApi.Model.MProductChat.Repository;
+using ConstradeApi.Model.MProductMessage.Repository;
 
 namespace ConstradeApi
 {
@@ -45,6 +47,8 @@ namespace ConstradeApi
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
             builder.Services.AddTransient<IUserChatRepository, UserChatRepository>();
             builder.Services.AddTransient<IUserMessageRepository, UserMessageRepository>();
+            builder.Services.AddTransient<IProductChatRepository, ProductChatRepository>();
+            builder.Services.AddTransient<IProductMessageRepository, ProductMessageRepository>();
 
 
             builder.Services.AddControllers();

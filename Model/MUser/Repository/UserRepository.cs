@@ -359,7 +359,6 @@ namespace ConstradeApi.Model.MUser.Repository
                 Person = data.ToModel()
             };
         }
-
         public async Task<UserAndPersonModel?> UpdatePersonInfo(UserAndPersonModel info)
         {
             Person? person = await _context.Persons.FindAsync(info.Person.PersonId);
@@ -383,7 +382,6 @@ namespace ConstradeApi.Model.MUser.Repository
                 Person = person.ToModel()
             }; 
         }
-
         public async Task<bool> IsFollowUser(int otherUserId, int currentUserId)
         {
             Follow? flag = await _context.UserFollows.Where(_f => _f.FollowByUserId == otherUserId && _f.FollowedByUserId == currentUserId).FirstOrDefaultAsync();
@@ -391,6 +389,17 @@ namespace ConstradeApi.Model.MUser.Repository
             if (flag == null) return false;
 
             return true;
+        }
+        public async Task<bool> ChangePasswordByEmail(ChangePasswordModel model)
+        {
+            User? user = await _context.Users.Where(_u => _u.Email.Equals(model.Email)).FirstOrDefaultAsync();
+
+            if(user == null) return false;
+
+            user.Password = model.NewPassword;
+            await _context.SaveChangesAsync();
+
+            return true; 
         }
     }
 }

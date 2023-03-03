@@ -9,6 +9,7 @@ using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUserApiKey;
 using ConstradeApi.Model.MUserChat;
 using ConstradeApi.Model.MUserMessage;
+using ConstradeApi.Model.MUserReport;
 using ConstradeApi.Model.MWallet;
 
 namespace ConstradeApi.Services.EntityToModel
@@ -262,6 +263,17 @@ namespace ConstradeApi.Services.EntityToModel
                 DateSent = productMessage.DateSent,
             };
         }
-        
+        public static UserReportModel ToModel(this UserReport userReport)
+        {
+            return new UserReportModel()
+            {
+                UserReportId = userReport.UserReportId,
+                ReportBy = userReport.ReportBy,
+                Reported = userReport.Reported,
+                ReportStatus= userReport.ReportStatus,
+                Description = userReport.Description,
+                DateSubmitted= userReport.DateSubmitted,
+            };
+        }
     }
 }

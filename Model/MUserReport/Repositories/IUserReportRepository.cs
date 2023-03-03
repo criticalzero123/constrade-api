@@ -2,5 +2,6 @@
 {
     public interface IUserReportRepository
     {
+        Task<bool> ReportUser(UserReportModel userReportModel);
     }
 }

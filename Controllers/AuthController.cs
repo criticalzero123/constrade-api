@@ -218,5 +218,23 @@ namespace ConstradeApi.Controllers
                 throw;
             }
         }
+
+        [AllowAnonymous]
+        [HttpPut("change/password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel info)
+        {
+            try
+            {
+                bool flag = await _userRepository.ChangePasswordByEmail(info);
+
+                if(flag == false) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, flag));
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
     }
 }

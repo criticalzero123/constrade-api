@@ -26,5 +26,6 @@
         Task<UserAndPersonModel?> LoginByGoogle(string email);
         Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info);
         Task<UserAndPersonModel?> UpdatePersonInfo(UserAndPersonModel info);
+        Task<bool> ChangePasswordByEmail(ChangePasswordModel model);
     }
 }

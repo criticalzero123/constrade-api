@@ -61,7 +61,7 @@ namespace ConstradeApi.Controllers
 
                 if (!flag) return BadRequest("Something Went Wrong");
 
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, transactionModel));
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }
             catch (Exception ex)
             {

@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 
 namespace ConstradeApi.Model.MTransaction.Repository
 {
-    public class TrsanctionRepository : ITransactionRepository
+    public class TransactionRepository : ITransactionRepository
     {
         private readonly DataContext _context;
 
-        public TrsanctionRepository(DataContext dataContext)
+        public TransactionRepository(DataContext dataContext)
         {
             _context = dataContext;
         }

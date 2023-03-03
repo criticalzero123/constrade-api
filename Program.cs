@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using ConstradeApi.Model.MProductChat.Repository;
 using ConstradeApi.Model.MProductMessage.Repository;
+using ConstradeApi.Model.MUserReport.Repositories;
 
 namespace ConstradeApi
 {
@@ -39,13 +40,14 @@ namespace ConstradeApi
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
-            builder.Services.AddScoped<ITransactionRepository, TrsanctionRepository>();
+            builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
 
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
             builder.Services.AddTransient<IUserChatRepository, UserChatRepository>();
+            builder.Services.AddTransient<IUserReportRepository,UserReportRepository>();
             builder.Services.AddTransient<IUserMessageRepository, UserMessageRepository>();
             builder.Services.AddTransient<IProductChatRepository, ProductChatRepository>();
             builder.Services.AddTransient<IProductMessageRepository, ProductMessageRepository>();

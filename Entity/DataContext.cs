@@ -28,5 +28,6 @@ namespace ConstradeApi.Entity
         public DbSet<UserMessage> UserMessage { get; set; }
         public DbSet<ProductChat> ProductChat { get; set; }
         public DbSet<ProductMessage> ProductMessages { get; set; }
+        public DbSet<UserReport> UserReport { get; set; }
     }
 }

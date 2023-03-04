@@ -1,9 +1,12 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
 using ConstradeApi.Model.MUserApiKey.Repository;
+using ConstradeApi.Model.MUserReport;
+using ConstradeApi.Model.MUserReport.Repositories;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +20,12 @@ namespace ConstradeApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly ISubscriptionRepository _subscriptionRepository;
-        private readonly IApiKeyRepository _sessionRepository; 
-        public UsersController(IUserRepository userRepository, ISubscriptionRepository subscriptionRepository, IApiKeyRepository sessionRepository)
+        private readonly IUserReportRepository _userReportRepository;
+
+        public UsersController(IUserRepository userRepository, IUserReportRepository userReport)
         {
             _userRepository = userRepository;
-            _subscriptionRepository = subscriptionRepository;
-            _sessionRepository = sessionRepository;
+            _userReportRepository = userReport;
         }
 
         // GET: api/<UserController>
@@ -144,6 +146,21 @@ namespace ConstradeApi.Controllers
                 var flag = await _userRepository.UpdatePersonInfo(info);
 
                 if (flag == null) return NotFound();
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPost("/report")]
+        public async Task<IActionResult> ReportUser(UserReportModel model)
+        {
+            try
+            {
+                bool flag = await _userReportRepository.ReportUser(model);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }

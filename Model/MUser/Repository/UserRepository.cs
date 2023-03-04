@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MProduct;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -121,7 +122,7 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns></returns>
         public async Task<IEnumerable<FavoriteModel>> GetFavorite(int userId)
         {
-            List<FavoriteModel> favoriteModels = await _context.UserFavorites
+            List<FavoriteModel> favoriteModels = await _context.ProductFavorite
                 .Where(_f => _f.UserId == userId)
                 .Select(_f => _f.ToModel())
                 .ToListAsync();
@@ -148,7 +149,7 @@ namespace ConstradeApi.Model.MUser.Repository
             favorites.UserId = userId;
             favorites.Date = DateTime.Now;
 
-            await _context.UserFavorites.AddAsync(favorites);
+            await _context.ProductFavorite.AddAsync(favorites);
             await _context.SaveChangesAsync();
 
             return true;
@@ -161,7 +162,7 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns></returns>
         public async Task<bool> DeleteFavorite(int id)
         {
-            Favorites? favorites = await _context.UserFavorites.FindAsync(id);
+            Favorites? favorites = await _context.ProductFavorite.FindAsync(id);
             if (favorites == null) return false;
 
             Product? product = await _context.Products.FindAsync(favorites.ProductId);
@@ -170,7 +171,7 @@ namespace ConstradeApi.Model.MUser.Repository
             product.CountFavorite -= 1;
             await _context.SaveChangesAsync();
 
-            _context.UserFavorites.Remove(favorites);
+            _context.ProductFavorite.Remove(favorites);
             await _context.SaveChangesAsync();
 
 

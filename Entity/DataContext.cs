@@ -12,7 +12,7 @@ namespace ConstradeApi.Entity
         public DbSet<Product> Products { get; set; }
         public DbSet<ImageList> Images { get; set; }
         public DbSet<ProductComment > ProductComments { get; set; }
-        public DbSet<Favorites> UserFavorites { get; set; }
+        public DbSet<Favorites> ProductFavorite { get; set; }
         public DbSet<Follow> UserFollows { get; set; }
         public DbSet<ProductView> ProductViews { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
@@ -29,5 +29,6 @@ namespace ConstradeApi.Entity
         public DbSet<ProductChat> ProductChat { get; set; }
         public DbSet<ProductMessage> ProductMessages { get; set; }
         public DbSet<UserReport> UserReport { get; set; }
+        public DbSet<ProductReport> ProductReport { get; set; }
     }
 }

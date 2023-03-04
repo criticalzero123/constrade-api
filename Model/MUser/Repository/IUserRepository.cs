@@ -1,4 +1,6 @@
-﻿namespace ConstradeApi.Model.MUser.Repository
+﻿using ConstradeApi.Model.MProduct;
+
+namespace ConstradeApi.Model.MUser.Repository
 {
     public interface IUserRepository
     {

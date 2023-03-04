@@ -2,6 +2,9 @@
 using ConstradeApi.Enums;
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProduct.Repository;
+using ConstradeApi.Model.MProductReport;
+using ConstradeApi.Model.MProductReport.Repository;
+using ConstradeApi.Model.MUserReport;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +19,12 @@ namespace ConstradeApi.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
+        private readonly IProductReportRepository _productReportRepository;
 
-        public ProductsController(IProductRepository productRepository)
+        public ProductsController(IProductRepository productRepository,IProductReportRepository productReport)
         {
             _productRepository = productRepository;
+            _productReportRepository = productReport;
         }
 
         // GET: api/<ProductController>
@@ -119,7 +124,6 @@ namespace ConstradeApi.Controllers
         }
 
         // DELETE api/<ProductController>/5
-     
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -130,7 +134,7 @@ namespace ConstradeApi.Controllers
 
                 if (!_result) return NotFound(); 
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, id));
+                return Ok(ResponseHandler.GetApiResponse(responseType, _result));
             }
             catch (Exception ex)
             {
@@ -139,8 +143,52 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpPost("favorite")]
+        public async Task<IActionResult> AddFavorite([FromBody] FavoriteModel info)
+        {
+            try
+            {
+                bool flag = await _productRepository.AddFavoriteProduct(info);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpDelete("favorite/{id}")]
+        public async Task<IActionResult> DeleteFavorite(int id)
+        {
+            try
+            {
+                bool flag = await _productRepository.DeleteFavoriteProduct(id);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("favorite/{userId}")]
+        public async Task<IActionResult> GetFavorites(int userId)
+        {
+            try
+            {
+                var favoriteList = await _productRepository.GetFavoriteUser(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, favoriteList));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         // GET api/<ProductsController>/1/comment
-    
         [HttpGet("{productId}/comment")]
         public async Task<IActionResult> GetComments(int productId)
         {
@@ -161,7 +209,6 @@ namespace ConstradeApi.Controllers
         }
 
         // POST api/<ProductsController>/1/comment
-     
         [HttpPost("{productId}/comment")]
         public async Task<IActionResult> AddComment(int productId, [FromBody] ProductCommentModel productCommentModel)
         {
@@ -179,7 +226,6 @@ namespace ConstradeApi.Controllers
         }
 
         //PUT api/<ProductsController/1/comment/1
-     
         [HttpPut("{productId}/comment/{id}")]
         public async Task<IActionResult> UpdateComment(int productId, int id, [FromBody] ProductUpdateNewComment newMessage)
         {
@@ -200,7 +246,6 @@ namespace ConstradeApi.Controllers
         }
 
         // DELETE api/<ProductsController>/1/comment/5
-        
         [HttpDelete("{productId}/comment/{id}")]
         public async Task<IActionResult> DeleleComment( int id)
         {
@@ -214,6 +259,22 @@ namespace ConstradeApi.Controllers
                 if(!_result) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, id));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        // POST api/<ProductsController>/report
+        [HttpPost("/report")]
+        public async Task<IActionResult> ReportUser(ProductReportModel model)
+        {
+            try
+            {
+                bool flag = await _productReportRepository.ReportProduct(model);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }
             catch (Exception ex)
             {

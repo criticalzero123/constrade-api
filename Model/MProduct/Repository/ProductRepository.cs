@@ -262,8 +262,64 @@ namespace ConstradeApi.Model.MProduct.Repository
 
             return true;
         }
-
-     
         //End of Product Comment
+
+        public async Task<bool> AddFavoriteProduct(FavoriteModel info)
+        {
+            Favorites? _info = await _context.ProductFavorite.Where(_f => _f.UserId == info.UserId &&
+                                                                      _f.ProductId == info.ProductId)
+                                                        .FirstOrDefaultAsync();
+
+            if(_info == null)
+            {
+                Favorites favorite = new Favorites
+                {
+                    ProductId = info.ProductId,
+                    UserId = info.UserId,
+                    Date = DateTime.Now,
+                };
+
+                await _context.ProductFavorite.AddAsync(favorite);
+            } 
+            else
+            {
+                _context.ProductFavorite.Remove(_info);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return true;
+
+        }
+
+        public async Task<bool> DeleteFavoriteProduct(int id)
+        {
+            Favorites? favorite = await _context.ProductFavorite.FindAsync(id);
+
+            if (favorite == null) return false;
+
+            _context.ProductFavorite.Remove(favorite);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+
+        }
+
+        public async Task<IEnumerable<FavoriteModel>> GetFavoriteUser(int userId)
+        {
+            IEnumerable<FavoriteModel> favorites = await _context.ProductFavorite.Where(_u => _u.UserId == userId)
+                                                                                .Select(_f => new FavoriteModel
+                                                                                {
+                                                                                    FavoriteId = _f.FavoriteId,
+                                                                                    ProductId = _f.ProductId,
+                                                                                    Product = _f.Product,
+                                                                                    UserId = _f.UserId,
+                                                                                    Date = _f.Date
+                                                                                }).ToListAsync();
+
+            return favorites;
+        }
+
     }
 }

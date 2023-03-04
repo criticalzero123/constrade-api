@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,11 +54,21 @@ namespace ConstradeApi.Model.MSubcription.Repository
         /// </summary>
         /// <param name="uid"></param>
         /// <returns>true if success otherwise false</returns>
-        public async Task<bool> SubscribePremium(int uid)
+        public async Task<SubscriptionResponseType> SubscribePremium(int uid)
         {
-            Subscription? sub = await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).FirstOrDefaultAsync();
-            if (sub == null) return false;
-            if (sub.SubscriptionType.Equals("premium")) return false;
+            User? _user = await _context.Users.FindAsync(uid);
+
+            if (_user == null) return SubscriptionResponseType.UserNotFound;
+            if (!_user.UserType.Equals("verified")) return SubscriptionResponseType.NotFullyVerified;
+
+            Subscription sub = await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).FirstAsync();
+            //already a premium
+            if (sub.SubscriptionType.Equals("premium")) return SubscriptionResponseType.AlreadyPremium;
+
+            Wallet walletUser = _context.UserWallet.Where(_w => _w.UserId == sub.UserId).First();
+
+            //not enough balance
+            if (walletUser.Balance <= 100) return SubscriptionResponseType.NotEnoughBalance;
 
             DateTime datetime = DateTime.Now;
             DateTime expiredDateTime = datetime.AddDays(30);
@@ -69,7 +80,6 @@ namespace ConstradeApi.Model.MSubcription.Repository
             sub.DateStart = datetime;
             sub.DateEnd = expiredDateTime;
             sub.Amount = amount;
-            _context.SaveChanges();
 
             SubscriptionHistory subH = await _context.SubscriptionsHistory.Where(_sh => _sh.SubscriptionId.Equals(sub.SubscriptionId)).FirstAsync();
             subH.DateUpdate = datetime;
@@ -77,9 +87,13 @@ namespace ConstradeApi.Model.MSubcription.Repository
             subH.NewDateEnd = expiredDateTime;
             subH.NewAmount = amount;
             subH.NewSubscriptionType = newSubscription;
-            _context.SaveChanges();
 
-            return true;
+            walletUser.Balance -= amount;
+
+            _user.UserType = newSubscription;
+
+            await _context.SaveChangesAsync();
+            return SubscriptionResponseType.Success;
         }
 
         /// <summary>
@@ -89,8 +103,7 @@ namespace ConstradeApi.Model.MSubcription.Repository
         /// <returns>false if the user is already free otherwise true</returns>
         public async Task<bool> CancelPremium(int uid)
         {
-            Subscription? sub = await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).FirstOrDefaultAsync();
-            if (sub == null) return false;
+            Subscription sub = await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).FirstAsync();
             if (sub.SubscriptionType.Equals("free")) return false;
 
             DateTime datetime = DateTime.Now;

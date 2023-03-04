@@ -18,7 +18,7 @@ namespace ConstradeApi.Model.MProductReport.Repository
                 ProductReported = info.ProductReported,
                 Title = info.Title,
                 Description = info.Description,
-                DateSubmitted = DateTime.Now
+                DateSubmitted = info.DateSubmitted
             };
 
             await _context.ProductReport.AddAsync(report);

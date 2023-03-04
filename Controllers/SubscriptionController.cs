@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MSubcription.Repository;
 using ConstradeApi.Model.Response;
@@ -10,6 +11,7 @@ namespace ConstradeApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SubscriptionController : ControllerBase
     {
         private readonly ISubscriptionRepository _subscriptionRepository;
@@ -18,7 +20,7 @@ namespace ConstradeApi.Controllers
             _subscriptionRepository = subscriptionRepository;
         }
 
-        [Authorize]
+       
         [HttpPut("cancel/{uid}")]
         public async Task<IActionResult> CancelSubscribeUser(int uid)
         {
@@ -36,17 +38,19 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [Authorize]
+    
         [HttpPut("subscribe/{uid}")]
         public async Task<IActionResult> SubscribeUser(int uid)
         {
             try
             {
-                bool sub = await _subscriptionRepository.SubscribePremium(uid);
+                SubscriptionResponseType sub = await _subscriptionRepository.SubscribePremium(uid);
 
-                if (!sub) return NotFound();
+                if (SubscriptionResponseType.Success != sub) 
+                       return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{sub}"));
+                
 
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, sub));
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, $"{sub}"));
             }
             catch (Exception ex)
             {
@@ -54,7 +58,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [Authorize]
+      
         [HttpGet("user/{uid}")]
         public async Task<IActionResult> GetUserSubscription(int uid)
         {
@@ -72,7 +76,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [Authorize]
+   
         [HttpGet("history/user/{uid}")]
         public async Task<IActionResult> GetUserSubscriptionHistory(int uid)
         {

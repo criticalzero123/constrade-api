@@ -267,7 +267,7 @@ namespace ConstradeApi.Controllers
         }
 
         // POST api/<ProductsController>/report
-        [HttpPost("/report")]
+        [HttpPost("report")]
         public async Task<IActionResult> ReportUser(ProductReportModel model)
         {
             try

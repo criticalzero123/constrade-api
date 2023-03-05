@@ -1,5 +1,7 @@
-﻿using ConstradeApi.Model.MUser;
+﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
+using ConstradeApi.Model.MUserNotification.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +14,12 @@ namespace ConstradeApi.Controllers
     public class FollowController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUserNotificationRepository _userNotification;
 
-        public FollowController(IUserRepository userRepository)
+        public FollowController(IUserRepository userRepository, IUserNotificationRepository userNotification)
         {
             _userRepository = userRepository;
+            _userNotification = userNotification;
         }
 
         //POST api/<FollowController>
@@ -29,6 +33,8 @@ namespace ConstradeApi.Controllers
                 bool flag = await _userRepository.FollowUser(userFollow.FollowByUserId, userFollow.FollowedByUserId);
 
                 if (!flag) responseType = ResponseType.Failure;
+
+                await _userNotification.SendNotificationFollow(userFollow.FollowedByUserId, userFollow.FollowByUserId);
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, flag));
             }

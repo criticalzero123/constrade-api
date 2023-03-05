@@ -103,7 +103,7 @@ namespace ConstradeApi.Controllers
 
                 var follower = await _userRepository.GetUserFollower(productModel.Product.PosterUserId);
 
-                await _notification.SendNotificationToFollower(follower.Select(_f => _f.FollowedByUserId).ToList(), response.ProductId, response.PosterUserId);
+                await _notification.SendNotificationToFollowerPosting(follower.Select(_f => _f.FollowedByUserId).ToList(), response.ProductId, response.PosterUserId);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, productModel));
             }catch(Exception ex)

@@ -15,10 +15,9 @@ namespace ConstradeApi.Entity
         public int UserId { get; set; }
         public User User { get; set; }
 
-        [ForeignKey("Product")]
-        [Column("product_id")]
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
+        
+        [Column("to_id")]
+        public int ToId { get; set; }
 
         [Column("notification_type")]
         public string NotificationType { get; set; } = string.Empty;

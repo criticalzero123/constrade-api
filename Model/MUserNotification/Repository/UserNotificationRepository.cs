@@ -22,20 +22,38 @@ namespace ConstradeApi.Model.MUserNotification.Repository
             return notif;
         }
 
-        public async Task SendNotificationToFollower(IEnumerable<int> ids, int productId, int ownerId)
+        public async Task SendNotificationFollow(int userFollower, int userFollowed)
+        {
+            User user = await _context.Users.Include(_u => _u.Person).Where(_u => _u.UserId == userFollower).FirstAsync();
+
+            string message = $"{user.Person.FirstName} {user.Person.LastName} started following you.";
+
+            await _context.Notification.AddAsync(new UserNotification()
+            {
+                UserId = userFollowed,
+                ToId= userFollower,
+                NotificationMessage = message,
+                NotificationType = "follow",
+                NotificationDate = DateTime.Now,
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SendNotificationToFollowerPosting(IEnumerable<int> ids, int somethingId, int ownerId)
         {
             if (ids.Count() == 0) return;
 
             User user = await _context.Users.Include(_u => _u.Person).Where(_u => _u.UserId == ownerId).FirstAsync();
 
-            string message = $"{user?.Person.FirstName} {user?.Person.LastName} posted a new Item.";
+            string message = $"{user.Person.FirstName} {user.Person.LastName} posted a new Item.";
 
             foreach (int id in ids)
             {
                 _context.Notification.Add(new UserNotification
                 {
                     UserId = id,
-                    ProductId = productId,
+                    ToId = somethingId,
                     NotificationMessage= message,
                     NotificationType = "post",
                     NotificationDate= DateTime.Now
@@ -44,5 +62,7 @@ namespace ConstradeApi.Model.MUserNotification.Repository
 
             await _context.SaveChangesAsync();
         }
+
+
     }
 }

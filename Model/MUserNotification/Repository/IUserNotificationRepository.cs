@@ -6,7 +6,8 @@ namespace ConstradeApi.Model.MUserNotification.Repository
 {
     public interface IUserNotificationRepository
     {
-        Task SendNotificationToFollower(IEnumerable<int> followModel, int productId, int ownerId);
+        Task SendNotificationToFollowerPosting(IEnumerable<int> followModel, int id, int ownerId);
+        Task SendNotificationFollow(int userFollower, int userFollowed);
         Task<IEnumerable<UserNotificationModel>> GetNotifications(int userId);
     }
 }

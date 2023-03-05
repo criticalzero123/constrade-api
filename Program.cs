@@ -21,6 +21,7 @@ using ConstradeApi.Model.MProductChat.Repository;
 using ConstradeApi.Model.MProductMessage.Repository;
 using ConstradeApi.Model.MUserReport.Repositories;
 using ConstradeApi.Model.MProductReport.Repository;
+using ConstradeApi.Model.MSystemFeedback.Repository;
 
 namespace ConstradeApi
 {
@@ -53,6 +54,7 @@ namespace ConstradeApi
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
             builder.Services.AddTransient<IUserReportRepository,UserReportRepository>();
             builder.Services.AddTransient<IProductReportRepository,ProductReportRepository>();
+            builder.Services.AddTransient<ISystemFeedbackRepository, SystemFeedbackRepository>();
             builder.Services.AddControllers();
 
             //for the Jwt Auth

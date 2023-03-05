@@ -4,6 +4,7 @@ using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProductChat;
 using ConstradeApi.Model.MProductMessage;
 using ConstradeApi.Model.MSubcription;
+using ConstradeApi.Model.MSystemFeedback;
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUserApiKey;
@@ -273,6 +274,19 @@ namespace ConstradeApi.Services.EntityToModel
                 ReportStatus= userReport.ReportStatus,
                 Description = userReport.Description,
                 DateSubmitted= userReport.DateSubmitted,
+            };
+        }
+        public static SystemFeedbackModel ToModel(this SystemFeedback systemFeedback)
+        {
+            return new SystemFeedbackModel
+            {
+                SystemFeedbackId = systemFeedback.SystemFeedbackId,
+                UserId = systemFeedback.UserId,
+                ReportType = systemFeedback.ReportType,
+                Title = systemFeedback.Title,
+                Status = systemFeedback.Status,
+                Description = systemFeedback.Description,
+                DateSubmitted = systemFeedback.DateSubmitted,
             };
         }
     }

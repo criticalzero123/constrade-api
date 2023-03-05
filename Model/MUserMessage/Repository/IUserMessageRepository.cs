@@ -7,5 +7,6 @@ namespace ConstradeApi.Model.MUserMessage.Repository
         Task<UserMessageModel> AddMessage(UserMessageModel userMessage);
         Task<UserMessageModel?> GetMessageById(int id);
         Task<IEnumerable<UserMessageModel>> GetMessageByUserChatId(int id, int index);
+        Task<bool> DeleteMessageById(int id);
     }
 }

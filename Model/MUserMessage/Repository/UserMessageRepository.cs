@@ -28,6 +28,18 @@ namespace ConstradeApi.Model.MUserMessage.Repository
             return message.ToModel();
         }
 
+        public async Task<bool> DeleteMessageById(int id)
+        {
+            UserMessage? _message = await _context.UserMessage.FindAsync(id);
+
+            if (_message == null) return false;
+
+            _context.UserMessage.Remove(_message);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<UserMessageModel?> GetMessageById(int id)
         {
             UserMessage?  _temp = await _context.UserMessage.FindAsync(id);

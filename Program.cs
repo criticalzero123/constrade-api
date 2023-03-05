@@ -22,6 +22,7 @@ using ConstradeApi.Model.MProductMessage.Repository;
 using ConstradeApi.Model.MUserReport.Repositories;
 using ConstradeApi.Model.MProductReport.Repository;
 using ConstradeApi.Model.MSystemFeedback.Repository;
+using ConstradeApi.Model.MUserNotification.Repository;
 
 namespace ConstradeApi
 {
@@ -41,7 +42,7 @@ namespace ConstradeApi
             builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgressDB"]));
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IProductRepository, Model.MProduct.Repository.ProductRepository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
@@ -50,6 +51,7 @@ namespace ConstradeApi
             builder.Services.AddScoped<IProductChatRepository, ProductChatRepository>();
             builder.Services.AddScoped<IProductMessageRepository, ProductMessageRepository>();
             builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
+            builder.Services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
 
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
             builder.Services.AddTransient<IUserReportRepository,UserReportRepository>();

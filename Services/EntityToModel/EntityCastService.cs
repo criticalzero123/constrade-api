@@ -10,6 +10,7 @@ using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUserApiKey;
 using ConstradeApi.Model.MUserChat;
 using ConstradeApi.Model.MUserMessage;
+using ConstradeApi.Model.MUserNotification;
 using ConstradeApi.Model.MUserReport;
 using ConstradeApi.Model.MWallet;
 
@@ -287,6 +288,17 @@ namespace ConstradeApi.Services.EntityToModel
                 Status = systemFeedback.Status,
                 Description = systemFeedback.Description,
                 DateSubmitted = systemFeedback.DateSubmitted,
+            };
+        }
+        public static UserNotificationModel ToModel(this UserNotification notification)
+        {
+            return new UserNotificationModel
+            {
+                UserNotificationId = notification.UserNotificationId,
+                NotificationType = notification.NotificationType,
+                NotificationMessage = notification.NotificationMessage,
+                UserId = notification.UserId,
+                ProductId = notification.ProductId,
             };
         }
     }

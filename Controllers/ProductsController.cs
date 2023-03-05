@@ -4,6 +4,8 @@ using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProduct.Repository;
 using ConstradeApi.Model.MProductReport;
 using ConstradeApi.Model.MProductReport.Repository;
+using ConstradeApi.Model.MUser.Repository;
+using ConstradeApi.Model.MUserNotification.Repository;
 using ConstradeApi.Model.MUserReport;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -20,11 +22,15 @@ namespace ConstradeApi.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly IProductReportRepository _productReportRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserNotificationRepository _notification;
 
-        public ProductsController(IProductRepository productRepository,IProductReportRepository productReport)
+        public ProductsController(IProductRepository productRepository,IProductReportRepository productReport, IUserRepository repository, IUserNotificationRepository notification)
         {
             _productRepository = productRepository;
             _productReportRepository = productReport;
+            _userRepository = repository;
+            _notification = notification;
         }
 
         // GET: api/<ProductController>
@@ -90,10 +96,14 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                ProductAddResponseType response = await _productRepository.Save(productModel.Product, productModel.ImageURLList);
+                CreationProductResponse response = await _productRepository.Save(productModel.Product, productModel.ImageURLList);
 
-                if (response == ProductAddResponseType.UserNotFound) return NotFound();
-                if (response == ProductAddResponseType.NoPostCount) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{response}"));
+                if (response.Response == ProductAddResponseType.UserNotFound) return NotFound();
+                if (response.Response == ProductAddResponseType.NoPostCount) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{response.Response}"));
+
+                var follower = await _userRepository.GetUserFollower(productModel.Product.PosterUserId);
+
+                await _notification.SendNotificationToFollower(follower.Select(_f => _f.FollowedByUserId).ToList(), response.ProductId, response.PosterUserId);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, productModel));
             }catch(Exception ex)

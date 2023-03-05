@@ -6,7 +6,7 @@ namespace ConstradeApi.Model.MProduct.Repository
     public interface IProductRepository
     {
         Task<IEnumerable<ProductModel>> GetAllProducts();
-        Task<ProductAddResponseType> Save(ProductModel product, IEnumerable<string> imageList);
+        Task<CreationProductResponse> Save(ProductModel product, IEnumerable<string> imageList);
         Task<IEnumerable<ProductModel>> GetProductsByUserId(int userId);
         Task<ProductFullDetails?> Get(int id, int? userId);
         Task<bool> DeleteProduct(int id);

@@ -48,12 +48,22 @@ namespace ConstradeApi.Model.MProduct.Repository
         /// POST for product
         /// </summary>
         /// <param name="product"></param>
-        public async Task<ProductAddResponseType> Save(ProductModel product, IEnumerable<string> imageList)
+        public async Task<CreationProductResponse> Save(ProductModel product, IEnumerable<string> imageList)
         {
             User? user = await _context.Users.FindAsync(product.PosterUserId);
-            if (user == null) return ProductAddResponseType.UserNotFound;
+            if (user == null) return new CreationProductResponse 
+            { 
+                Response = ProductAddResponseType.UserNotFound,
+                ProductId = 0,
+                PosterUserId = 0
+            };
             //Prevent the user that less than 1 count post to post a product
-            if (user.CountPost < 1) return ProductAddResponseType.NoPostCount;
+            if (user.CountPost < 1) return new CreationProductResponse 
+            { 
+                Response = ProductAddResponseType.NoPostCount,
+                ProductId = 0,
+                PosterUserId = 0
+            };
 
             user.CountPost -= 1;
             await _context.SaveChangesAsync();
@@ -95,7 +105,12 @@ namespace ConstradeApi.Model.MProduct.Repository
 
             _context.SaveChanges();
 
-            return ProductAddResponseType.Success;
+            return new CreationProductResponse 
+            { 
+                Response = ProductAddResponseType.Success, 
+                ProductId = _product.ProductId, 
+                PosterUserId = product.PosterUserId
+            };
         }
 
         /// <summary>

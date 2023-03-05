@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Enums;
 using ConstradeApi.Model.MCommunity;
+using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
 using ConstradeApi.Model.MCommunity.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -66,5 +67,58 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCommunity(int id)
+        {
+            try
+            {
+                CommunityModel? model = await _communityRepo.GetCommunity(id);
+
+                if (model == null) return NotFound("No Community Exist");
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, model));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCommunity(int id, int userId)
+        {
+            try
+            {
+                bool deleted = await _communityRepo.DeleteCommunity(id, userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, deleted));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPost("join")]
+        public async Task<IActionResult> JoinCommunity([FromBody] CommunityJoinRequest info)
+        {
+            try
+            {
+                CommunityJoinResponse response = await _communityRepo.JoinCommunity(info.CommunityId, info.UserId);
+
+                if (response == CommunityJoinResponse.Rejected) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{response}"));
+
+
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, $"{response}"));
+
+ 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }  
     }
 }

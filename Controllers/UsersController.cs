@@ -1,12 +1,8 @@
-﻿using ConstradeApi.Entity;
-using ConstradeApi.Model.MProduct;
-using ConstradeApi.Model.MSubcription;
-using ConstradeApi.Model.MSubcription.Repository;
+﻿using ConstradeApi.Model.MProduct;
+using ConstradeApi.Model.MReport;
+using ConstradeApi.Model.MReport.Repository;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Model.MUser.Repository;
-using ConstradeApi.Model.MUserApiKey.Repository;
-using ConstradeApi.Model.MUserReport;
-using ConstradeApi.Model.MUserReport.Repositories;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,19 +13,20 @@ namespace ConstradeApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly IUserReportRepository _userReportRepository;
+        private readonly IReportRepository _userReportRepository;
 
-        public UsersController(IUserRepository userRepository, IUserReportRepository userReport)
+        public UsersController(IUserRepository userRepository, IReportRepository userReport)
         {
             _userRepository = userRepository;
             _userReportRepository = userReport;
         }
 
         // GET: api/<UserController>
-        [Authorize]
+     
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -48,7 +45,7 @@ namespace ConstradeApi.Controllers
         }
 
         // GET api/<AuthController>/5
-        [Authorize]
+       
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -68,14 +65,13 @@ namespace ConstradeApi.Controllers
         }
 
         // PUT api/<UserController>/5
-        [Authorize]
+       
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] UserModel userModel)
         {
         }
 
         //GET api/<UserController>/4/favorite
-        [Authorize]
         [HttpGet("{userId}/favorite")]
         public async Task<IActionResult> GetFavorite(int userId)
         {
@@ -96,7 +92,6 @@ namespace ConstradeApi.Controllers
         }
 
         //POST api/<UserController>/4/favorite
-        [Authorize]
         [HttpPost("{userId}/favorite")]
         public async Task<IActionResult> AddFavorite(int userId, [FromBody] FavoriteModel favoriteModel)
         {
@@ -116,7 +111,6 @@ namespace ConstradeApi.Controllers
         }
 
         //GET api/<UserController>/4/favorite/4
-        [Authorize]
         [HttpDelete("{userId}/favorite/{id}")]
         public async Task<IActionResult> DeleteFavorite(int id)
         {
@@ -137,7 +131,6 @@ namespace ConstradeApi.Controllers
 
 
         //PUT api/<UserController/person
-        [Authorize]
         [HttpPut("person")]
         public async Task<IActionResult> UpdatePersonInfo([FromBody] UserAndPersonModel info)
         {
@@ -155,12 +148,12 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpPost("/report")]
-        public async Task<IActionResult> ReportUser(UserReportModel model)
+        [HttpPost("report")]
+        public async Task<IActionResult> ReportUser([FromBody]ReportModel model)
         {
             try
             {
-                bool flag = await _userReportRepository.ReportUser(model);
+                bool flag = await _userReportRepository.CreateReport(model);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }

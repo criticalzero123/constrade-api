@@ -28,11 +28,11 @@ namespace ConstradeApi.Entity
         public DbSet<UserMessage> UserMessage { get; set; }
         public DbSet<ProductChat> ProductChat { get; set; }
         public DbSet<ProductMessage> ProductMessages { get; set; }
-        public DbSet<UserReport> UserReport { get; set; }
-        public DbSet<ProductReport> ProductReport { get; set; }
+        public DbSet<Report> Report { get; set; }
         public DbSet<SystemFeedback> SystemFeedback { get; set; }
         public DbSet<UserNotification> Notification { get; set; }
         public DbSet<Community> Community { get; set; }
         public DbSet<CommunityMember> CommunityMember { get; set; }
+        public DbSet<CommunityJoin> CommunityJoin { get; set; }
     }
 }

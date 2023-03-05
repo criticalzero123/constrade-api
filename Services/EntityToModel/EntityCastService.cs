@@ -1,10 +1,12 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MCommunity;
+using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
 using ConstradeApi.Model.MCommunity.MCommunityMember;
 using ConstradeApi.Model.MOtp;
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProductChat;
 using ConstradeApi.Model.MProductMessage;
+using ConstradeApi.Model.MReport;
 using ConstradeApi.Model.MSubcription;
 using ConstradeApi.Model.MSystemFeedback;
 using ConstradeApi.Model.MTransaction;
@@ -13,7 +15,6 @@ using ConstradeApi.Model.MUserApiKey;
 using ConstradeApi.Model.MUserChat;
 using ConstradeApi.Model.MUserMessage;
 using ConstradeApi.Model.MUserNotification;
-using ConstradeApi.Model.MUserReport;
 using ConstradeApi.Model.MWallet;
 
 namespace ConstradeApi.Services.EntityToModel
@@ -267,16 +268,17 @@ namespace ConstradeApi.Services.EntityToModel
                 DateSent = productMessage.DateSent,
             };
         }
-        public static UserReportModel ToModel(this UserReport userReport)
+        public static ReportModel ToModel(this Report report)
         {
-            return new UserReportModel()
+            return new ReportModel
             {
-                UserReportId = userReport.UserReportId,
-                ReportBy = userReport.ReportBy,
-                Reported = userReport.Reported,
-                ReportStatus= userReport.ReportStatus,
-                Description = userReport.Description,
-                DateSubmitted= userReport.DateSubmitted,
+                ReportId = report.ReportId,
+                IdReported= report.IdReported,
+                ReportedBy = report.ReportedBy,
+                ReportType = report.ReportType,
+                Description = report.Description,
+                Status = report.Status,
+                DateSubmitted = report.DateSubmitted,
             };
         }
         public static SystemFeedbackModel ToModel(this SystemFeedback systemFeedback)
@@ -327,6 +329,18 @@ namespace ConstradeApi.Services.EntityToModel
                 CommunityId = community.CommunityId,
                 Role= community.Role,
                 MemberSince = community.MemberSince,
+            };
+        }
+        public static CommunityJoinModel ToModel(this CommunityJoin info)
+        {
+            return new CommunityJoinModel
+            {
+                CommunityJoinRequestId = info.CommunityJoinRequestId,
+                CommunityId = info.CommunityId,
+                UserId = info.UserId,
+                Status = info.Status,
+                DateRequested = info.DateRequested,
+
             };
         }
     }

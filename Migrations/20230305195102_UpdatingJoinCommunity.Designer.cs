@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230305195102_UpdatingJoinCommunity")]
+    partial class UpdatingJoinCommunity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +156,7 @@ namespace ConstradeApi.Migrations
                     b.ToTable("community");
                 });
 
-            modelBuilder.Entity("ConstradeApi.Entity.CommunityJoin", b =>
+            modelBuilder.Entity("ConstradeApi.Entity.CommunityJoinRequest", b =>
                 {
                     b.Property<int>("CommunityJoinRequestId")
                         .ValueGeneratedOnAdd()
@@ -608,6 +611,48 @@ namespace ConstradeApi.Migrations
                     b.ToTable("product_message");
                 });
 
+            modelBuilder.Entity("ConstradeApi.Entity.ProductReport", b =>
+                {
+                    b.Property<int>("ProductReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("product_report_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProductReportId"));
+
+                    b.Property<DateTime>("DateSubmitted")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_submitted");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(155)
+                        .HasColumnType("character varying(155)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("ProductReported")
+                        .HasColumnType("integer")
+                        .HasColumnName("product_reported");
+
+                    b.Property<int>("ReportedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("reported_by");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("title");
+
+                    b.HasKey("ProductReportId");
+
+                    b.HasIndex("ProductReported");
+
+                    b.HasIndex("ReportedBy");
+
+                    b.ToTable("product_report");
+                });
+
             modelBuilder.Entity("ConstradeApi.Entity.ProductView", b =>
                 {
                     b.Property<int>("ProductViewId")
@@ -632,47 +677,6 @@ namespace ConstradeApi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("product_view");
-                });
-
-            modelBuilder.Entity("ConstradeApi.Entity.Report", b =>
-                {
-                    b.Property<int>("ReportId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ReportId"));
-
-                    b.Property<DateTime>("DateSubmitted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_submitted");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<int>("IdReported")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_reported");
-
-                    b.Property<int>("ReportType")
-                        .HasColumnType("integer")
-                        .HasColumnName("report_type");
-
-                    b.Property<int>("ReportedBy")
-                        .HasColumnType("integer")
-                        .HasColumnName("reported_by");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
-
-                    b.HasKey("ReportId");
-
-                    b.HasIndex("ReportedBy");
-
-                    b.ToTable("report");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Review", b =>
@@ -1147,6 +1151,46 @@ namespace ConstradeApi.Migrations
                     b.ToTable("user_notification");
                 });
 
+            modelBuilder.Entity("ConstradeApi.Entity.UserReport", b =>
+                {
+                    b.Property<int>("UserReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("user_report_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserReportId"));
+
+                    b.Property<DateTime>("DateSubmitted")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_submitted");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<int>("ReportBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("report_by");
+
+                    b.Property<string>("ReportStatus")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("report_status");
+
+                    b.Property<int>("Reported")
+                        .HasColumnType("integer")
+                        .HasColumnName("reported");
+
+                    b.HasKey("UserReportId");
+
+                    b.HasIndex("ReportBy");
+
+                    b.HasIndex("Reported");
+
+                    b.ToTable("user_report");
+                });
+
             modelBuilder.Entity("ConstradeApi.Entity.Wallet", b =>
                 {
                     b.Property<int>("WalletId")
@@ -1193,7 +1237,7 @@ namespace ConstradeApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ConstradeApi.Entity.CommunityJoin", b =>
+            modelBuilder.Entity("ConstradeApi.Entity.CommunityJoinRequest", b =>
                 {
                     b.HasOne("ConstradeApi.Entity.Community", "Community")
                         .WithMany()
@@ -1365,6 +1409,25 @@ namespace ConstradeApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ConstradeApi.Entity.ProductReport", b =>
+                {
+                    b.HasOne("ConstradeApi.Entity.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductReported")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstradeApi.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("ReportedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ConstradeApi.Entity.ProductView", b =>
                 {
                     b.HasOne("ConstradeApi.Entity.Product", "Product")
@@ -1380,17 +1443,6 @@ namespace ConstradeApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ConstradeApi.Entity.Report", b =>
-                {
-                    b.HasOne("ConstradeApi.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("ReportedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1554,6 +1606,25 @@ namespace ConstradeApi.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ConstradeApi.Entity.UserReport", b =>
+                {
+                    b.HasOne("ConstradeApi.Entity.User", "User1")
+                        .WithMany()
+                        .HasForeignKey("ReportBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConstradeApi.Entity.User", "User2")
+                        .WithMany()
+                        .HasForeignKey("Reported")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User1");
+
+                    b.Navigation("User2");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Wallet", b =>

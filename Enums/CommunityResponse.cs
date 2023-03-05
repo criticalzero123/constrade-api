@@ -6,4 +6,12 @@
         NotVerified,
         Failed,
     }
+
+    public enum CommunityJoinResponse
+    {
+        Pending,
+        Approved,
+        Rejected,
+        Failed
+    }
 }

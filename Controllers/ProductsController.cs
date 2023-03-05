@@ -2,11 +2,10 @@
 using ConstradeApi.Enums;
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProduct.Repository;
-using ConstradeApi.Model.MProductReport;
-using ConstradeApi.Model.MProductReport.Repository;
+using ConstradeApi.Model.MReport;
+using ConstradeApi.Model.MReport.Repository;
 using ConstradeApi.Model.MUser.Repository;
 using ConstradeApi.Model.MUserNotification.Repository;
-using ConstradeApi.Model.MUserReport;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,11 +20,11 @@ namespace ConstradeApi.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
-        private readonly IProductReportRepository _productReportRepository;
+        private readonly IReportRepository _productReportRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUserNotificationRepository _notification;
 
-        public ProductsController(IProductRepository productRepository,IProductReportRepository productReport, IUserRepository repository, IUserNotificationRepository notification)
+        public ProductsController(IProductRepository productRepository,IReportRepository productReport, IUserRepository repository, IUserNotificationRepository notification)
         {
             _productRepository = productRepository;
             _productReportRepository = productReport;
@@ -278,11 +277,11 @@ namespace ConstradeApi.Controllers
 
         // POST api/<ProductsController>/report
         [HttpPost("report")]
-        public async Task<IActionResult> ReportUser(ProductReportModel model)
+        public async Task<IActionResult> ReportUser([FromBody]ReportModel model)
         {
             try
             {
-                bool flag = await _productReportRepository.ReportProduct(model);
+                bool flag = await _productReportRepository.CreateReport(model);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }

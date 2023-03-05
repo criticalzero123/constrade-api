@@ -9,5 +9,6 @@
         public string ImageUrl { get; set; } = string.Empty;
         public string NotificationType { get; set; } = string.Empty;
         public string NotificationMessage { get; set; } = string.Empty;
+        public DateTime NotificationDate { get; set; }
     }
 }

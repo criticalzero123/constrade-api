@@ -23,6 +23,7 @@ using ConstradeApi.Model.MUserReport.Repositories;
 using ConstradeApi.Model.MProductReport.Repository;
 using ConstradeApi.Model.MSystemFeedback.Repository;
 using ConstradeApi.Model.MUserNotification.Repository;
+using ConstradeApi.Model.MCommunity.Repository;
 
 namespace ConstradeApi
 {
@@ -52,6 +53,7 @@ namespace ConstradeApi
             builder.Services.AddScoped<IProductMessageRepository, ProductMessageRepository>();
             builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
             builder.Services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
+            builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
 
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
             builder.Services.AddTransient<IUserReportRepository,UserReportRepository>();

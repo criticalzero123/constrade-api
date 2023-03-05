@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230305163811_AddingCommunity")]
+    partial class AddingCommunity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,40 +154,6 @@ namespace ConstradeApi.Migrations
                     b.HasIndex("OwnerUserId");
 
                     b.ToTable("community");
-                });
-
-            modelBuilder.Entity("ConstradeApi.Entity.CommunityMember", b =>
-                {
-                    b.Property<int>("CommunityMemberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("community_member_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CommunityMemberId"));
-
-                    b.Property<int>("CommunityId")
-                        .HasColumnType("integer")
-                        .HasColumnName("community_id");
-
-                    b.Property<DateTime>("MemberSince")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("member_since");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("integer")
-                        .HasColumnName("role");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("CommunityMemberId");
-
-                    b.HasIndex("CommunityId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("community_member");
                 });
 
             modelBuilder.Entity("ConstradeApi.Entity.Favorites", b =>
@@ -1196,25 +1165,6 @@ namespace ConstradeApi.Migrations
                         .HasForeignKey("OwnerUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ConstradeApi.Entity.CommunityMember", b =>
-                {
-                    b.HasOne("ConstradeApi.Entity.Community", "Community")
-                        .WithMany()
-                        .HasForeignKey("CommunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ConstradeApi.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Community");
 
                     b.Navigation("User");
                 });

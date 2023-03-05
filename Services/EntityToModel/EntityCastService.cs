@@ -1,4 +1,6 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MCommunity;
+using ConstradeApi.Model.MCommunity.MCommunityMember;
 using ConstradeApi.Model.MOtp;
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProductChat;
@@ -297,9 +299,34 @@ namespace ConstradeApi.Services.EntityToModel
                 UserNotificationId = notification.UserNotificationId,
                 NotificationType = notification.NotificationType,
                 NotificationMessage = notification.NotificationMessage,
+                NotificationDate = notification.NotificationDate,
                 ImageUrl = notification.ImageUrl,
                 UserId = notification.UserId,
                 ToId = notification.ToId,
+            };
+        }
+        public static CommunityModel ToModel(this Community community)
+        {
+            return new CommunityModel
+            {
+                CommunityId = community.CommunityId,
+                OwnerUserId = community.OwnerUserId,
+                Name = community.Name,
+                Description = community.Description,
+                ImageUrl = community.ImageUrl,
+                DateCreated = community.DateCreated,
+                TotalMembers = community.TotalMembers,
+            };
+        }
+        public static CommunityMemberModel ToModel(this CommunityMember community)
+        {
+            return new CommunityMemberModel
+            {
+                CommunityMemberId = community.CommunityMemberId,
+                UserId= community.UserId,
+                CommunityId = community.CommunityId,
+                Role= community.Role,
+                MemberSince = community.MemberSince,
             };
         }
     }

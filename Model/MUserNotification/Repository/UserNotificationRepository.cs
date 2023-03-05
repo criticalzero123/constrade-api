@@ -31,11 +31,12 @@ namespace ConstradeApi.Model.MUserNotification.Repository
             await _context.Notification.AddAsync(new UserNotification()
             {
                 UserId = userFollowed,
-                ToId= userFollower,
+                ToId = userFollower,
+                ImageUrl = user.ImageUrl,
                 NotificationMessage = message,
                 NotificationType = "follow",
                 NotificationDate = DateTime.Now,
-            });
+            }); ;
 
             await _context.SaveChangesAsync();
         }
@@ -54,6 +55,7 @@ namespace ConstradeApi.Model.MUserNotification.Repository
                 {
                     UserId = id,
                     ToId = somethingId,
+                    ImageUrl = user.ImageUrl,
                     NotificationMessage= message,
                     NotificationType = "post",
                     NotificationDate= DateTime.Now

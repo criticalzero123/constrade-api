@@ -19,6 +19,9 @@ namespace ConstradeApi.Entity
         [Column("to_id")]
         public int ToId { get; set; }
 
+        [Column("image_url")]
+        public string ImageUrl { get; set; } = string.Empty;
+
         [Column("notification_type")]
         public string NotificationType { get; set; } = string.Empty;
         [Column("notification_message")]

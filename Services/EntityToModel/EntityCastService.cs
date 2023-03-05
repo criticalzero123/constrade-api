@@ -297,6 +297,7 @@ namespace ConstradeApi.Services.EntityToModel
                 UserNotificationId = notification.UserNotificationId,
                 NotificationType = notification.NotificationType,
                 NotificationMessage = notification.NotificationMessage,
+                ImageUrl = notification.ImageUrl,
                 UserId = notification.UserId,
                 ToId = notification.ToId,
             };

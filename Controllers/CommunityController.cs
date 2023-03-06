@@ -1,6 +1,7 @@
 ﻿using ConstradeApi.Enums;
 using ConstradeApi.Model.MCommunity;
 using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
+using ConstradeApi.Model.MCommunity.MCommunityPost;
 using ConstradeApi.Model.MCommunity.Repository;
 using ConstradeApi.Model.MReport;
 using ConstradeApi.Model.MReport.Repository;
@@ -117,7 +118,7 @@ namespace ConstradeApi.Controllers
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, $"{response}"));
 
- 
+
             }
             catch (Exception ex)
             {
@@ -148,6 +149,53 @@ namespace ConstradeApi.Controllers
                 var flag = await _communityRepo.UpdateCommunity(info);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPost("{id}/post")]
+        public async Task<IActionResult> PostCommunity([FromBody] CommunityPostModel info)
+        {
+            try
+            {
+                var result = await _communityRepo.CommunityCreatePost(info);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, result));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("{id}/post")]
+        public async Task<IActionResult> GetPostCommunity(int id)
+        {
+            try
+            {
+                var posts = await _communityRepo.GetAllCommunityPost(id);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success,posts));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpDelete("{id}/post/{postId}")]
+        public async Task<IActionResult> DeletePostCommunity(int postId, int userId)
+        {
+            try
+            {
+                bool deleted = await _communityRepo.DeletePostCommunityById(postId, userId);
+
+                if (!deleted) return NotFound("You are not the owner or the post doesnt exist");
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, deleted));
             }
             catch (Exception ex)
             {

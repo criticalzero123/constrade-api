@@ -2,6 +2,7 @@
 using ConstradeApi.Model.MCommunity;
 using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
 using ConstradeApi.Model.MCommunity.MCommunityMember;
+using ConstradeApi.Model.MCommunity.MCommunityPost;
 using ConstradeApi.Model.MOtp;
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProductChat;
@@ -342,6 +343,17 @@ namespace ConstradeApi.Services.EntityToModel
                 Status = info.Status,
                 DateRequested = info.DateRequested,
 
+            };
+        }
+        public static CommunityPostModel ToModel(this CommunityPost info)
+        {
+            return new CommunityPostModel
+            {
+                CommunityPostId = info.CommunityPostId,
+                CommunityId = info.CommunityId,
+                PosterUserId = info.PosterUserId,
+                Description = info.Description,
+                CreatedDate = info.CreatedDate,
             };
         }
     }

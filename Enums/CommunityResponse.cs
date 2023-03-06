@@ -14,4 +14,11 @@
         Rejected,
         Failed
     }
+
+    public enum CommunityPostResponse
+    {
+        Success,
+        NotAMember,
+        Failed,
+    }
 }

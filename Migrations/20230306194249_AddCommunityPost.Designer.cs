@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230306194249_AddCommunityPost")]
+    partial class AddCommunityPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,9 +233,6 @@ namespace ConstradeApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CommunityPostId"));
 
-                    b.Property<int>("CommunityId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_date");
@@ -247,8 +247,6 @@ namespace ConstradeApi.Migrations
                         .HasColumnName("poster_user_id");
 
                     b.HasKey("CommunityPostId");
-
-                    b.HasIndex("CommunityId");
 
                     b.HasIndex("PosterUserId");
 
@@ -1267,19 +1265,11 @@ namespace ConstradeApi.Migrations
 
             modelBuilder.Entity("ConstradeApi.Entity.CommunityPost", b =>
                 {
-                    b.HasOne("ConstradeApi.Entity.Community", "Community")
-                        .WithMany()
-                        .HasForeignKey("CommunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ConstradeApi.Entity.User", "User")
                         .WithMany()
                         .HasForeignKey("PosterUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Community");
 
                     b.Navigation("User");
                 });

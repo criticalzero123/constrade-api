@@ -1,9 +1,11 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Enums;
 using ConstradeApi.Model.MCommunity.MCommunityMember;
+using ConstradeApi.Model.MCommunity.MCommunityPost;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ConstradeApi.Model.MCommunity.Repository
 {
@@ -131,8 +133,36 @@ namespace ConstradeApi.Model.MCommunity.Repository
                 community.TotalMembers += 1;
                 await _context.CommunityMember.AddAsync(_info);
 
+                await _context.SaveChangesAsync();
+
+
                 return CommunityJoinResponse.Approved;
             }
+        }
+
+        // TODO: this will not check if the user exist in the community 
+        // Please do a checker here
+        public async Task<CommunityPostDetails> CommunityCreatePost(CommunityPostModel info)
+        {
+            CommunityPost post = new CommunityPost
+            {
+                CommunityId = info.CommunityId,
+                PosterUserId = info.PosterUserId,
+                Description = info.Description,
+                CreatedDate = info.CreatedDate
+            };
+
+            await _context.AddAsync(post);
+            await _context.SaveChangesAsync();
+
+            CommunityPost _post = await _context.CommunityPost.Include(_p => _p.User).Where(_p => _p.CommunityPostId == post.CommunityPostId).FirstAsync();
+
+
+            return new CommunityPostDetails
+            {
+                CommunityPost = _post.ToModel(),
+                User = _post.User.ToModel()
+            };
         }
 
         public async Task<bool> UpdateCommunity(CommunityModel info)
@@ -147,6 +177,31 @@ namespace ConstradeApi.Model.MCommunity.Repository
             _community.Visibility = info.Visibility;
 
             await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId)
+        {
+            IEnumerable<CommunityPost> communityPosts = await _context.CommunityPost.Include(_p => _p.User).Where(_p => _p.CommunityId == communityId).ToListAsync();
+
+            IEnumerable<CommunityPostDetails> posts = communityPosts.Select(_p => new CommunityPostDetails
+            {
+                CommunityPost = _p.ToModel(),
+                User = _p.User.ToModel()
+            });
+
+            return posts;
+        }
+        public async Task<bool> DeletePostCommunityById(int postId, int userId)
+        {
+            CommunityPost? post = await _context.CommunityPost.FindAsync(postId);
+
+            if (post == null) return false;
+            if (post.PosterUserId != userId) return false;
+
+            _context.Remove(post);
+            _context.SaveChanges();
+
             return true;
         }
     }

@@ -1,5 +1,7 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Enums;
+using ConstradeApi.Model.MCommunity.MCommunityMember;
+using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -68,13 +70,24 @@ namespace ConstradeApi.Model.MCommunity.Repository
             return await _context.Community.Select(_c => _c.ToModel()).ToListAsync();
         }
 
-        public async Task<CommunityModel?> GetCommunity(int id)
+        public async Task<CommunityDetails?> GetCommunity(int id)
         {
-            Community? model = await _context.Community.FindAsync(id);
+            Community? model = await _context.Community.Include(_c => _c.User).Include(_c => _c.User.Person).Where(_c => _c.CommunityId == id).FirstOrDefaultAsync();
 
             if (model == null) return null;
 
-            return model.ToModel();
+            IEnumerable<CommunityMemberModel> members = await _context.CommunityMember.Where(_c => _c.CommunityId == model.CommunityId).Select(_c => _c.ToModel()).ToListAsync();
+
+            return new CommunityDetails
+            {
+                Community = model.ToModel(),
+                Owner = new UserAndPersonModel
+                {
+                    User = model.User.ToModel(),
+                    Person = model.User.Person.ToModel(),
+                },
+                Members = members
+            };
         }
 
         public async Task<IEnumerable<CommunityModel>> GetCommunityByOwnerId(int userId)
@@ -120,6 +133,21 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
                 return CommunityJoinResponse.Approved;
             }
+        }
+
+        public async Task<bool> UpdateCommunity(CommunityModel info)
+        {
+            Community? _community = await _context.Community.FindAsync(info.CommunityId);
+
+            if (_community == null) return false;
+            if (_community.OwnerUserId != info.OwnerUserId) return false;
+
+            _community.Description = info.Description;
+            _community.ImageUrl = info.ImageUrl;
+            _community.Visibility = info.Visibility;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

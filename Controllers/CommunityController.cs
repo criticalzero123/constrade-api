@@ -2,6 +2,8 @@
 using ConstradeApi.Model.MCommunity;
 using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
 using ConstradeApi.Model.MCommunity.Repository;
+using ConstradeApi.Model.MReport;
+using ConstradeApi.Model.MReport.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +17,12 @@ namespace ConstradeApi.Controllers
     public class CommunityController : ControllerBase
     {
         private readonly ICommunityRepository _communityRepo;
+        private readonly IReportRepository _reportRepo;
 
-        public CommunityController(ICommunityRepository communityRepo)
+        public CommunityController(ICommunityRepository communityRepo, IReportRepository report)
         {
             _communityRepo = communityRepo;
+            _reportRepo = report;
         }
 
         [HttpPost("create")]
@@ -73,7 +77,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                CommunityModel? model = await _communityRepo.GetCommunity(id);
+                var model = await _communityRepo.GetCommunity(id);
 
                 if (model == null) return NotFound("No Community Exist");
 
@@ -119,6 +123,36 @@ namespace ConstradeApi.Controllers
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
-        }  
+        }
+
+        [HttpPost("report")]
+        public async Task<IActionResult> ReportCommunity([FromBody] ReportModel report)
+        {
+            try
+            {
+                bool flag = await _reportRepo.CreateReport(report);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditCommunity([FromBody] CommunityModel info)
+        {
+            try
+            {
+                var flag = await _communityRepo.UpdateCommunity(info);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
     }
 }

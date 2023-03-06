@@ -316,6 +316,7 @@ namespace ConstradeApi.Services.EntityToModel
                 Name = community.Name,
                 Description = community.Description,
                 ImageUrl = community.ImageUrl,
+                Visibility = community.Visibility,
                 DateCreated = community.DateCreated,
                 TotalMembers = community.TotalMembers,
             };

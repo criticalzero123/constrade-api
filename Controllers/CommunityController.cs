@@ -189,21 +189,6 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpPost("{id}/post/report")]
-        public async Task<IActionResult> ReportPostCommunity([FromBody] ReportModel model)
-        {
-            try
-            {
-                var report = await _reportRepo.CreateReport(model);
-
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, report));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
-            }
-        }
-
         [HttpDelete("{id}/post/{postId}")]
         public async Task<IActionResult> DeletePostCommunity(int postId, int userId)
         {
@@ -261,21 +246,6 @@ namespace ConstradeApi.Controllers
                 var comments = await _communityRepo.GetCommentByPostId(postId);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, comments));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
-            }
-        }
-
-        [HttpPost("{id}/post/{postId}/comment/report")]
-        public async Task<IActionResult> ReportCommentPost([FromBody] ReportModel model)
-        {
-            try
-            {
-                var report = await _reportRepo.CreateReport(model);
-
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, report));
             }
             catch (Exception ex)
             {

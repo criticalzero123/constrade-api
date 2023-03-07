@@ -259,5 +259,48 @@ namespace ConstradeApi.Model.MCommunity.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<CommunityPostCommentModel?> UpdateComment(CommunityPostCommentModel info)
+        {
+            CommunityPostComment? comment = await _context.PostComment.FindAsync(info.CommunityPostCommentId);
+
+            if(comment == null) return null;
+
+            comment.Comment = info.Comment;
+            comment.DateCommented = DateTime.Now;
+
+            _context.SaveChanges();
+
+            return comment.ToModel();
+        }
+
+        public async Task<IEnumerable<CommunityMemberDetails>> GetCommunityMember(int id)
+        {
+            IEnumerable<CommunityMember> community = await _context.CommunityMember.Include(_cm => _cm.User.Person).Where(_cm => _cm.CommunityId == id).ToListAsync();
+
+            IEnumerable<CommunityMemberDetails> _result = community.Select(_cm => new CommunityMemberDetails
+            {
+                Member = _cm.ToModel(),
+                UserInfo = new UserAndPersonModel
+                {
+                    User = _cm.User.ToModel(),
+                    Person = _cm.User.Person.ToModel()
+                }
+            });
+
+            return _result;
+        }
+
+        public async Task<bool> RemoveMember(int id)
+        {
+            CommunityMember? exist = await _context.CommunityMember.FindAsync(id);
+
+            if (exist == null) return false;
+
+            _context.CommunityMember.Remove(exist);
+            _context.SaveChanges();
+
+            return true;
+        }
     }
 }

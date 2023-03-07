@@ -158,7 +158,6 @@ namespace ConstradeApi.Controllers
             }
         }
 
-
         [HttpPost("{id}/post")]
         public async Task<IActionResult> PostCommunity([FromBody] CommunityPostModel info)
         {
@@ -167,6 +166,38 @@ namespace ConstradeApi.Controllers
                 var result = await _communityRepo.CommunityCreatePost(info);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, result));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("{id}/members")]
+        public async Task<IActionResult> GetCommunityMembers(int id)
+        {
+            try
+            {
+                var members = await _communityRepo.GetCommunityMember(id);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, members));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpDelete("{id}/members/{memberId}")]
+        public async Task<IActionResult> RemoveMember(int memberId)
+        {
+            try
+            {
+                bool flag = await _communityRepo.RemoveMember(memberId);
+
+                if (!flag) return NotFound("User not found in community");
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }
             catch (Exception ex)
             {
@@ -265,6 +296,23 @@ namespace ConstradeApi.Controllers
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }
             catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPut("{id}/post/{postId}/comment/")]
+        public async Task<IActionResult> UpdateCommentPost([FromBody] CommunityPostCommentModel info)
+        {
+            try
+            {
+                var comment = await _communityRepo.UpdateComment(info);
+
+                if (comment == null) return NotFound("Comment not found");
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, comment));
+            }
+            catch (Exception ex) 
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }

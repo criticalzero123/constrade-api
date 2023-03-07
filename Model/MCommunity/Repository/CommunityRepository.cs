@@ -53,7 +53,6 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return CommunityResponse.Success;
         }
-
         public async Task<bool> DeleteCommunity(int id, int userId)
         {
             Community? community = await _context.Community.Where(_c => _c.CommunityId == id 
@@ -67,12 +66,10 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return true;
         }
-
         public async Task<IEnumerable<CommunityModel>> GetCommunities()
         {
             return await _context.Community.Select(_c => _c.ToModel()).ToListAsync();
         }
-
         public async Task<CommunityDetails?> GetCommunity(int id)
         {
             Community? model = await _context.Community.Include(_c => _c.User).Include(_c => _c.User.Person).Where(_c => _c.CommunityId == id).FirstOrDefaultAsync();
@@ -92,14 +89,12 @@ namespace ConstradeApi.Model.MCommunity.Repository
                 Members = members
             };
         }
-
         public async Task<IEnumerable<CommunityModel>> GetCommunityByOwnerId(int userId)
         {
             IEnumerable<CommunityModel> communityList = await _context.Community.Where(_c => _c.OwnerUserId == userId).Select(_c => _c.ToModel()).ToListAsync();
 
             return communityList;
         }
-
         public async Task<CommunityJoinResponse> JoinCommunity(int id, int userId)
         {
             Community? community = await _context.Community.FindAsync(id);
@@ -140,7 +135,6 @@ namespace ConstradeApi.Model.MCommunity.Repository
                 return CommunityJoinResponse.Approved;
             }
         }
-
         // TODO: this will not check if the user exist in the community 
         // Please do a checker here
         public async Task<CommunityPostDetails> CommunityCreatePost(CommunityPostModel info)
@@ -165,7 +159,6 @@ namespace ConstradeApi.Model.MCommunity.Repository
                 User = _post.User.ToModel()
             };
         }
-
         public async Task<bool> UpdateCommunity(CommunityModel info)
         {
             Community? _community = await _context.Community.FindAsync(info.CommunityId);
@@ -180,7 +173,6 @@ namespace ConstradeApi.Model.MCommunity.Repository
             await _context.SaveChangesAsync();
             return true;
         }
-
         public async Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId)
         {
             IEnumerable<CommunityPost> communityPosts = await _context.CommunityPost.Include(_p => _p.User).Where(_p => _p.CommunityId == communityId).ToListAsync();
@@ -205,7 +197,6 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return true;
         }
-
         // TODO: this will not check if the user is a memeber in the community post
         // Please make a optimizer also here
         public async Task<CommunityPostCommentModel> CommentPost(CommunityPostCommentModel info)
@@ -225,14 +216,12 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return _comment.ToModel();
         }
-
         public async Task<IEnumerable<CommunityPostCommentModel>> GetCommentByPostId(int id)
         {
             IEnumerable<CommunityPostCommentModel> comments = await _context.PostComment.Where(_p => _p.CommunityPostId == id).Select(_p => _p.ToModel()).ToListAsync();
 
             return comments;
         }
-
         public async Task<bool> DeleteCommentPost(int id)
         {
             CommunityPostComment? comment = await _context.PostComment.FindAsync(id);
@@ -242,6 +231,32 @@ namespace ConstradeApi.Model.MCommunity.Repository
             _context.Remove(comment);
             _context.SaveChanges();
 
+            return true;
+        }
+        public async Task<bool> CommunityPostLike(int postId, int userId)
+        {
+            CommunityPost? post = await _context.CommunityPost.FindAsync(postId);
+
+            if(post == null) return false;
+
+            CommunityPostLike? like = await _context.PostLike.Where(_l => _l.UserId == userId && _l.CommunityPostId == postId).FirstOrDefaultAsync();
+
+            if(like == null)
+            {
+                post.Like += 1;
+                await _context.PostLike.AddAsync(new CommunityPostLike
+                {
+                    UserId = userId,
+                    CommunityPostId = postId,
+                });
+            }
+            else
+            {
+                post.Like -= 1;
+                _context.PostLike.Remove(like);
+            }
+
+            await _context.SaveChangesAsync();
             return true;
         }
     }

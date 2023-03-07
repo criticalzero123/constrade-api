@@ -158,6 +158,7 @@ namespace ConstradeApi.Controllers
             }
         }
 
+
         [HttpPost("{id}/post")]
         public async Task<IActionResult> PostCommunity([FromBody] CommunityPostModel info)
         {
@@ -219,7 +220,23 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
+        
+        [HttpPut("{id}/post/{postId}/like")]
+        public async Task<IActionResult> LikePostCommunity(int postId, int userId)
+        {
+            try
+            {
+                bool flag = await _communityRepo.CommunityPostLike(postId, userId);
 
+                if (!flag) return NotFound("No post found");
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
 
         [HttpPost("{id}/post/{postId}/comment")]
         public async Task<IActionResult> CommentPost([FromBody] CommunityPostCommentModel info)

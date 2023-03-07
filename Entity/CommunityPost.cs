@@ -24,5 +24,8 @@ namespace ConstradeApi.Entity
 
         [Column("created_date")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        [Column("like_count")]
+        public int Like { get; set; }
     }
 }

@@ -35,5 +35,6 @@ namespace ConstradeApi.Entity
         public DbSet<CommunityMember> CommunityMember { get; set; }
         public DbSet<CommunityJoin> CommunityJoin { get; set; }
         public DbSet<CommunityPost> CommunityPost { get; set; }
+        public DbSet<CommunityPostComment> PostComment { get; set; }
     }
 }

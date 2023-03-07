@@ -1,7 +1,9 @@
-﻿using ConstradeApi.Enums;
+﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Model.MCommunity;
 using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
 using ConstradeApi.Model.MCommunity.MCommunityPost;
+using ConstradeApi.Model.MCommunity.MCommunityPostComment;
 using ConstradeApi.Model.MCommunity.Repository;
 using ConstradeApi.Model.MReport;
 using ConstradeApi.Model.MReport.Repository;
@@ -186,6 +188,21 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpPost("{id}/post/report")]
+        public async Task<IActionResult> ReportPostCommunity([FromBody] ReportModel model)
+        {
+            try
+            {
+                var report = await _reportRepo.CreateReport(model);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, report));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         [HttpDelete("{id}/post/{postId}")]
         public async Task<IActionResult> DeletePostCommunity(int postId, int userId)
         {
@@ -196,6 +213,69 @@ namespace ConstradeApi.Controllers
                 if (!deleted) return NotFound("You are not the owner or the post doesnt exist");
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, deleted));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+
+        [HttpPost("{id}/post/{postId}/comment")]
+        public async Task<IActionResult> CommentPost([FromBody] CommunityPostCommentModel info)
+        {
+            try
+            {
+                var comment = await _communityRepo.CommentPost(info);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, comment));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("{id}/post/{postId}/comment")]
+        public async Task<IActionResult> GetCommentPost(int postId)
+        {
+            try
+            {
+                var comments = await _communityRepo.GetCommentByPostId(postId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, comments));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPost("{id}/post/{postId}/comment/report")]
+        public async Task<IActionResult> ReportCommentPost([FromBody] ReportModel model)
+        {
+            try
+            {
+                var report = await _reportRepo.CreateReport(model);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, report));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpDelete("{id}/post/{postId}/comment/{commentId}")]
+        public async Task<IActionResult> DeleteCommentPost(int commentId)
+        {
+            try
+            {
+                bool flag = await _communityRepo.DeleteCommentPost(commentId);
+
+                if (!flag) return NotFound("Comment is not found or something went wrong");
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }
             catch (Exception ex)
             {

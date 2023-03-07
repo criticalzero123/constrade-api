@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Enums;
 using ConstradeApi.Model.MCommunity.MCommunityPost;
+using ConstradeApi.Model.MCommunity.MCommunityPostComment;
 
 namespace ConstradeApi.Model.MCommunity.Repository
 {
@@ -15,5 +16,8 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<CommunityPostDetails> CommunityCreatePost(CommunityPostModel info);
         Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId);
         Task<bool> DeletePostCommunityById(int postId, int userId);
+        Task<CommunityPostCommentModel> CommentPost(CommunityPostCommentModel info);
+        Task<IEnumerable<CommunityPostCommentModel>> GetCommentByPostId(int id);
+        Task<bool> DeleteCommentPost(int id);
     }
 }

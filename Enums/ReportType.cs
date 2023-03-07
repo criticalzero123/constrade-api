@@ -4,7 +4,9 @@
     {
         User,
         Product,
-        Community
+        Community,
+        CommunityPost,
+        CommunityPostComment
     }
 
     public enum ReportStatus

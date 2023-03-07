@@ -7,5 +7,6 @@
         public int PosterUserId { get; set; }
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public int Like { get; set; }
     }
 }

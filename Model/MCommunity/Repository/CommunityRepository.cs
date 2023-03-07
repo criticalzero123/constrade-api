@@ -2,6 +2,7 @@
 using ConstradeApi.Enums;
 using ConstradeApi.Model.MCommunity.MCommunityMember;
 using ConstradeApi.Model.MCommunity.MCommunityPost;
+using ConstradeApi.Model.MCommunity.MCommunityPostComment;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
@@ -200,6 +201,45 @@ namespace ConstradeApi.Model.MCommunity.Repository
             if (post.PosterUserId != userId) return false;
 
             _context.Remove(post);
+            _context.SaveChanges();
+
+            return true;
+        }
+
+        // TODO: this will not check if the user is a memeber in the community post
+        // Please make a optimizer also here
+        public async Task<CommunityPostCommentModel> CommentPost(CommunityPostCommentModel info)
+        {
+            CommunityPostComment comment = new CommunityPostComment
+            {
+                CommunityPostId = info.CommunityPostId,
+                CommentedByUser = info.CommentedByUser,
+                Comment = info.Comment,
+                DateCommented = info.DateCommented,
+            };
+
+            await _context.PostComment.AddAsync(comment);
+            await _context.SaveChangesAsync();
+
+            CommunityPostComment? _comment = await _context.PostComment.FindAsync(comment.CommunityPostCommentId);
+
+            return _comment.ToModel();
+        }
+
+        public async Task<IEnumerable<CommunityPostCommentModel>> GetCommentByPostId(int id)
+        {
+            IEnumerable<CommunityPostCommentModel> comments = await _context.PostComment.Where(_p => _p.CommunityPostId == id).Select(_p => _p.ToModel()).ToListAsync();
+
+            return comments;
+        }
+
+        public async Task<bool> DeleteCommentPost(int id)
+        {
+            CommunityPostComment? comment = await _context.PostComment.FindAsync(id);
+
+            if(comment == null) return false;   
+
+            _context.Remove(comment);
             _context.SaveChanges();
 
             return true;

@@ -50,7 +50,8 @@ namespace ConstradeApi.Services.EntityToModel
                 ImageUrl = user.ImageUrl,
                 LastActiveAt = user.LastActiveAt,
                 CountPost = user.CountPost,
-                DateCreated = user.DateCreated
+                DateCreated = user.DateCreated,
+                
             };
         }
         public static ProductModel ToModel(this Product product)

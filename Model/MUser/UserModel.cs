@@ -19,5 +19,6 @@ namespace ConstradeApi.Model.MUser
         public DateTime LastActiveAt { get; set; }
         public int CountPost { get; set; }
         public DateTime DateCreated { get; set; }
+
     }
 }

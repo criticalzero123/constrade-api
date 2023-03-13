@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Model.MProduct;
+using ConstradeApi.Model.MTransaction;
 
 namespace ConstradeApi.Model.MUser.Repository
 {
@@ -29,5 +30,6 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info);
         Task<UserAndPersonModel?> UpdatePersonInfo(UserAndPersonModel info);
         Task<bool> ChangePasswordByEmail(ChangePasswordModel model);
+        Task<IEnumerable<TransactionModel>> GetNotRated(int buyerId, int sellerId);  
     }
 }

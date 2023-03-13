@@ -9,6 +9,7 @@ namespace ConstradeApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReviewController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
@@ -26,7 +27,6 @@ namespace ConstradeApi.Controllers
         /// <param name="review">if true the reviews of the user will be fetch</param>
         /// <returns>object</returns>
         //GET api/<ReviewController>/4/all
-        [Authorize]
         [HttpGet("{userId}/all")]
         public async Task<IActionResult> GetAllReviews(int userId)
         {
@@ -45,7 +45,6 @@ namespace ConstradeApi.Controllers
         }
 
         //GET api/<ReviewController>/4/my
-        [Authorize]
         [HttpGet("{userId}/my")]
         public async Task<IActionResult> GetMyReviews(int userId)
         {
@@ -61,9 +60,39 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        //GET api/<UserController>
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetReviews(int userId)
+        {
+            try
+            {
+                var reviews = await _userRepository.GetReviews(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, reviews));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("{userId}/available")]
+        public async Task<IActionResult> GetNotRated(int userId, int visitorId)
+        {
+            try
+            {
+                var available = await _userRepository.GetNotRated(visitorId, userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, available));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         //POST api/<Usercontroller>
-        [Authorize]
-        [HttpPost("{userId}")]
+        [HttpPost()]
         public async Task<IActionResult> AddReview(int uid, [FromBody] UserReviewModel userReviewModel)
         {
             try
@@ -80,21 +109,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        //GET api/<UserController>
-        [Authorize]
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetReviews(int userId)
-        {
-            try
-            {
-                var reviews = await _userRepository.GetReviews(userId);
 
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, reviews));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
-            }
-        }
+
+
     }
 }

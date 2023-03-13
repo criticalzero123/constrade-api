@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MProduct;
+using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -401,6 +402,15 @@ namespace ConstradeApi.Model.MUser.Repository
             await _context.SaveChangesAsync();
 
             return true; 
+        }
+
+        public async Task<IEnumerable<TransactionModel>> GetNotRated( int buyerId, int sellerId)
+        {
+            IEnumerable<TransactionModel> _transactions = await _context.Transactions.Where(_u =>  !_u.IsReviewed && _u.BuyerUserId == buyerId && _u.SellerUserId == sellerId)
+                                                                                     .Select(_t => _t.ToModel())
+                                                                                     .ToListAsync();
+
+            return _transactions;
         }
     }
 }

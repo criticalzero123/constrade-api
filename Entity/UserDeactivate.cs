@@ -19,6 +19,6 @@ namespace ConstradeApi.Entity
         public DateTime DateStarted { get; set; } = DateTime.Now;
 
         [Column("date_end")]
-        public DateTime DateEnd { get; set; } 
+        public DateTime DateEnd { get; set; } = DateTime.Now.AddDays(5);
     }
 }

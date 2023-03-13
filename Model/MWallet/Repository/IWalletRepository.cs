@@ -29,6 +29,5 @@ namespace ConstradeApi.Model.MWallet.Repository
          Task<IEnumerable<TopUpTransactionModel>> GetAllTopUpTransaction();
 
          Task<TopUpTransactionModel?> GetTopUpById(int id);
-
     }
 }

@@ -56,6 +56,23 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
+
+        [HttpDelete("messages/message/{id}")]
+        public async Task<IActionResult> DeleteMessage(int id)
+        {
+            try
+            {
+                bool flag = await _productMessage.DeleteMessageById(id);
+
+                if (!flag) return NotFound("message not found");
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
        
     }
 }

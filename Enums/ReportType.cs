@@ -12,6 +12,7 @@
     public enum ReportStatus
     {
         Active,
+        Fixes,
         Done,
     }
 }

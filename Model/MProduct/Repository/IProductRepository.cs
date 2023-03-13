@@ -14,10 +14,6 @@ namespace ConstradeApi.Model.MProduct.Repository
         Task<bool> AddFavoriteProduct(FavoriteModel info);
         Task<bool> DeleteFavoriteProduct(int id);
         Task<IEnumerable<FavoriteModel>> GetFavoriteUser(int userId);
-        Task<IEnumerable<ProductCommentModel>> GetProductComment(int productId);
-        Task<bool> AddCommentProduct(int productId, int userId, string comment);
-        Task<bool> DeleteCommentProduct(int id);
-        Task<bool> UpdateCommentProduct(int productId, int id, int userId, string newComment);
 
     }
 }

@@ -65,6 +65,34 @@ namespace ConstradeApi.Model.MUserNotification.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task SendNotificationTransaction(int sellerUserId, int buyerUserId, int transactionId)
+        {
+            UserNotification _u = new UserNotification
+            {
+                UserId = sellerUserId,
+                ToId = transactionId,
+                ImageUrl = "",
+                NotificationMessage= "Transaction completed.",
+                NotificationType="transaction",
+                NotificationDate= DateTime.Now
+            };
 
+            await _context.Notification.AddAsync(_u);
+
+            UserNotification _u1 = new UserNotification
+            {
+                UserId = buyerUserId,
+                ToId = transactionId,
+                ImageUrl = "",
+                NotificationMessage = "Transaction completed. You can review him now.",
+                NotificationType = "transaction",
+                NotificationDate = DateTime.Now
+            };
+
+            await _context.Notification.AddAsync(_u1);
+
+            await _context.SaveChangesAsync();
+
+        }
     }
 }

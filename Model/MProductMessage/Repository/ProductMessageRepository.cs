@@ -30,6 +30,18 @@ namespace ConstradeApi.Model.MProductMessage.Repository
             return message.ToModel();
         }
 
+        public async Task<bool> DeleteMessageById(int id)
+        {
+            ProductMessage? message = await _context.ProductMessages.FindAsync(id);
+
+            if (message == null) return false;
+
+            _context.ProductMessages.Remove(message);
+            _context.SaveChanges();
+
+            return true;
+        }
+
         public async Task<ProductMessageModel?> GetProductMessageById(int id)
         {
             ProductMessage? message = await _context.ProductMessages.FindAsync(id);

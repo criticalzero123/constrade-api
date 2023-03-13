@@ -185,12 +185,11 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return posts;
         }
-        public async Task<bool> DeletePostCommunityById(int postId, int userId)
+        public async Task<bool> DeletePostCommunityById(int postId)
         {
             CommunityPost? post = await _context.CommunityPost.FindAsync(postId);
 
             if (post == null) return false;
-            if (post.PosterUserId != userId) return false;
 
             _context.Remove(post);
             _context.SaveChanges();

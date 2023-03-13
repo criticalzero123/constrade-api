@@ -14,8 +14,6 @@ using System.Text;
 using ConstradeApi.Model.MUserChat.Repository;
 using ConstradeApi.Hubs;
 using ConstradeApi.Model.MUserMessage.Repository;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using ConstradeApi.Model.MProductChat.Repository;
 using ConstradeApi.Model.MProductMessage.Repository;
@@ -39,7 +37,7 @@ namespace ConstradeApi
       
 
             // Add services to the container.
-            builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgressDB"]));
+            builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBDev"]));
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -111,6 +109,7 @@ namespace ConstradeApi
 
             app.UseWhen(httpContext => !httpContext.Request.Path.StartsWithSegments("/api/auth"),
                         subApp => subApp.UseMiddleware<CheckApiKeyMiddleware>());
+
             app.UseEndpoints(e =>
             {
                 e.MapHub<UserChatHub>("/hubs/userChatHub");

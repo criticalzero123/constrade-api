@@ -221,13 +221,13 @@ namespace ConstradeApi.Controllers
         }
 
         [HttpDelete("{id}/post/{postId}")]
-        public async Task<IActionResult> DeletePostCommunity(int postId, int userId)
+        public async Task<IActionResult> DeletePostCommunity(int postId)
         {
             try
             {
-                bool deleted = await _communityRepo.DeletePostCommunityById(postId, userId);
+                bool deleted = await _communityRepo.DeletePostCommunityById(postId);
 
-                if (!deleted) return NotFound("You are not the owner or the post doesnt exist");
+                if (!deleted) return NotFound("The post doesnt exist");
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, deleted));
             }

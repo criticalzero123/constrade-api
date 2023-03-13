@@ -19,30 +19,32 @@ namespace ConstradeApi.Model.MTransaction.Repository
         /// </summary>
         /// <param name="transaction"></param>
         /// <returns></returns>
-        public async Task<bool> SoldProduct(TransactionModel transaction)
+        public async Task<int> SoldProduct(TransactionModel transaction)
         {
 
             Product? product = await _context.Products.FindAsync(transaction.ProductId);
-            if (product == null) return false;
 
+            if (product == null) return -1;
 
-            product.ProductStatus = "sold";
-            await _context.SaveChangesAsync();
-
-            _context.Transactions.Add(new Transaction()
+            Transaction _t = new Transaction
             {
                 ProductId = transaction.ProductId,
                 BuyerUserId = transaction.BuyerUserId,
                 SellerUserId = transaction.SellerUserId,
-                InAppTransaction = transaction.InAppTransaction,
                 GetWanted = transaction.GetWanted,
+                InAppTransaction = transaction.InAppTransaction,
                 IsReviewed = transaction.IsReviewed,
-                DateTransaction = transaction.DateTransaction
-            });
+                DateTransaction = DateTime.Now
+            };
+
+            product.ProductStatus = "sold";
+            await _context.SaveChangesAsync();
+
+            _context.Transactions.Add(_t);
 
             _context.SaveChanges();
 
-            return true;
+            return _t.TransactionId;
         }
 
         /// <summary>

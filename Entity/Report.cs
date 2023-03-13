@@ -8,7 +8,7 @@ namespace ConstradeApi.Entity
     public class Report
     {
         [Key]
-        [Column("user_id")]
+        [Column("reportId")]
         public int ReportId { get; set; }
 
         [ForeignKey("User")]

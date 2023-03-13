@@ -80,17 +80,6 @@ namespace ConstradeApi.Services.EntityToModel
                 HasWarranty = product.HasWarranty,
             };
         }
-        public static ProductCommentModel ToModel(this ProductComment comment)
-        {
-            return new ProductCommentModel
-            {
-                ProductCommentId = comment.ProductCommentId,
-                Comment = comment.Comment,
-                UserId = comment.UserId,
-                ProductId = comment.ProductId,
-                DateCreated = comment.DateCreated,
-            };
-        }
         public static FavoriteModel ToModel(this Favorites favorite)
         {
             return new FavoriteModel()

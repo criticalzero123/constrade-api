@@ -1,6 +1,7 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Model.MTransaction.Repository;
+using ConstradeApi.Model.MUserNotification.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,10 +15,13 @@ namespace ConstradeApi.Controllers
     public class TransactionsController : ControllerBase
     {
         private readonly ITransactionRepository _transactionRespository;
-        public TransactionsController(ITransactionRepository transactionRespository)
+        private readonly IUserNotificationRepository _notif;
+
+        public TransactionsController(ITransactionRepository transactionRespository, IUserNotificationRepository notif)
         {
             _transactionRespository= transactionRespository;
-    }
+            _notif = notif;
+        }
 
         // api/<TransactionsController>/product
         [HttpGet("product")]
@@ -39,7 +43,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                TransactionModel? transactionModel = await _transactionRespository.GetTransaction(id);
+                Model.MTransaction.TransactionModel? transactionModel = await _transactionRespository.GetTransaction(id);
 
                 if (transactionModel == null) return NotFound();
 
@@ -57,9 +61,11 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                bool flag = await _transactionRespository.SoldProduct(transactionModel);
+                int flag = await _transactionRespository.SoldProduct(transactionModel);
 
-                if (!flag) return BadRequest("Something Went Wrong");
+                if (flag == -1) return BadRequest("Something Went Wrong");
+
+                await _notif.SendNotificationTransaction(transactionModel.SellerUserId, transactionModel.BuyerUserId, flag);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }

@@ -1,8 +1,12 @@
-﻿namespace ConstradeApi.Model.MTransaction.Repository
+﻿
+
+using ConstradeApi.Entity;
+
+namespace ConstradeApi.Model.MTransaction.Repository
 {
     public interface ITransactionRepository
     {
-         Task<bool> SoldProduct(TransactionModel transaction);
+         Task<int> SoldProduct(TransactionModel transaction);
 
          Task<IEnumerable<TransactionModel>> GetAllTransaction();
 

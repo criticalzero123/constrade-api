@@ -121,6 +121,7 @@ namespace ConstradeApi.Services.EntityToModel
                 ReviewId = review.ReviewId,
                 TransactionRefId = review.TransactionRefId,
                 Rate = review.Rate,
+                Description = review.Description,
                 DateCreated = review.DateCreated,
             };
         }

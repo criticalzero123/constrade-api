@@ -20,6 +20,10 @@ namespace ConstradeApi.Entity
         public short Rate { get; set; }
 
         [Required]
+        [StringLength(150)]
+        public string Description { get; set; } = string.Empty;
+
+        [Required]
         [Column("date_created")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
     }

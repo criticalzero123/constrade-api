@@ -3,6 +3,7 @@ using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ConstradeApi.Model.MUser.Repository
 {
@@ -263,6 +264,7 @@ namespace ConstradeApi.Model.MUser.Repository
             {
                 TransactionRefId = userReviewModel.TransactionRefId,
                 Rate = userReviewModel.Rate,
+                Description = userReviewModel.Description,
                 DateCreated = userReviewModel.DateCreated
             });
             await _context.SaveChangesAsync();
@@ -279,9 +281,9 @@ namespace ConstradeApi.Model.MUser.Repository
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<UserReviewModel>> GetMyReviews(int userId)
+        public async Task<IEnumerable<UserReviewModel>> GetMyReviews(int userId, int otherUserId)
         {
-            List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.BuyerUserId.Equals(userId)).Where(_t => _t.IsReviewed == true).ToListAsync();
+            List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.BuyerUserId == userId && _t.SellerUserId == otherUserId && _t.IsReviewed).ToListAsync();
             List<Review> _reviews = _context.UserReviews.ToList();
 
 
@@ -300,9 +302,9 @@ namespace ConstradeApi.Model.MUser.Repository
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<UserReviewModel>> GetReviews(int userId)
+        public async Task<IEnumerable<UserReviewModel>> GetReviews(int userId, int otherUserId)
         {
-            List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.SellerUserId.Equals(userId)).Where(_t => _t.IsReviewed == true).ToListAsync();
+            List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.SellerUserId == otherUserId && _t.BuyerUserId != userId && _t.IsReviewed).ToListAsync();
             List<Review> _reviews = _context.UserReviews.ToList();
 
 
@@ -314,6 +316,20 @@ namespace ConstradeApi.Model.MUser.Repository
                 .Select(result => result._r.ToModel()).ToList();
 
             return data;
+        }
+
+        public async Task<decimal> GetAverage(int userId)
+        {
+            IEnumerable<Transaction> transactions = await _context.Transactions.Where(_t => _t.SellerUserId == userId && _t.IsReviewed).ToListAsync();
+
+            IEnumerable<decimal> rates = _context.UserReviews.ToList().Join(transactions,
+                                                               _r => _r.TransactionRefId,
+                                                               _t => _t.TransactionId,
+                                                               (_r, _t) => new { _r, _t }
+                                                               )
+                                                            .Select(result => Convert.ToDecimal(result._r.Rate)).ToList();
+
+            return rates.Average();
         }
 
         /// <summary>
@@ -412,5 +428,7 @@ namespace ConstradeApi.Model.MUser.Repository
 
             return _transactions;
         }
+
+       
     }
 }

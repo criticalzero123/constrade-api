@@ -5,6 +5,7 @@ using ConstradeApi.Model.MCommunity.MCommunityPost;
 using ConstradeApi.Model.MCommunity.MCommunityPostComment;
 using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -300,6 +301,29 @@ namespace ConstradeApi.Model.MCommunity.Repository
             _context.SaveChanges();
 
             return true;
+        }
+
+        public async Task<IEnumerable<CommunityDetails>> GetCommunityJoined(int userId)
+        {
+            IEnumerable<Community> communities = await _context.Community.Include(_c => _c.User.Person).ToListAsync();
+
+            var communityMembers = _context.CommunityMember.ToList().Where(_cm => _cm.UserId == userId)
+                                                                    .Join(communities,
+                                                                          _cm => _cm.CommunityId,
+                                                                          _c => _c.CommunityId,
+                                                                          (_cm, _c) => new {_cm, _c})
+                                                                    .Select(_result => new CommunityDetails
+                                                                    {
+                                                                        Community = _result._c.ToModel(),
+                                                                        Owner = new UserAndPersonModel
+                                                                        {
+                                                                            Person = _result._cm.User.Person.ToModel(),
+                                                                            User = _result._cm.User.ToModel()
+                                                                        },
+                                                                        Members = _context.CommunityMember.Where(_cm => _cm.CommunityId == _result._c.CommunityId).Select(_cm => _cm.ToModel()),
+                                                                    });
+
+            return communityMembers;
         }
     }
 }

@@ -92,6 +92,21 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpGet("{id}/my")]
+        public async Task<IActionResult> GetAllMyCommunity(int id)
+        {
+            try
+            {
+                var communities = await _communityRepo.GetCommunityJoined(id);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, communities));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCommunity(int id, int userId)
         {

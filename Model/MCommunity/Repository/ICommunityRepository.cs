@@ -9,6 +9,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
     {
         Task<CommunityResponse> CreateCommunity(CommunityModel info);
         Task<IEnumerable<CommunityModel>> GetCommunityByOwnerId(int userId);
+        Task<IEnumerable<CommunityDetails>> GetCommunityJoined(int userId);
         Task<IEnumerable<CommunityModel>> GetCommunities();
         Task<CommunityDetails?> GetCommunity(int id);
         Task<bool> DeleteCommunity(int id, int userId);

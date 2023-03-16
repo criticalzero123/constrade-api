@@ -207,6 +207,9 @@ namespace ConstradeApi.Model.MProduct.Repository
             Favorites? _info = await _context.ProductFavorite.Where(_f => _f.UserId == info.UserId &&
                                                                       _f.ProductId == info.ProductId)
                                                         .FirstOrDefaultAsync();
+            Product? product = await _context.Products.FindAsync(info.ProductId);
+
+            if (product == null) return false;
 
             if(_info == null)
             {
@@ -216,17 +219,19 @@ namespace ConstradeApi.Model.MProduct.Repository
                     UserId = info.UserId,
                     Date = DateTime.Now,
                 };
-
+                product.CountFavorite += 1;
                 await _context.ProductFavorite.AddAsync(favorite);
+
+                await _context.SaveChangesAsync();
+                return true;
             } 
             else
             {
+                product.CountFavorite -= 1;
                 _context.ProductFavorite.Remove(_info);
+                await _context.SaveChangesAsync();
+                return false;
             }
-
-            await _context.SaveChangesAsync();
-
-            return true;
 
         }
 

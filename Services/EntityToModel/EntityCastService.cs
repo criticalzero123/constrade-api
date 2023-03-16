@@ -18,6 +18,8 @@ using ConstradeApi.Model.MUserChat;
 using ConstradeApi.Model.MUserMessage;
 using ConstradeApi.Model.MUserNotification;
 using ConstradeApi.Model.MWallet;
+using ConstradeApi.VerificationEntity;
+using ConstradeApi.VerificationModel.MValidIdRequest;
 
 namespace ConstradeApi.Services.EntityToModel
 {
@@ -358,6 +360,20 @@ namespace ConstradeApi.Services.EntityToModel
                 CommentedByUser = info.CommentedByUser,
                 Comment = info.Comment,
                 DateCommented = info.DateCommented,
+            };
+        }
+
+        public static ValidIdRequestModel ToModel(this ValidIdRequest info)
+        {
+            return new ValidIdRequestModel
+            {
+                ValidIdRequestId = info.ValidIdRequestId,
+                ValidIdNumber = info.ValidIdNumber,
+                UserId = info.UserId,
+                UserName = info.UserName,
+                ValidationType = info.ValidationType,
+                RequestDate = info.RequestDate,
+                Status  = info.Status,
             };
         }
     }

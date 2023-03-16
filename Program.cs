@@ -21,6 +21,8 @@ using ConstradeApi.Model.MSystemFeedback.Repository;
 using ConstradeApi.Model.MUserNotification.Repository;
 using ConstradeApi.Model.MCommunity.Repository;
 using ConstradeApi.Model.MReport.Repository;
+using ConstradeApi.VerificationEntity;
+using ConstradeApi.VerificationModel.MValidIdRequest.Repository;
 
 namespace ConstradeApi
 {
@@ -38,6 +40,7 @@ namespace ConstradeApi
 
             // Add services to the container.
             builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBDev"]));
+            builder.Services.AddDbContext<VerificationDataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBVerificationDev"]));
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -55,7 +58,13 @@ namespace ConstradeApi
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
             builder.Services.AddTransient<IReportRepository, ReportRepository>();
             builder.Services.AddTransient<ISystemFeedbackRepository, SystemFeedbackRepository>();
+
+            //for the validation
+            builder.Services.AddTransient<IValidIdRequestRepository, ValidIdRequestRepository>();
             builder.Services.AddControllers();
+
+
+          
 
             //for the Jwt Auth
             builder.Services.AddAuthentication(option =>

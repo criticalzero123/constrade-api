@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MProduct;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
@@ -61,12 +62,16 @@ namespace ConstradeApi.Model.MTransaction.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<TransactionModel?> GetTransaction(int id)
+        public async Task<UserAndTransactionModel?> GetTransaction(int id)
         {
-            Transaction? data = await _context.Transactions.FindAsync(id);
-            if (data == null) return null;
+            Transaction transaction = await _context.Transactions.Include(_t => _t.Seller.Person).Include(_t => _t.Buyer.Person).Where(_t => _t.ProductId == id).FirstAsync();
 
-            return data.ToModel();
+            return new UserAndTransactionModel
+            {
+                Transaction = transaction.ToModel(),
+                Buyer = transaction.Buyer.Person.ToModel(),
+                Seller = transaction.Seller.Person.ToModel(),
+            };
         }
 
         //public async Task<List<TransactionModel>> GetTransactionByUser(int uid)

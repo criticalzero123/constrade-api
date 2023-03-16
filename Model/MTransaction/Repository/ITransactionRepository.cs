@@ -1,6 +1,7 @@
 ﻿
 
 using ConstradeApi.Entity;
+using ConstradeApi.Model.MProduct;
 
 namespace ConstradeApi.Model.MTransaction.Repository
 {
@@ -10,7 +11,7 @@ namespace ConstradeApi.Model.MTransaction.Repository
 
          Task<IEnumerable<TransactionModel>> GetAllTransaction();
 
-         Task<TransactionModel?> GetTransaction(int id);
+         Task<UserAndTransactionModel?> GetTransaction(int id);
 
     }
 }

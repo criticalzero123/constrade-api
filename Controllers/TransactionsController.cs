@@ -43,7 +43,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                Model.MTransaction.TransactionModel? transactionModel = await _transactionRespository.GetTransaction(id);
+                var transactionModel = await _transactionRespository.GetTransaction(id);
 
                 if (transactionModel == null) return NotFound();
 

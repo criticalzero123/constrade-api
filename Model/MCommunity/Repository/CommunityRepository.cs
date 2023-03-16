@@ -7,6 +7,7 @@ using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 using System.Linq;
 
 namespace ConstradeApi.Model.MCommunity.Repository
@@ -297,7 +298,13 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             if (exist == null) return false;
 
+            Community? community = await _context.Community.FindAsync(exist.CommunityId);
+
+            if (community == null) return false;
+
+            community.TotalMembers -= 1;
             _context.CommunityMember.Remove(exist);
+
             _context.SaveChanges();
 
             return true;
@@ -317,10 +324,9 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                         Community = _result._c.ToModel(),
                                                                         Owner = new UserAndPersonModel
                                                                         {
-                                                                            Person = _result._cm.User.Person.ToModel(),
-                                                                            User = _result._cm.User.ToModel()
+                                                                            Person = _result._c.User.Person.ToModel(),
+                                                                            User = _result._c.User.ToModel()
                                                                         },
-                                                                        Members = _context.CommunityMember.Where(_cm => _cm.CommunityId == _result._c.CommunityId).Select(_cm => _cm.ToModel()),
                                                                     });
 
             return communityMembers;

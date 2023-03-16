@@ -322,6 +322,8 @@ namespace ConstradeApi.Model.MUser.Repository
         {
             IEnumerable<Transaction> transactions = await _context.Transactions.Where(_t => _t.SellerUserId == userId && _t.IsReviewed).ToListAsync();
 
+            if (transactions.Count() == 0) return 0;
+
             IEnumerable<decimal> rates = _context.UserReviews.ToList().Join(transactions,
                                                                _r => _r.TransactionRefId,
                                                                _t => _t.TransactionId,

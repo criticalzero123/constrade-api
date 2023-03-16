@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MBoostProduct;
 using ConstradeApi.Model.MCommunity;
 using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
 using ConstradeApi.Model.MCommunity.MCommunityMember;
@@ -376,5 +377,18 @@ namespace ConstradeApi.Services.EntityToModel
                 Status  = info.Status,
             };
         }
+
+        public static BoostProductModel ToModel(this BoostProduct info)
+        {
+            return new BoostProductModel
+            {
+                BoostProductId = info.BoostProductId,
+                ProductId = info.ProductId,
+                DaysBoosted = info.DaysBoosted,
+                Status = info.Status,
+                DateTimeExpired= info.DateTimeExpired,
+                DateBoosted = info.DateBoosted,
+            };
+        } 
     }
 }

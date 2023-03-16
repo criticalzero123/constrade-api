@@ -23,6 +23,7 @@ using ConstradeApi.Model.MCommunity.Repository;
 using ConstradeApi.Model.MReport.Repository;
 using ConstradeApi.VerificationEntity;
 using ConstradeApi.VerificationModel.MValidIdRequest.Repository;
+using ConstradeApi.Model.MBoostProduct.Repository;
 
 namespace ConstradeApi
 {
@@ -54,6 +55,7 @@ namespace ConstradeApi
             builder.Services.AddScoped<IApiKeyRepository, ApiKeyRepository>();
             builder.Services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
             builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
+            builder.Services.AddScoped<IBoostProductRepository, BoostProductRepository>();
 
             builder.Services.AddTransient<IOtpRepository, OtpRepository>();
             builder.Services.AddTransient<IReportRepository, ReportRepository>();

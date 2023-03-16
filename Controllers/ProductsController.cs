@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Enums;
+using ConstradeApi.Model.MBoostProduct.Repository;
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MProduct.Repository;
 using ConstradeApi.Model.MReport;
@@ -23,30 +24,32 @@ namespace ConstradeApi.Controllers
         private readonly IReportRepository _productReportRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUserNotificationRepository _notification;
+        private readonly IBoostProductRepository _boost;
 
-        public ProductsController(IProductRepository productRepository,IReportRepository productReport, IUserRepository repository, IUserNotificationRepository notification)
+        public ProductsController(IProductRepository productRepository, IReportRepository productReport, IUserRepository repository, IUserNotificationRepository notification, IBoostProductRepository boost)
         {
             _productRepository = productRepository;
             _productReportRepository = productReport;
             _userRepository = repository;
             _notification = notification;
+            _boost = boost;
         }
 
         // GET: api/<ProductController>
-        
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             try
             {
-                ResponseType responseType= ResponseType.Success;
+                ResponseType responseType = ResponseType.Success;
                 var products = await _productRepository.GetAllProducts();
 
                 if (!products.Any()) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, products));
 
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
@@ -74,22 +77,22 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                ResponseType responseType= ResponseType.Success;
+                ResponseType responseType = ResponseType.Success;
 
-                var product = await _productRepository.Get(id,uid);
+                var product = await _productRepository.Get(id, uid);
 
-                if(product == null) responseType = ResponseType.NotFound;
+                if (product == null) responseType = ResponseType.NotFound;
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, product));
 
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
             }
         }
 
         // POST api/<ProductController>
-        
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductAndImages productModel)
         {
@@ -105,14 +108,14 @@ namespace ConstradeApi.Controllers
                 await _notification.SendNotificationToFollowerPosting(follower.Select(_f => _f.FollowedByUserId).ToList(), response.ProductId, response.PosterUserId);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, productModel));
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
             }
         }
 
         // PUT api/<ProductController>/5
-    
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ProductModel productModel)
         {
@@ -141,7 +144,7 @@ namespace ConstradeApi.Controllers
                 ResponseType responseType = ResponseType.Success;
                 bool _result = await _productRepository.DeleteProduct(id);
 
-                if (!_result) return NotFound(); 
+                if (!_result) return NotFound();
 
                 return Ok(ResponseHandler.GetApiResponse(responseType, _result));
             }
@@ -199,11 +202,56 @@ namespace ConstradeApi.Controllers
 
         // POST api/<ProductsController>/report
         [HttpPost("report")]
-        public async Task<IActionResult> ReportUser([FromBody]ReportModel model)
+        public async Task<IActionResult> ReportUser([FromBody] ReportModel model)
         {
             try
             {
                 bool flag = await _productReportRepository.CreateReport(model);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("boost/{id}")]
+        public async Task<IActionResult> GetProductBoosted(int id)
+        {
+            try
+            {
+                var boosted = await _boost.GetProductBoost(id);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, boosted));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPost("boost/{id}")]
+        public async Task<IActionResult> BoostProduct(int id, int days)
+        {
+            try
+            {
+                bool flag = await _boost.ProductBoost(id, days);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPut("boost/{id}/cancel")]
+        public async Task<IActionResult> CancelBoost(int id)
+        {
+            try
+            {
+                bool flag = await _boost.CancelBoost(id);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }

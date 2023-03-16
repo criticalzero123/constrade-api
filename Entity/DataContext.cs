@@ -37,5 +37,6 @@ namespace ConstradeApi.Entity
         public DbSet<CommunityPostComment> PostComment { get; set; }
         public DbSet<CommunityPostLike> PostLike { get; set; }
         public DbSet<UserDeactivate> UserDeactivated { get; set; }
+        public DbSet<BoostProduct> BoostProduct { get; set; }
     }
 }

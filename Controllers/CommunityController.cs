@@ -107,6 +107,21 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopular(int uid)
+        {
+            try
+            {
+                var community = await _communityRepo.GetPopularCommunity(uid);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, community));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCommunity(int id, int userId)
         {

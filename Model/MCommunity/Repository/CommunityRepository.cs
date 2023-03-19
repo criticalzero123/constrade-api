@@ -68,10 +68,12 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return true;
         }
+
         public async Task<IEnumerable<CommunityModel>> GetCommunities()
         {
             return await _context.Community.Select(_c => _c.ToModel()).ToListAsync();
         }
+
         public async Task<CommunityDetails?> GetCommunity(int id)
         {
             Community? model = await _context.Community.Include(_c => _c.User).Include(_c => _c.User.Person).Where(_c => _c.CommunityId == id).FirstOrDefaultAsync();
@@ -91,12 +93,14 @@ namespace ConstradeApi.Model.MCommunity.Repository
                 Members = members
             };
         }
+
         public async Task<IEnumerable<CommunityModel>> GetCommunityByOwnerId(int userId)
         {
             IEnumerable<CommunityModel> communityList = await _context.Community.Where(_c => _c.OwnerUserId == userId).Select(_c => _c.ToModel()).ToListAsync();
 
             return communityList;
         }
+
         public async Task<CommunityJoinResponse> JoinCommunity(int id, int userId)
         {
             Community? community = await _context.Community.FindAsync(id);
@@ -137,6 +141,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
                 return CommunityJoinResponse.Approved;
             }
         }
+
         // TODO: this will not check if the user exist in the community 
         // Please do a checker here
         public async Task<CommunityPostDetails> CommunityCreatePost(CommunityPostModel info)
@@ -161,6 +166,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
                 User = _post.User.ToModel()
             };
         }
+
         public async Task<bool> UpdateCommunity(CommunityModel info)
         {
             Community? _community = await _context.Community.FindAsync(info.CommunityId);
@@ -175,6 +181,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
         public async Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId)
         {
             IEnumerable<CommunityPost> communityPosts = await _context.CommunityPost.Include(_p => _p.User).Where(_p => _p.CommunityId == communityId).ToListAsync();
@@ -187,6 +194,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return posts;
         }
+
         public async Task<bool> DeletePostCommunityById(int postId)
         {
             CommunityPost? post = await _context.CommunityPost.FindAsync(postId);
@@ -198,6 +206,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return true;
         }
+
         // TODO: this will not check if the user is a memeber in the community post
         // Please make a optimizer also here
         public async Task<CommunityPostCommentModel> CommentPost(CommunityPostCommentModel info)
@@ -217,12 +226,14 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return _comment.ToModel();
         }
+
         public async Task<IEnumerable<CommunityPostCommentModel>> GetCommentByPostId(int id)
         {
             IEnumerable<CommunityPostCommentModel> comments = await _context.PostComment.Where(_p => _p.CommunityPostId == id).Select(_p => _p.ToModel()).ToListAsync();
 
             return comments;
         }
+
         public async Task<bool> DeleteCommentPost(int id)
         {
             CommunityPostComment? comment = await _context.PostComment.FindAsync(id);
@@ -234,6 +245,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return true;
         }
+
         public async Task<bool> CommunityPostLike(int postId, int userId)
         {
             CommunityPost? post = await _context.CommunityPost.FindAsync(postId);
@@ -328,6 +340,30 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                             User = _result._c.User.ToModel()
                                                                         },
                                                                     });
+
+            return communityMembers;
+        }
+
+        public async Task<IEnumerable<CommunityDetails>> GetPopularCommunity(int userId)
+        {
+            IEnumerable<Community> communities = await _context.Community.Include(_c => _c.User.Person).ToListAsync();
+
+            var communityMembers = _context.CommunityMember.ToList().Where(_cm => _cm.UserId != userId)
+                                                                    .Join(communities,
+                                                                          _cm => _cm.CommunityId,
+                                                                          _c => _c.CommunityId,
+                                                                          (_cm, _c) => new { _cm, _c })
+                                                                    .OrderBy(_result => _result._c.TotalMembers)
+                                                                    .Select(_result => new CommunityDetails
+                                                                    {
+                                                                        Community = _result._c.ToModel(),
+                                                                        Owner = new UserAndPersonModel
+                                                                        {
+                                                                            Person = _result._c.User.Person.ToModel(),
+                                                                            User = _result._c.User.ToModel()
+                                                                        },
+                                                                    })
+                                                                    .Take(10);
 
             return communityMembers;
         }

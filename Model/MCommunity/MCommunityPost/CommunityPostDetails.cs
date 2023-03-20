@@ -5,6 +5,7 @@ namespace ConstradeApi.Model.MCommunity.MCommunityPost
     public class CommunityPostDetails
     {
         public CommunityPostModel CommunityPost { get; set;}
-        public UserModel User { get; set;}
+        public UserAndPersonModel User { get; set;}
+
     }
 }

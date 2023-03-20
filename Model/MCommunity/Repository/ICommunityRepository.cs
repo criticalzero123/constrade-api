@@ -14,7 +14,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<CommunityDetails?> GetCommunity(int id);
 
         /// <summary>
-        /// GET: 10 of the community order by total members that is not joined by the user
+        /// GET: 5 of the community order by total members that is not joined by the user
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>List of community</returns>
@@ -24,7 +24,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<IEnumerable<CommunityMemberDetails>> GetCommunityMember(int id);
         Task<bool> RemoveMember(int id);
         Task<bool> UpdateCommunity(CommunityModel info);
-        Task<CommunityPostDetails> CommunityCreatePost(CommunityPostModel info);
+        Task<int> CommunityCreatePost(CommunityPostModel info);
         Task<bool> CommunityPostLike(int postId, int userId);
         Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId);
         Task<bool> DeletePostCommunityById(int postId);

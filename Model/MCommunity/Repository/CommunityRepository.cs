@@ -144,7 +144,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
         // TODO: this will not check if the user exist in the community 
         // Please do a checker here
-        public async Task<CommunityPostDetails> CommunityCreatePost(CommunityPostModel info)
+        public async Task<int> CommunityCreatePost(CommunityPostModel info)
         {
             CommunityPost post = new CommunityPost
             {
@@ -157,14 +157,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
             await _context.AddAsync(post);
             await _context.SaveChangesAsync();
 
-            CommunityPost _post = await _context.CommunityPost.Include(_p => _p.User).Where(_p => _p.CommunityPostId == post.CommunityPostId).FirstAsync();
-
-
-            return new CommunityPostDetails
-            {
-                CommunityPost = _post.ToModel(),
-                User = _post.User.ToModel()
-            };
+            return post.CommunityPostId;
         }
 
         public async Task<bool> UpdateCommunity(CommunityModel info)
@@ -184,12 +177,16 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
         public async Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId)
         {
-            IEnumerable<CommunityPost> communityPosts = await _context.CommunityPost.Include(_p => _p.User).Where(_p => _p.CommunityId == communityId).ToListAsync();
+            IEnumerable<CommunityPost> communityPosts = await _context.CommunityPost.Include(_p => _p.User.Person).Where(_p => _p.CommunityId == communityId).ToListAsync();
 
             IEnumerable<CommunityPostDetails> posts = communityPosts.Select(_p => new CommunityPostDetails
             {
                 CommunityPost = _p.ToModel(),
-                User = _p.User.ToModel()
+                User = new UserAndPersonModel
+                {
+                    User = _p.User.ToModel(),
+                    Person = _p.User.Person.ToModel(),
+                }
             });
 
             return posts;
@@ -353,7 +350,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                           _cm => _cm.CommunityId,
                                                                           _c => _c.CommunityId,
                                                                           (_cm, _c) => new { _cm, _c })
-                                                                    .OrderBy(_result => _result._c.TotalMembers)
+                                                                    .OrderByDescending(_result => _result._c.TotalMembers)
                                                                     .Select(_result => new CommunityDetails
                                                                     {
                                                                         Community = _result._c.ToModel(),
@@ -363,7 +360,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                             User = _result._c.User.ToModel()
                                                                         },
                                                                     })
-                                                                    .Take(10);
+                                                                    .Take(5);
 
             return communityMembers;
         }

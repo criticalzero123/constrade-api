@@ -28,9 +28,9 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<bool> CommunityPostLike(int postId, int userId);
         Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId);
         Task<bool> DeletePostCommunityById(int postId);
-        Task<CommunityPostCommentModel> CommentPost(CommunityPostCommentModel info);
-        Task<IEnumerable<CommunityPostCommentModel>> GetCommentByPostId(int id);
+        Task<int> CommentPost(CommunityPostCommentModel info);
+        Task<IEnumerable<CommentDetails>> GetCommentByPostId(int id);
         Task<bool> DeleteCommentPost(int id);
-        Task<CommunityPostCommentModel?> UpdateComment(CommunityPostCommentModel info);
+        Task<bool> UpdateComment(CommunityPostCommentModel info);
     }
 }

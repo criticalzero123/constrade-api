@@ -197,7 +197,8 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
                                                                                  },
                                                                                  CommentsLength = group.Count(c => c != null),
-                                                                             });
+                                                                             })
+                                                                    .OrderByDescending(result => result.CommunityPost.CreatedDate);
 
             foreach (var post in posts)
             {
@@ -224,7 +225,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
         // TODO: this will not check if the user is a memeber in the community post
         // Please make a optimizer also here
-        public async Task<CommunityPostCommentModel> CommentPost(CommunityPostCommentModel info)
+        public async Task<int> CommentPost(CommunityPostCommentModel info)
         {
             CommunityPostComment comment = new CommunityPostComment
             {
@@ -237,14 +238,24 @@ namespace ConstradeApi.Model.MCommunity.Repository
             await _context.PostComment.AddAsync(comment);
             await _context.SaveChangesAsync();
 
-            CommunityPostComment? _comment = await _context.PostComment.FindAsync(comment.CommunityPostCommentId);
 
-            return _comment.ToModel();
+            return comment.CommunityPostCommentId;
         }
 
-        public async Task<IEnumerable<CommunityPostCommentModel>> GetCommentByPostId(int id)
+        public async Task<IEnumerable<CommentDetails>> GetCommentByPostId(int id)
         {
-            IEnumerable<CommunityPostCommentModel> comments = await _context.PostComment.Where(_p => _p.CommunityPostId == id).Select(_p => _p.ToModel()).ToListAsync();
+            IEnumerable<CommentDetails> comments = await _context.PostComment.Include(_cm => _cm.User.Person)
+                                                                             .Where(_p => _p.CommunityPostId == id)
+                                                                             .Select(_p => new CommentDetails
+                                                                             {
+                                                                                 Comment = _p.ToModel(),
+                                                                                 UserInfo = new UserAndPersonModel
+                                                                                 {
+                                                                                     User = _p.User.ToModel(),
+                                                                                     Person = _p.User.Person.ToModel(),
+                                                                                 }
+                                                                             })
+                                                                             .ToListAsync();
 
             return comments;
         }
@@ -288,18 +299,18 @@ namespace ConstradeApi.Model.MCommunity.Repository
             return true;
         }
 
-        public async Task<CommunityPostCommentModel?> UpdateComment(CommunityPostCommentModel info)
+        public async Task<bool> UpdateComment(CommunityPostCommentModel info)
         {
             CommunityPostComment? comment = await _context.PostComment.FindAsync(info.CommunityPostCommentId);
 
-            if(comment == null) return null;
+            if(comment == null) return false;
 
             comment.Comment = info.Comment;
             comment.DateCommented = DateTime.Now;
 
             _context.SaveChanges();
 
-            return comment.ToModel();
+            return true;
         }
 
         public async Task<IEnumerable<CommunityMemberDetails>> GetCommunityMember(int id)

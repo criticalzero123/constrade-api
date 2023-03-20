@@ -179,15 +179,33 @@ namespace ConstradeApi.Model.MCommunity.Repository
         {
             IEnumerable<CommunityPost> communityPosts = await _context.CommunityPost.Include(_p => _p.User.Person).Where(_p => _p.CommunityId == communityId).ToListAsync();
 
-            IEnumerable<CommunityPostDetails> posts = communityPosts.Select(_p => new CommunityPostDetails
+            IEnumerable<CommunityPostDetails> posts = communityPosts.GroupJoin(_context.PostComment.ToList(),
+                                                                          _cp => _cp.CommunityPostId,
+                                                                          _c => _c.CommunityPostId,
+                                                                          (_cp, _c) => new { _cp, _c })
+                                                                    .SelectMany(result => result._c.DefaultIfEmpty(),
+                                                                                (parent, child) => new { parent._cp, child})
+                                                                    .GroupBy(result => result._cp,
+                                                                             result => result.child,
+                                                                             (key, group) => new CommunityPostDetails
+                                                                             {
+                                                                                 CommunityPost = key.ToModel(),
+                                                                                 User = new UserAndPersonModel
+                                                                                 {
+                                                                                     User = key.User.ToModel(),
+                                                                                     Person = key.User.Person.ToModel(),
+
+                                                                                 },
+                                                                                 CommentsLength = group.Count(c => c != null),
+                                                                             });
+
+            foreach (var post in posts)
             {
-                CommunityPost = _p.ToModel(),
-                User = new UserAndPersonModel
-                {
-                    User = _p.User.ToModel(),
-                    Person = _p.User.Person.ToModel(),
-                }
-            });
+                
+                    // Log a warning if the comment count doesn't match the expected value
+                    Console.WriteLine($"Warning: post {post.CommunityPost.CommunityPostId} has {post.CommentsLength} comments.");
+               
+            }
 
             return posts;
         }

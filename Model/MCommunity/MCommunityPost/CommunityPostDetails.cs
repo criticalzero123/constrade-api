@@ -1,4 +1,5 @@
-﻿using ConstradeApi.Model.MUser;
+﻿using ConstradeApi.Model.MCommunity.MCommunityPostComment;
+using ConstradeApi.Model.MUser;
 
 namespace ConstradeApi.Model.MCommunity.MCommunityPost
 {
@@ -6,6 +7,6 @@ namespace ConstradeApi.Model.MCommunity.MCommunityPost
     {
         public CommunityPostModel CommunityPost { get; set;}
         public UserAndPersonModel User { get; set;}
-
+        public int CommentsLength { get; set;}
     }
 }

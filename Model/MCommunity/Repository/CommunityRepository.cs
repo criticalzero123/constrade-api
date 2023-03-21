@@ -380,16 +380,20 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                           _c => _c.CommunityId,
                                                                           (_cm, _c) => new { _cm, _c })
                                                                     .OrderByDescending(_result => _result._c.TotalMembers)
-                                                                    .Select(_result => new CommunityDetails
-                                                                    {
-                                                                        Community = _result._c.ToModel(),
-                                                                        Owner = new UserAndPersonModel
-                                                                        {
-                                                                            Person = _result._c.User.Person.ToModel(),
-                                                                            User = _result._c.User.ToModel()
-                                                                        },
-                                                                    })
-                                                                    .Take(5);
+                                                                    .GroupBy(_result => _result._c,
+                                                                          _result => _result._cm,
+                                                                          (key, value) => new CommunityDetails
+                                                                          {
+                                                                              Community = key.ToModel(),
+                                                                              Owner = new UserAndPersonModel
+                                                                              {
+                                                                                  Person = key.User.Person.ToModel(),
+                                                                                  User = key.User.ToModel()
+                                                                              }
+                                                                          })
+                                                                    .Take(5); 
+
+    
 
             return communityMembers;
         }

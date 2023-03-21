@@ -397,5 +397,17 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return communityMembers;
         }
+
+        public async Task<bool> UpdatePost(CommunityPostModel info)
+        {
+            CommunityPost? post = await _context.CommunityPost.FindAsync(info.CommunityPostId);
+
+            if (post == null) return false;
+
+            post.Description = info.Description;
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

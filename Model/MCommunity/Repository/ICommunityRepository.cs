@@ -25,6 +25,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<bool> RemoveMember(int id);
         Task<bool> UpdateCommunity(CommunityModel info);
         Task<int> CommunityCreatePost(CommunityPostModel info);
+        Task<bool> UpdatePost(CommunityPostModel info);
         Task<bool> CommunityPostLike(int postId, int userId);
         Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId);
         Task<bool> DeletePostCommunityById(int postId);

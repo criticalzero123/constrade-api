@@ -203,6 +203,21 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpPut("{id}/post")]
+        public async Task<IActionResult> EditPost([FromBody] CommunityPostModel info)
+        {
+            try
+            {
+                bool flag = await _communityRepo.UpdatePost(info);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         [HttpGet("{id}/members")]
         public async Task<IActionResult> GetCommunityMembers(int id)
         {

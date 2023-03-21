@@ -200,17 +200,24 @@ namespace ConstradeApi.Model.MWallet.Repository
         {
             IEnumerable<SendMoneyTransactionModel> _data = await _context.SendMoneyTransactions.Where(_t => _t.ReceiverWalletId == userId || 
                                                                                                       _t.SenderWalletId == userId)
-                                                                                         .Select(_t => _t.ToModel()).ToListAsync();
+                                                                                         .OrderByDescending(_t => _t)
+                                                                                         .Take(10)
+                                                                                         .Select(_t => _t.ToModel()).ToListAsync()
+                                                                                         ;
 
             return _data;
         }
 
         public async Task<IEnumerable<WalletUserDetailModel>> GetAllWalletUserDetails()
         {
-            IEnumerable<WalletUserDetailModel> data = await _context.UserWallet.Select(_w => new WalletUserDetailModel
+            IEnumerable<WalletUserDetailModel> data = await _context.UserWallet
+                                                                    .Include(_w => _w.User.Person)
+                                                                    .Where(_w => _w.User.UserType != "semi-verified" )
+                                                                    .Select(_w => new WalletUserDetailModel
             {
                 WalletId = _w.WalletId,
-                User = _w.User,
+                User = _w.User.ToModel(),
+                Person = _w.User.Person.ToModel(),
             }).ToListAsync();
 
             return data;

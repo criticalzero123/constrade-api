@@ -101,13 +101,13 @@ namespace ConstradeApi.Controllers
                 CreationProductResponse response = await _productRepository.Save(productModel.Product, productModel.ImageURLList);
 
                 if (response.Response == ProductAddResponseType.UserNotFound) return NotFound();
-                if (response.Response == ProductAddResponseType.NoPostCount) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{response.Response}"));
+                if (response.Response == ProductAddResponseType.NoPostCount) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{ProductAddResponseType.NoPostCount}"));
 
                 var follower = await _userRepository.GetUserFollower(productModel.Product.PosterUserId);
 
                 await _notification.SendNotificationToFollowerPosting(follower.Select(_f => _f.FollowedByUserId).ToList(), response.ProductId, response.PosterUserId);
 
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, productModel));
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, response.ProductId));
             } catch (Exception ex)
             {
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));

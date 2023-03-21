@@ -57,6 +57,12 @@ namespace ConstradeApi.Model.MProduct.Repository
                 ProductId = 0,
                 PosterUserId = 0
             };
+            if (user.UserType == "semi-verified") return new CreationProductResponse
+            {
+                Response = ProductAddResponseType.NotVerified,
+                ProductId = 0,
+                PosterUserId = 0,
+            };
             //Prevent the user that less than 1 count post to post a product
             if (user.CountPost < 1) return new CreationProductResponse 
             { 

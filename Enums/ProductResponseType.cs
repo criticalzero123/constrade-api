@@ -4,6 +4,7 @@
     {
         Success,
         UserNotFound,
+        NotVerified,
         NoPostCount,
     }
 }

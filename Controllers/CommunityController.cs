@@ -251,11 +251,11 @@ namespace ConstradeApi.Controllers
         }
 
         [HttpGet("{id}/post")]
-        public async Task<IActionResult> GetPostCommunity(int id)
+        public async Task<IActionResult> GetPostCommunity(int id, int userId)
         {
             try
             {
-                var posts = await _communityRepo.GetAllCommunityPost(id);
+                var posts = await _communityRepo.GetAllCommunityPost(id, userId);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success,posts));
             }

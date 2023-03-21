@@ -7,6 +7,7 @@ using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections;
 using System.Linq;
 
@@ -175,38 +176,38 @@ namespace ConstradeApi.Model.MCommunity.Repository
             return true;
         }
 
-        public async Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId)
+        public async Task<IEnumerable<CommunityPostDetails>> GetAllCommunityPost(int communityId, int userId)
         {
             IEnumerable<CommunityPost> communityPosts = await _context.CommunityPost.Include(_p => _p.User.Person).Where(_p => _p.CommunityId == communityId).ToListAsync();
 
             IEnumerable<CommunityPostDetails> posts = communityPosts.GroupJoin(_context.PostComment.ToList(),
                                                                           _cp => _cp.CommunityPostId,
                                                                           _c => _c.CommunityPostId,
-                                                                          (_cp, _c) => new { _cp, _c })
-                                                                    .SelectMany(result => result._c.DefaultIfEmpty(),
-                                                                                (parent, child) => new { parent._cp, child})
-                                                                    .GroupBy(result => result._cp,
-                                                                             result => result.child,
-                                                                             (key, group) => new CommunityPostDetails
-                                                                             {
-                                                                                 CommunityPost = key.ToModel(),
-                                                                                 User = new UserAndPersonModel
-                                                                                 {
-                                                                                     User = key.User.ToModel(),
-                                                                                     Person = key.User.Person.ToModel(),
+                                                                          (_cp, _c) => new { Post = _cp, Comments = _c })
+                                                                    .GroupJoin(_context.PostLike.ToList().Where(_likes => _likes.UserId == userId),
+                                                                               _cp => _cp.Post.CommunityPostId,
+                                                                               _cl => _cl.CommunityPostId,
+                                                                               (cp, likes) => new
+                                                                               {
+                                                                                   Post = cp.Post,
+                                                                                   Comments = cp.Comments,
+                                                                                   LikeCount = likes.Count(),
+                                                                                   CommentCount = cp.Comments.Count(),
+                                                                                   Liked = likes.Any(),
+                                                                               })
+                                                                    .Select(p => new CommunityPostDetails
+                                                                    {
+                                                                        CommunityPost = p.Post.ToModel(),
+                                                                        User = new UserAndPersonModel
+                                                                        {
+                                                                            User = p.Post.User.ToModel(),
+                                                                            Person = p.Post.User.Person.ToModel(),
 
-                                                                                 },
-                                                                                 CommentsLength = group.Count(c => c != null),
-                                                                             })
+                                                                        },
+                                                                        CommentsLength = p.CommentCount,
+                                                                        IsLiked = p.Liked
+                                                                    })
                                                                     .OrderByDescending(result => result.CommunityPost.CreatedDate);
-
-            foreach (var post in posts)
-            {
-                
-                    // Log a warning if the comment count doesn't match the expected value
-                    Console.WriteLine($"Warning: post {post.CommunityPost.CommunityPostId} has {post.CommentsLength} comments.");
-               
-            }
 
             return posts;
         }

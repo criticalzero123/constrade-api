@@ -38,6 +38,7 @@ namespace ConstradeApi.Model.MProduct.Repository
         public async Task<IEnumerable<ProductModel>> GetProductsByUserId(int userId)
         {
             IEnumerable<ProductModel> products = await _context.Products.Where(_p => _p.PosterUserId == userId)
+                                                                        .OrderBy(_p => _p.DateCreated)
                                                                         .Select(_p => _p.ToModel())
                                                                         .ToListAsync();
 
@@ -127,14 +128,23 @@ namespace ConstradeApi.Model.MProduct.Repository
         /// <returns>ProductModel</returns>
         public async Task<ProductFullDetails?> Get(int id, int? userId)
         {
-            var _data = await _context.Products.Where(p => p.ProductId == id)
-                .Select(product => new ProductFullDetails
-                {
-                    User = product.User.ToModel(),
-                    Product = product.ToModel(),
-                    Person = product.User.Person.ToModel(),
-                    Images = _context.Images.Where(_i => _i.ProductId == product.ProductId).Select(_i => _i.ToModel()).ToList()
-                }).FirstOrDefaultAsync();
+            var _data = _context.Products.Include(_p => _p.User.Person).ToList()
+                                                .GroupJoin(_context.Images.ToList(),
+                                                           _p => _p.ProductId,
+                                                           _i => _i.ProductId,
+                                                           (_p , _i) => new 
+                                                           {
+                                                               Product = _p,
+                                                               Images = _i,
+                                                           })
+                                                .Select(product => new ProductFullDetails
+                                                {
+                                                    User = product.Product.User.ToModel(),
+                                                    Product = product.Product.ToModel(),
+                                                    Person = product.Product.User.Person.ToModel(),
+                                                    Images = product.Images.Select(_i => _i.ToModel()),
+                                                    IsFavorite = _context.ProductFavorite.Any(_pf => _pf.ProductId == id && _pf.UserId == userId),
+                                                }).FirstOrDefault();
 
             if (_data == null) return null;
             if (!userId.HasValue) return _data;

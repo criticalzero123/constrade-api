@@ -8,5 +8,6 @@ namespace ConstradeApi.Model.MProduct
         public IEnumerable<ImageListModel> Images { get; set; }
         public UserModel User { get; set; }
         public PersonModel Person { get; set; }
+        public bool IsFavorite { get; set; }
     }
 }

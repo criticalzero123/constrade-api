@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Enums;
+using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -35,11 +36,22 @@ namespace ConstradeApi.Model.MProduct.Repository
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>List of Products</returns>
-        public async Task<IEnumerable<ProductModel>> GetProductsByUserId(int userId)
+        public async Task<IEnumerable<ProductCardDetails>> GetProductsByUserId(int userId)
         {
-            IEnumerable<ProductModel> products = await _context.Products.Where(_p => _p.PosterUserId == userId)
+            IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
+                                                                        .Where(_p => _p.PosterUserId == userId)
                                                                         .OrderBy(_p => _p.DateCreated)
-                                                                        .Select(_p => _p.ToModel())
+                                                                        .Select(_p => new ProductCardDetails
+                                                                        {
+                                                                            ProductId = _p.ProductId,
+                                                                            ProductName = _p.Title,
+                                                                            ThumbnailUrl = _p.ThumbnailUrl,
+                                                                            UserName = _p.User.Person.FirstName + " " + _p.User.Person.LastName,
+                                                                            UserImage = _p.User.ImageUrl,
+                                                                            PreferTrade = _p.PreferTrade,
+                                                                            DateCreated = _p.DateCreated,
+
+                                                                        })
                                                                         .ToListAsync();
 
             return products;

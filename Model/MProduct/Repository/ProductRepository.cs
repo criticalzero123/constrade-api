@@ -128,7 +128,7 @@ namespace ConstradeApi.Model.MProduct.Repository
         /// <returns>ProductModel</returns>
         public async Task<ProductFullDetails?> Get(int id, int? userId)
         {
-            var _data = _context.Products.Include(_p => _p.User.Person).ToList()
+            var _data = _context.Products.Include(_p => _p.User.Person).ToList().Where(_p => _p.ProductId == id)
                                                 .GroupJoin(_context.Images.ToList(),
                                                            _p => _p.ProductId,
                                                            _i => _i.ProductId,

@@ -266,27 +266,37 @@ namespace ConstradeApi.Model.MProduct.Repository
         public async Task<bool> DeleteFavoriteProduct(int id)
         {
             Favorites? favorite = await _context.ProductFavorite.FindAsync(id);
-
+            
             if (favorite == null) return false;
+            Product? product = await _context.Products.FindAsync(favorite.ProductId);
 
+            if(product == null) return false;
+
+            product.CountFavorite -= 1;
             _context.ProductFavorite.Remove(favorite);
-
             await _context.SaveChangesAsync();
 
             return true;
 
         }
 
-        public async Task<IEnumerable<FavoriteModel>> GetFavoriteUser(int userId)
+        public async Task<IEnumerable<FavoriteProductDetails>> GetFavoriteUser(int userId)
         {
-            IEnumerable<FavoriteModel> favorites = await _context.ProductFavorite.Where(_u => _u.UserId == userId)
-                                                                                .Select(_f => new FavoriteModel
+            IEnumerable<FavoriteProductDetails> favorites = await _context.ProductFavorite.Include(_f => _f.Product.User.Person)
+                                                                                .Where(_u => _u.UserId == userId)
+                                                                                .Select(_f => new FavoriteProductDetails
                                                                                 {
                                                                                     FavoriteId = _f.FavoriteId,
-                                                                                    ProductId = _f.ProductId,
-                                                                                    Product = _f.Product,
-                                                                                    UserId = _f.UserId,
-                                                                                    Date = _f.Date
+                                                                                    Product = new ProductCardDetails
+                                                                                    {
+                                                                                        ProductId = _f.ProductId,
+                                                                                        ProductName = _f.Product.Title,
+                                                                                        ThumbnailUrl = _f.Product.ThumbnailUrl,
+                                                                                        UserName = _f.User.Person.FirstName + " " + _f.User.Person.LastName,
+                                                                                        UserImage = _f.User.ImageUrl,
+                                                                                        DateCreated = _f.Product.DateCreated,
+                                                                                        PreferTrade = _f.Product.PreferTrade,
+                                                                                    }
                                                                                 }).ToListAsync();
 
             return favorites;

@@ -13,7 +13,7 @@ namespace ConstradeApi.Model.MProduct.Repository
         Task<bool> UpdateProduct(int id, ProductModel product);
         Task<bool> AddFavoriteProduct(FavoriteModel info);
         Task<bool> DeleteFavoriteProduct(int id);
-        Task<IEnumerable<FavoriteModel>> GetFavoriteUser(int userId);
+        Task<IEnumerable<FavoriteProductDetails>> GetFavoriteUser(int userId);
 
     }
 }

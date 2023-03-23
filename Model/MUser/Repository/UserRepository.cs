@@ -281,18 +281,29 @@ namespace ConstradeApi.Model.MUser.Repository
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<UserReviewModel>> GetMyReviews(int userId, int otherUserId)
+        public async Task<IEnumerable<ReviewDisplayModel>> GetMyReviews(int userId, int otherUserId)
         {
-            List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.BuyerUserId == userId && _t.SellerUserId == otherUserId && _t.IsReviewed).ToListAsync();
+            List<Transaction> _transaction = await _context.Transactions.Include(_t => _t.Buyer.Person)
+                                                                        .Where(_t => _t.BuyerUserId == userId && _t.SellerUserId == otherUserId && _t.IsReviewed)
+                                                                        .ToListAsync();
             List<Review> _reviews = _context.UserReviews.ToList();
 
 
-            var data = _reviews.Join(_transaction,
-                                      _r => _r.TransactionRefId,
-                                      _t => _t.TransactionId,
-                                      (_r, _t) => new { _r, _t }
-                                    )
-                .Select(result => result._r.ToModel()).ToList();
+            IEnumerable<ReviewDisplayModel> data = _reviews.Join(_transaction,
+                                    _r => _r.TransactionRefId,
+                                    _t => _t.TransactionId,
+                                    (_r, _t) => new { _r, _t }
+                                  )
+              .Select(result => new ReviewDisplayModel
+              {
+                  ReviewId = result._r.ReviewId,
+                    Rate = result._r.Rate,
+                  TransactionId = result._t.TransactionId,
+                  UserName = result._t.Buyer.Person.FirstName + " " + result._t.Buyer.Person.LastName,
+                  ImageUrl = result._t.Buyer.ImageUrl,
+                  Description = result._r.Description,
+                  Date = result._r.DateCreated,
+              });
 
             return data;
         }
@@ -302,18 +313,29 @@ namespace ConstradeApi.Model.MUser.Repository
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<UserReviewModel>> GetReviews(int userId, int otherUserId)
+        public async Task<IEnumerable<ReviewDisplayModel>> GetReviews(int userId, int otherUserId)
         {
-            List<Transaction> _transaction = await _context.Transactions.Where(_t => _t.SellerUserId == otherUserId && _t.BuyerUserId != userId && _t.IsReviewed).ToListAsync();
+            List<Transaction> _transaction = await _context.Transactions.Include(_t => _t.Buyer.Person)
+                                                                        .Where(_t => _t.SellerUserId == otherUserId && _t.BuyerUserId != userId && _t.IsReviewed)
+                                                                        .ToListAsync();
             List<Review> _reviews = _context.UserReviews.ToList();
 
 
-            var data = _reviews.Join(_transaction,
+            IEnumerable<ReviewDisplayModel> data = _reviews.Join(_transaction,
                                       _r => _r.TransactionRefId,
                                       _t => _t.TransactionId,
                                       (_r, _t) => new { _r, _t }
                                     )
-                .Select(result => result._r.ToModel()).ToList();
+                .Select(result => new ReviewDisplayModel
+                {
+                    ReviewId = result._r.ReviewId,
+                    TransactionId = result._t.TransactionId,
+                    Rate = result._r.Rate,
+                    UserName = result._t.Buyer.Person.FirstName + " " + result._t.Buyer.Person.LastName,
+                    ImageUrl = result._t.Buyer.ImageUrl,
+                    Description = result._r.Description,
+                    Date = result._r.DateCreated,
+                });
 
             return data;
         }

@@ -24,8 +24,8 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<bool> IsFollowUser(int otherUserId, int currentUserId);
         Task<bool> FollowUser(int followUser, int followedByUser);
         Task<bool> AddReview(int reviewerId, UserReviewModel userReviewModel);
-        Task<IEnumerable<UserReviewModel>> GetMyReviews(int userId, int otherUserId);
-        Task<IEnumerable<UserReviewModel>> GetReviews(int userId, int otherUserId);
+        Task<IEnumerable<ReviewDisplayModel>> GetMyReviews(int userId, int otherUserId);
+        Task<IEnumerable<ReviewDisplayModel>> GetReviews(int userId, int otherUserId);
         Task<UserAndPersonModel?> LoginByGoogle(string email);
         Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info);
         Task<UserAndPersonModel?> UpdatePersonInfo(UserAndPersonModel info);

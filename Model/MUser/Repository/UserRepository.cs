@@ -453,6 +453,19 @@ namespace ConstradeApi.Model.MUser.Repository
             return _transactions;
         }
 
-       
+        public async Task<UserFollowCount> GetUserFollowCount(int userId)
+        {
+            int userFollowCount = await _context.UserFollows.Where(_u => _u.FollowByUserId.Equals(userId))
+                                                            .CountAsync();
+
+            int userFollowedCount = await _context.UserFollows.Where(_u => _u.FollowedByUserId.Equals(userId))
+                                                            .CountAsync();
+
+            return new UserFollowCount
+            {
+                FollowCount = userFollowCount,
+                FollowedCount = userFollowedCount
+            };
+        }
     }
 }

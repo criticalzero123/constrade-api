@@ -53,10 +53,9 @@ namespace ConstradeApi.Controllers
             {
                 ResponseType responseType = ResponseType.Success;
 
-                var followers = await _userRepository.GetUserFollower(userId);
-                var follows = await _userRepository.GetUserFollow(userId);
+                var followCount = await _userRepository.GetUserFollowCount(userId);
 
-                return Ok(ResponseHandler.GetApiResponse(responseType, new { followers, follows }));
+                return Ok(ResponseHandler.GetApiResponse(responseType, followCount));
             }
             catch (Exception ex)
             {

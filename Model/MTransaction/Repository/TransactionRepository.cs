@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Model.MProduct;
+using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
@@ -15,11 +16,6 @@ namespace ConstradeApi.Model.MTransaction.Repository
             _context = dataContext;
         }
 
-        /// <summary>
-        /// POST: check if the product existed
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <returns></returns>
         public async Task<int> SoldProduct(TransactionModel transaction)
         {
 
@@ -48,35 +44,53 @@ namespace ConstradeApi.Model.MTransaction.Repository
             return _t.TransactionId;
         }
 
-        /// <summary>
-        /// Getting all transactions
-        /// </summary>
-        /// <returns></returns>
+
         public async Task<IEnumerable<TransactionModel>> GetAllTransaction()
         {
             return await _context.Transactions.Select(_t => _t.ToModel()).ToListAsync();
         }
 
-        /// <summary>
-        /// Getting specific transaction by passing the id 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<UserAndTransactionModel?> GetTransaction(int id)
-        {
-            Transaction transaction = await _context.Transactions.Include(_t => _t.Seller.Person).Include(_t => _t.Buyer.Person).Where(_t => _t.ProductId == id).FirstAsync();
 
-            return new UserAndTransactionModel
+        public async Task<TransactionFullDetails?> GetTransaction(int id)
+        {
+           Transaction? transaction = await _context.Transactions.Include(_t => _t.Seller.Person)
+                                                                 .Include(_t => _t.Buyer.Person)
+                                                                 .Include(_t => _t.Product)
+                                                                 .Where(_t => _t.TransactionId == id)
+                                                                 .FirstOrDefaultAsync();
+
+            if(transaction == null) return null;
+
+            return new TransactionFullDetails
             {
                 Transaction = transaction.ToModel(),
-                Buyer = transaction.Buyer.Person.ToModel(),
-                Seller = transaction.Seller.Person.ToModel(),
+                Buyer = new UserAndPersonModel(transaction.Buyer.ToModel(), transaction.Buyer.Person.ToModel()),
+                Seller = new UserAndPersonModel(transaction.Seller.ToModel(), transaction.Seller.Person.ToModel()),
+                Product = transaction.Product.ToModel()
             };
         }
 
-        //public async Task<List<TransactionModel>> GetTransactionByUser(int uid)
-        //{
+        public async Task<IEnumerable<TransactionDisplayDetails>> GetTransactionByUser(int id)
+        {
+            IEnumerable<TransactionDisplayDetails> transactions = await _context.Transactions.Include(_t => _t.Buyer.Person)
+                                                                                          .Include(_t => _t.Seller.Person)
+                                                                                          .Include(_t => _t.Product)
+                                                                                          .Where(_t => _t.BuyerUserId == id || _t.SellerUserId == id)
+                                                                                          .Select(_t => new TransactionDisplayDetails
+                                                                                          {
+                                                                                              TransactionId = _t.TransactionId,
+                                                                                              BuyerId=_t.BuyerUserId,
+                                                                                              BuyerName = _t.Buyer.Person.FirstName + " " + _t.Buyer.Person.LastName,
+                                                                                              SellerId = _t.SellerUserId,
+                                                                                              SellerName = _t.Seller.Person.FirstName + " " + _t.Seller.Person.LastName,
+                                                                                              ProductImage = _t.Product.ThumbnailUrl,
+                                                                                              ProductName = _t.Product.Title,
+                                                                                              TransactionDate = _t.DateTransaction,
+                                                                                          })
+                                                                                          .ToListAsync();
 
-        //}
+            return transactions;
+        }
+
     }
 }

@@ -55,7 +55,7 @@ namespace ConstradeApi.Model.MProductMessage.Repository
         public async Task<IEnumerable<ProductMessageModel>> GetProductMessagesByProductChatId(int id, int index)
         {
             //if the index is 0 then return takeCount otherwise index * takeCount
-            int takeCount = 10;
+            int takeCount = 20;
             int skipIndex = index == 0 ? 0 : index * takeCount;
 
             IEnumerable<ProductMessageModel> messages = await _context.ProductMessages.OrderByDescending(_m => _m.DateSent)

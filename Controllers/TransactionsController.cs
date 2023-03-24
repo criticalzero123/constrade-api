@@ -74,5 +74,21 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
             }
         }
+
+        // api/<TransactionController>/product
+        [HttpGet("users/{uid}")]
+        public async Task<IActionResult> GetTransacionUser(int uid)
+        {
+            try
+            {
+                var transactions = await _transactionRespository.GetTransactionByUser(uid);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, transactions));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
     }
 }

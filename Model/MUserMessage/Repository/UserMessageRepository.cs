@@ -50,7 +50,7 @@ namespace ConstradeApi.Model.MUserMessage.Repository
         public async Task<IEnumerable<UserMessageModel>> GetMessageByUserChatId(int id, int index)
         {
             //if the index is 0 then return 0 otherwise index * takeCount
-            int takeCount = 10; 
+            int takeCount = 20; 
             int skipIndex = index == 0  ? 0 : index * takeCount;
 
             IEnumerable<UserMessageModel> messages = await _context.UserMessage.OrderByDescending(_m => _m.DateSent)

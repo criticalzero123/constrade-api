@@ -328,18 +328,6 @@ namespace ConstradeApi.Services.EntityToModel
                 MemberSince = community.MemberSince,
             };
         }
-        public static CommunityJoinModel ToModel(this CommunityJoin info)
-        {
-            return new CommunityJoinModel
-            {
-                CommunityJoinRequestId = info.CommunityJoinRequestId,
-                CommunityId = info.CommunityId,
-                UserId = info.UserId,
-                Status = info.Status,
-                DateRequested = info.DateRequested,
-
-            };
-        }
         public static CommunityPostModel ToModel(this CommunityPost info)
         {
             return new CommunityPostModel

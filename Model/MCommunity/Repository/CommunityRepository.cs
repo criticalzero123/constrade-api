@@ -1,5 +1,6 @@
 ﻿using ConstradeApi.Entity;
 using ConstradeApi.Enums;
+using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
 using ConstradeApi.Model.MCommunity.MCommunityMember;
 using ConstradeApi.Model.MCommunity.MCommunityPost;
 using ConstradeApi.Model.MCommunity.MCommunityPostComment;
@@ -386,9 +387,8 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                               OwnerImage = key.User.ImageUrl,
                                                                               IsJoined = value.Any(_cm => _cm.UserId == userId),
                                                                           })
-                                                                    .Take(5); 
+                                                                    .Take(5);
 
-    
 
             return communityMembers;
         }
@@ -403,6 +403,22 @@ namespace ConstradeApi.Model.MCommunity.Repository
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<IEnumerable<CommunityJoinModel>> GetMemberRequests(int communityId)
+        {
+            IEnumerable<CommunityJoinModel> requests = await _context.CommunityJoin.Include(_cj => _cj.User.Person)
+                                                                                   .Where(_cj => _cj.CommunityId == communityId)
+                                                                                   .Select(_cj => new CommunityJoinModel
+                                                                                   {
+                                                                                       CommunityJoinRequestId = _cj.CommunityJoinRequestId,
+                                                                                       DateRequested= _cj.DateRequested,
+                                                                                       UserEmail = _cj.User.Email,
+                                                                                       UserName = _cj.User.Person.FirstName +  " " + _cj.User.Person.LastName,
+                                                                                       UserImageUrl = _cj.User.ImageUrl
+                                                                                   }).ToListAsync();
+
+            return requests;
         }
     }
 }

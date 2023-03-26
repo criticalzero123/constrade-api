@@ -362,5 +362,20 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
+
+        [HttpGet("{id}/members/requests")]
+        public async Task<IActionResult> GetRequests(int id)
+        {
+            try
+            {
+                var requests = _communityRepo.GetMemberRequests(id);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, requests));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
     }
 }

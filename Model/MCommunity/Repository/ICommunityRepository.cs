@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Enums;
+using ConstradeApi.Model.MCommunity.MCommunityJoinRequest;
 using ConstradeApi.Model.MCommunity.MCommunityMember;
 using ConstradeApi.Model.MCommunity.MCommunityPost;
 using ConstradeApi.Model.MCommunity.MCommunityPostComment;
@@ -33,5 +34,6 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<IEnumerable<CommentDetails>> GetCommentByPostId(int id);
         Task<bool> DeleteCommentPost(int id);
         Task<bool> UpdateComment(CommunityPostCommentModel info);
+        Task<IEnumerable<CommunityJoinModel>> GetMemberRequests(int communityId);
     }
 }

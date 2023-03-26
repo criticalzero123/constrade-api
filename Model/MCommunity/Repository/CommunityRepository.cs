@@ -427,7 +427,20 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             if (request == null) return false;
 
+            Community community = await _context.Community.Where(_c => _c.CommunityId == request.CommunityId).FirstAsync();
+
+            CommunityMember _info = new CommunityMember
+            {
+                CommunityId = community.CommunityId,
+                UserId = request.UserId,
+                Role = CommunityRole.Member,
+                MemberSince = DateTime.Now,
+            };
+
+            community.TotalMembers += 1;
+            await _context.CommunityMember.AddAsync(_info);
             request.Status = CommunityJoinResponse.Approved;
+
             await _context.SaveChangesAsync();
 
             return true;

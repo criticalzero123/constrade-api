@@ -368,9 +368,39 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                var requests = _communityRepo.GetMemberRequests(id);
+                var requests = await _communityRepo.GetMemberRequests(id);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, requests));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPut("{id}/members/accept/{reqId}")]
+        public async Task<IActionResult> AcceptRequest(int reqId)
+        {
+            try
+            {
+                var flag = await _communityRepo.AcceptMemberRequest(reqId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPut("{id}/members/reject/{reqId}")]
+        public async Task<IActionResult> RejectRequest(int reqId)
+        {
+            try
+            {
+                var flag = await _communityRepo.RejectMemberRequest(reqId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }
             catch (Exception ex)
             {

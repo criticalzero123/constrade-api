@@ -408,7 +408,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
         public async Task<IEnumerable<CommunityJoinModel>> GetMemberRequests(int communityId)
         {
             IEnumerable<CommunityJoinModel> requests = await _context.CommunityJoin.Include(_cj => _cj.User.Person)
-                                                                                   .Where(_cj => _cj.CommunityId == communityId)
+                                                                                   .Where(_cj => _cj.CommunityId == communityId && _cj.Status == CommunityJoinResponse.Pending)
                                                                                    .Select(_cj => new CommunityJoinModel
                                                                                    {
                                                                                        CommunityJoinRequestId = _cj.CommunityJoinRequestId,
@@ -419,6 +419,30 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                                    }).ToListAsync();
 
             return requests;
+        }
+
+        public async Task<bool> AcceptMemberRequest(int id)
+        {
+            CommunityJoin? request = await _context.CommunityJoin.FindAsync(id);
+
+            if (request == null) return false;
+
+            request.Status = CommunityJoinResponse.Approved;
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> RejectMemberRequest(int id)
+        {
+            CommunityJoin? request = await _context.CommunityJoin.FindAsync(id);
+
+            if (request == null) return false;
+
+            request.Status = CommunityJoinResponse.Rejected;
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

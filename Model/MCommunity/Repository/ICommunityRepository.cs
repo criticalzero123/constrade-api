@@ -35,5 +35,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<bool> DeleteCommentPost(int id);
         Task<bool> UpdateComment(CommunityPostCommentModel info);
         Task<IEnumerable<CommunityJoinModel>> GetMemberRequests(int communityId);
+        Task<bool> AcceptMemberRequest(int id);
+        Task<bool> RejectMemberRequest(int id);
     }
 }

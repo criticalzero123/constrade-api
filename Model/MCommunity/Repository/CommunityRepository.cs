@@ -168,6 +168,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
             if (_community == null) return false;
             if (_community.OwnerUserId != info.OwnerUserId) return false;
 
+            _community.Name = info.Name;
             _community.Description = info.Description;
             _community.ImageUrl = info.ImageUrl;
             _community.Visibility = info.Visibility;
@@ -321,12 +322,10 @@ namespace ConstradeApi.Model.MCommunity.Repository
             IEnumerable<CommunityMemberDetails> _result = community.Select(_cm => new CommunityMemberDetails
             {
                 Member = _cm.ToModel(),
-                UserInfo = new UserAndPersonModel
-                {
-                    User = _cm.User.ToModel(),
-                    Person = _cm.User.Person.ToModel()
-                }
-            });
+                UserName = _cm.User.Person.FirstName + " " + _cm.User.Person.LastName,
+                UserImageUrl = _cm.User.ImageUrl
+             
+            }) ;
 
             return _result;
         }
@@ -349,7 +348,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
             return true;
         }
 
-        public async Task<IEnumerable<CommunityDetails>> GetCommunityJoined(int userId)
+        public async Task<IEnumerable<CommunityItem>> GetCommunityJoined(int userId)
         {
             IEnumerable<Community> communities = await _context.Community.Include(_c => _c.User.Person).ToListAsync();
 
@@ -358,39 +357,34 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                           _cm => _cm.CommunityId,
                                                                           _c => _c.CommunityId,
                                                                           (_cm, _c) => new {_cm, _c})
-                                                                    .Select(_result => new CommunityDetails
+                                                                    .Select(_result => new CommunityItem
                                                                     {
                                                                         Community = _result._c.ToModel(),
-                                                                        Owner = new UserAndPersonModel
-                                                                        {
-                                                                            Person = _result._c.User.Person.ToModel(),
-                                                                            User = _result._c.User.ToModel()
-                                                                        },
+                                                                        OwnerImage = _result._c.User.ImageUrl,
+                                                                        OwnerName = _result._c.User.Person.FirstName + " " + _result._c.User.Person.FirstName,
+                                                                        IsJoined = true,
                                                                     });
 
             return communityMembers;
         }
 
-        public async Task<IEnumerable<CommunityDetails>> GetPopularCommunity(int userId)
+        public async Task<IEnumerable<CommunityItem>> GetPopularCommunity(int userId)
         {
             IEnumerable<Community> communities = await _context.Community.Include(_c => _c.User.Person).ToListAsync();
 
-            var communityMembers = _context.CommunityMember.ToList().Where(_cm => _cm.UserId != userId)
-                                                                    .Join(communities,
+            var communityMembers = _context.CommunityMember.ToList().Join(communities,
                                                                           _cm => _cm.CommunityId,
                                                                           _c => _c.CommunityId,
                                                                           (_cm, _c) => new { _cm, _c })
                                                                     .OrderByDescending(_result => _result._c.TotalMembers)
                                                                     .GroupBy(_result => _result._c,
                                                                           _result => _result._cm,
-                                                                          (key, value) => new CommunityDetails
+                                                                          (key, value) => new CommunityItem
                                                                           {
                                                                               Community = key.ToModel(),
-                                                                              Owner = new UserAndPersonModel
-                                                                              {
-                                                                                  Person = key.User.Person.ToModel(),
-                                                                                  User = key.User.ToModel()
-                                                                              }
+                                                                              OwnerName = key.User.Person.FirstName + " " + key.User.Person.LastName,
+                                                                              OwnerImage = key.User.ImageUrl,
+                                                                              IsJoined = value.Any(_cm => _cm.UserId == userId),
                                                                           })
                                                                     .Take(5); 
 

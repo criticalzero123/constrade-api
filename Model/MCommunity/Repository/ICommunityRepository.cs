@@ -9,7 +9,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
     {
         Task<CommunityResponse> CreateCommunity(CommunityModel info);
         Task<IEnumerable<CommunityModel>> GetCommunityByOwnerId(int userId);
-        Task<IEnumerable<CommunityDetails>> GetCommunityJoined(int userId);
+        Task<IEnumerable<CommunityItem>> GetCommunityJoined(int userId);
         Task<IEnumerable<CommunityModel>> GetCommunities();
         Task<CommunityDetails?> GetCommunity(int id);
 
@@ -18,7 +18,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
         /// </summary>
         /// <param name="userId"></param>
         /// <returns>List of community</returns>
-        Task<IEnumerable<CommunityDetails>> GetPopularCommunity(int userId);
+        Task<IEnumerable<CommunityItem>> GetPopularCommunity(int userId);
         Task<bool> DeleteCommunity(int id, int userId);
         Task<CommunityJoinResponse> JoinCommunity(int id, int userId);
         Task<IEnumerable<CommunityMemberDetails>> GetCommunityMember(int id);

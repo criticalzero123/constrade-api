@@ -149,8 +149,6 @@ namespace ConstradeApi.Controllers
 
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, $"{response}"));
-
-
             }
             catch (Exception ex)
             {

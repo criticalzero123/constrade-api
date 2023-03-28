@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.VerificationEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations.VerificationData
 {
     [DbContext(typeof(VerificationDataContext))]
-    partial class VerificationDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230328004605_AddingProductPrices")]
+    partial class AddingProductPrices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,27 +24,6 @@ namespace ConstradeApi.Migrations.VerificationData
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ConstradeApi.VerificationEntity.AdminAccounts", b =>
-                {
-                    b.Property<int>("AdminAccountId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AdminAccountId"));
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("AdminAccountId");
-
-                    b.ToTable("admin_accounts");
-                });
 
             modelBuilder.Entity("ConstradeApi.VerificationEntity.ProductPrices", b =>
                 {
@@ -51,43 +33,19 @@ namespace ConstradeApi.Migrations.VerificationData
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProductPricesId"));
 
-                    b.Property<int>("AddedBy")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("OriginUrl")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("origin_url");
 
-                    b.Property<string>("Platform")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ReleaseDate")
+                    b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("release_date");
-
-                    b.Property<string>("ShopName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("shop_name");
 
                     b.Property<decimal>("Value")
                         .HasColumnType("numeric");
 
                     b.HasKey("ProductPricesId");
-
-                    b.HasIndex("AddedBy");
-
-                    b.HasIndex("Name");
 
                     b.ToTable("product_prices");
                 });
@@ -162,17 +120,6 @@ namespace ConstradeApi.Migrations.VerificationData
                     b.HasKey("ValidIdentificationId");
 
                     b.ToTable("valid_identification");
-                });
-
-            modelBuilder.Entity("ConstradeApi.VerificationEntity.ProductPrices", b =>
-                {
-                    b.HasOne("ConstradeApi.VerificationEntity.AdminAccounts", "AdminAccount")
-                        .WithMany()
-                        .HasForeignKey("AddedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AdminAccount");
                 });
 #pragma warning restore 612, 618
         }

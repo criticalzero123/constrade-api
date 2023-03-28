@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.VerificationEntity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations.VerificationData
 {
     [DbContext(typeof(VerificationDataContext))]
-    partial class VerificationDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230328011708_AddingAddedByInProductPrices")]
+    partial class AddingAddedByInProductPrices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,10 +61,6 @@ namespace ConstradeApi.Migrations.VerificationData
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("OriginUrl")
                         .IsRequired()
                         .HasColumnType("text")
@@ -71,14 +70,9 @@ namespace ConstradeApi.Migrations.VerificationData
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("ReleaseDate")
+                    b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("release_date");
-
-                    b.Property<string>("ShopName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("shop_name");
 
                     b.Property<decimal>("Value")
                         .HasColumnType("numeric");
@@ -86,8 +80,6 @@ namespace ConstradeApi.Migrations.VerificationData
                     b.HasKey("ProductPricesId");
 
                     b.HasIndex("AddedBy");
-
-                    b.HasIndex("Name");
 
                     b.ToTable("product_prices");
                 });

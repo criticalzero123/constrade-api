@@ -91,6 +91,7 @@ namespace ConstradeApi.Model.MSubcription.Repository
             walletUser.Balance -= amount;
 
             _user.UserType = newSubscription;
+            _user.CountPost += 10;
 
             await _context.SaveChangesAsync();
             return SubscriptionResponseType.Success;

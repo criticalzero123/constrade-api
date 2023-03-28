@@ -8,5 +8,7 @@ namespace ConstradeApi.VerificationEntity
 
         public DbSet<ValidIdentification> ValidIdentification { get; set; }
         public DbSet<ValidIdRequest> ValidIdRequests { get; set; }
+        public DbSet<ProductPrices> ProductPrices { get; set; }
+        public DbSet<AdminAccounts> AdminAccounts { get; set; }
     }
 }

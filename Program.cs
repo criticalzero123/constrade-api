@@ -24,6 +24,7 @@ using ConstradeApi.Model.MReport.Repository;
 using ConstradeApi.VerificationEntity;
 using ConstradeApi.VerificationModel.MValidIdRequest.Repository;
 using ConstradeApi.Model.MBoostProduct.Repository;
+using ConstradeApi.VerificationModel.MProductPrices.Repository;
 
 namespace ConstradeApi
 {
@@ -37,7 +38,7 @@ namespace ConstradeApi
             builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("Secrets.json", optional:true);
             builder.Services.AddControllers();
             builder.Services.AddSignalR();
-      
+
 
             // Add services to the container.
             //builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBProd"]));
@@ -64,7 +65,9 @@ namespace ConstradeApi
             builder.Services.AddTransient<IReportRepository, ReportRepository>();
             builder.Services.AddTransient<ISystemFeedbackRepository, SystemFeedbackRepository>();
 
-            //for the validation
+            //for the validation context
+            builder.Services.AddScoped<IProductPricesRepository, ProductPricesRepository>();
+
             builder.Services.AddTransient<IValidIdRequestRepository, ValidIdRequestRepository>();
             builder.Services.AddControllers();
 

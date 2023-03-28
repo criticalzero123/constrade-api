@@ -20,6 +20,7 @@ using ConstradeApi.Model.MUserMessage;
 using ConstradeApi.Model.MUserNotification;
 using ConstradeApi.Model.MWallet;
 using ConstradeApi.VerificationEntity;
+using ConstradeApi.VerificationModel.MProductPrices;
 using ConstradeApi.VerificationModel.MValidIdRequest;
 
 namespace ConstradeApi.Services.EntityToModel
@@ -378,5 +379,19 @@ namespace ConstradeApi.Services.EntityToModel
                 DateBoosted = info.DateBoosted,
             };
         } 
+
+        public static ProductPricesResponse Response(this ProductPrices info)
+        {
+            return new ProductPricesResponse
+            {
+                ProductPricesId = info.ProductPricesId,
+                Name = info.Name,
+                Value = info.Value,
+                ReleaseDate = info.ReleaseDate,
+                Platform = info.Platform,
+                Genre = info.Genre,
+                OriginUrl = info.OriginUrl,
+            };
+        }
     }
 }

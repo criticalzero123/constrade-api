@@ -11,6 +11,7 @@ namespace ConstradeApi.VerificationModel.MProductPrices
         public DateTime? ReleaseDate { get; set; }
         public string Platform { get; set; } = string.Empty;
         public string Genre { get; set; } = string.Empty;
+        public string ShopName { get; set; } = string.Empty;
         public string OriginUrl { get; set; } = string.Empty;
     }
 }

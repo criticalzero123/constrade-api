@@ -12,14 +12,23 @@ namespace ConstradeApi.VerificationModel.MProductPrices.Repository
         {
             _context = context;
         }
-        public async Task<IEnumerable<ProductPricesResponse>> GetAllProductsPrice(string text)
+        public async Task<IEnumerable<string>> GetAllProductsPrice(string text)
         {
             string lower = text.ToLower();
-            IEnumerable<ProductPricesResponse> products = await _context.ProductPrices.Where(_p => _p.Name.ToLower().Contains(lower))
-                                                                                      .Select(_p => _p.Response())
+            IEnumerable<string> products = await _context.ProductPrices.Where(_p => _p.Name.ToLower().Contains(lower))
+                                                                                      .Select(_p => _p.Name)
                                                                                       .ToListAsync();
+            var result = Enumerable.DistinctBy(products, _p => _p);                                                  
+            return result;
+        }
 
-            return products;
+        public async Task<IEnumerable<ProductPricesResponse>> GetAllShopPrices(string name)
+        {
+            IEnumerable<ProductPricesResponse> result = await _context.ProductPrices.Where(_p => _p.Name.ToLower() == name)
+                                                                                    .Select(_p => _p.ToModel())
+                                                                                    .ToListAsync();
+
+            return result;
         }
     }
 }

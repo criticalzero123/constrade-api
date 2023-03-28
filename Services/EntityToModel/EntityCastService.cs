@@ -380,7 +380,7 @@ namespace ConstradeApi.Services.EntityToModel
             };
         } 
 
-        public static ProductPricesResponse Response(this ProductPrices info)
+        public static ProductPricesResponse ToModel(this ProductPrices info)
         {
             return new ProductPricesResponse
             {
@@ -391,6 +391,7 @@ namespace ConstradeApi.Services.EntityToModel
                 Platform = info.Platform,
                 Genre = info.Genre,
                 OriginUrl = info.OriginUrl,
+                ShopName = info.ShopName,
             };
         }
     }

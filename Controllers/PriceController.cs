@@ -32,5 +32,20 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
+
+        [HttpGet("product/shop")]
+        public async Task<IActionResult> GetShop(string name)
+        {
+            try
+            {
+                var shops = await _productRepo.GetAllShopPrices(name);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, shops));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
     }
 }

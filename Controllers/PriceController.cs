@@ -8,7 +8,7 @@ namespace ConstradeApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PriceController : ControllerBase
     {
         private readonly IProductPricesRepository _productRepo;

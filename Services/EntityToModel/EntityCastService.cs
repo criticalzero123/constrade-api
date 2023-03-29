@@ -77,11 +77,13 @@ namespace ConstradeApi.Services.EntityToModel
                 CountFavorite = product.CountFavorite,
                 Condition = product.Condition,
                 PreferTrade = product.PreferTrade,
-                DeliveryMethod = product.DeliveryMethod,
+                IsMeetup = product.IsMeetup,
+                IsDeliver = product.IsDeliver,
                 Location = product.Location,
                 ProductStatus = product.ProductStatus,
                 HasReceipts = product.HasReceipts,
                 HasWarranty = product.HasWarranty,
+                IsGenerated = product.IsGenerated,
             };
         }
         public static FavoriteModel ToModel(this Favorites favorite)

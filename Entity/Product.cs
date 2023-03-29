@@ -50,6 +50,9 @@ namespace ConstradeApi.Entity
         [Column("cash")]
         public decimal Cash { get; set; }
 
+        [Column("value")]
+        public decimal Value { get; set; }
+
         [Required]
         [Column("item")]
         public string Item { get; set; } = string.Empty;
@@ -71,9 +74,11 @@ namespace ConstradeApi.Entity
         [Column("prefer_trade")]
         public string PreferTrade { get; set; } = string.Empty;
 
-        [Required, StringLength(20)]
-        [Column("delivery_method")]
-        public string DeliveryMethod { get; set; } = string.Empty;
+        [Column("is_meetup")]
+        public bool IsMeetup { get; set; }
+
+        [Column("is_delivery")]
+        public bool IsDeliver { get; set; }
 
         [Required]
         [Column("location")]
@@ -88,6 +93,9 @@ namespace ConstradeApi.Entity
         
         [Required, Column("has_warranty")]
         public bool HasWarranty { get; set; } = false;
+
+        [Column("is_generated")]
+        public bool IsGenerated { get; set; }
 
     }
 }

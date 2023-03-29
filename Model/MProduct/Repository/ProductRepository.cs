@@ -94,7 +94,8 @@ namespace ConstradeApi.Model.MProduct.Repository
                 Description = product.Description,
                 Condition = product.Condition,
                 PreferTrade = product.PreferTrade,
-                DeliveryMethod = product.DeliveryMethod,
+                IsMeetup = product.IsMeetup,
+                IsDeliver = product.IsDeliver,
                 ProductStatus = product.ProductStatus,
                 Location = product.Location,
                 ModelNumber = product.ModelNumber,
@@ -107,6 +108,7 @@ namespace ConstradeApi.Model.MProduct.Repository
                 CountFavorite = product.CountFavorite,
                 HasReceipts = product.HasReceipts,
                 HasWarranty = product.HasWarranty,
+                IsGenerated= product.IsGenerated,
             };
 
             await _context.Products.AddAsync(_product);
@@ -222,7 +224,8 @@ namespace ConstradeApi.Model.MProduct.Repository
             _product.Condition = product.Condition;
             _product.PreferTrade = product.PreferTrade;
             _product.ThumbnailUrl = product.ThumbnailUrl;
-            _product.DeliveryMethod = product.DeliveryMethod;
+            _product.IsDeliver = product.IsDeliver;
+            _product.IsMeetup = product.IsMeetup;
 
 
             await _context.SaveChangesAsync();

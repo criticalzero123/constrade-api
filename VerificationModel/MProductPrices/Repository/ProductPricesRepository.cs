@@ -14,8 +14,8 @@ namespace ConstradeApi.VerificationModel.MProductPrices.Repository
         }
         public async Task<IEnumerable<string>> GetAllProductsPrice(string text)
         {
-            string lower = text.ToLower();
-            IEnumerable<string> products = await _context.ProductPrices.Where(_p => _p.Name.ToLower().Contains(lower))
+           
+            IEnumerable<string> products = await _context.ProductPrices.Where(_p => _p.Name.ToLower().Contains(text.ToLower()))
                                                                                       .Select(_p => _p.Name)
                                                                                       .ToListAsync();
             var result = Enumerable.DistinctBy(products, _p => _p);                                                  
@@ -24,7 +24,8 @@ namespace ConstradeApi.VerificationModel.MProductPrices.Repository
 
         public async Task<IEnumerable<ProductPricesResponse>> GetAllShopPrices(string name)
         {
-            IEnumerable<ProductPricesResponse> result = await _context.ProductPrices.Where(_p => _p.Name.ToLower() == name)
+            string trimmedSearchName = name.Replace("[", "").Replace("]", "").Trim();
+            IEnumerable<ProductPricesResponse> result = await _context.ProductPrices.Where(_p => _p.Name.ToLower() == trimmedSearchName.ToLower())
                                                                                     .Select(_p => _p.ToModel())
                                                                                     .ToListAsync();
 

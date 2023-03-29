@@ -3,6 +3,7 @@ using System;
 using ConstradeApi.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ConstradeApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230329085344_RefractoringProductDelivery")]
+    partial class RefractoringProductDelivery
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -562,10 +565,6 @@ namespace ConstradeApi.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_delivery");
 
-                    b.Property<bool>("IsGenerated")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_generated");
-
                     b.Property<bool>("IsMeetup")
                         .HasColumnType("boolean")
                         .HasColumnName("is_meetup");
@@ -624,8 +623,7 @@ namespace ConstradeApi.Migrations
                         .HasColumnName("title");
 
                     b.Property<decimal>("Value")
-                        .HasColumnType("numeric")
-                        .HasColumnName("value");
+                        .HasColumnType("numeric");
 
                     b.HasKey("ProductId");
 

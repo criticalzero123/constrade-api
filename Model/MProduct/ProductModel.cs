@@ -23,11 +23,12 @@ namespace ConstradeApi.Model.MProduct
         public int CountFavorite { get; set; }
         public string Condition { get; set; } = string.Empty;
         public string PreferTrade { get; set; } = string.Empty;
-        public string DeliveryMethod { get; set; } = string.Empty;
+        public bool IsDeliver { get; set; }
+        public bool IsMeetup { get; set; }
         public string Location { get; set; } = string.Empty;
         public string ProductStatus { get; set; } = string.Empty;
         public bool HasWarranty { get; set; }
         public bool HasReceipts { get; set; }
-
+        public bool IsGenerated { get; set; }
     }
 }

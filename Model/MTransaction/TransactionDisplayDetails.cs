@@ -6,6 +6,7 @@ namespace ConstradeApi.Model.MTransaction
     public class TransactionDisplayDetails
     {
         public int TransactionId { get; set; }
+        public int ProductId { get; set; }
         public int BuyerId { get; set; }
         public string BuyerName { get; set; } = string.Empty;
         public int SellerId { get; set; }

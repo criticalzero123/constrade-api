@@ -107,6 +107,7 @@ namespace ConstradeApi.Model.MProduct.Repository
                 Item = product.Item,
                 CountFavorite = product.CountFavorite,
                 HasReceipts = product.HasReceipts,
+                Value = product.Value,
                 HasWarranty = product.HasWarranty,
                 IsGenerated= product.IsGenerated,
             };

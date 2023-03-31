@@ -56,7 +56,7 @@ namespace ConstradeApi.Model.MTransaction.Repository
            Transaction? transaction = await _context.Transactions.Include(_t => _t.Seller.Person)
                                                                  .Include(_t => _t.Buyer.Person)
                                                                  .Include(_t => _t.Product)
-                                                                 .Where(_t => _t.TransactionId == id)
+                                                                 .Where(_t => _t.ProductId == id)
                                                                  .FirstOrDefaultAsync();
 
             if(transaction == null) return null;
@@ -79,6 +79,7 @@ namespace ConstradeApi.Model.MTransaction.Repository
                                                                                           .Select(_t => new TransactionDisplayDetails
                                                                                           {
                                                                                               TransactionId = _t.TransactionId,
+                                                                                              ProductId = _t.ProductId,
                                                                                               BuyerId=_t.BuyerUserId,
                                                                                               BuyerName = _t.Buyer.Person.FirstName + " " + _t.Buyer.Person.LastName,
                                                                                               SellerId = _t.SellerUserId,

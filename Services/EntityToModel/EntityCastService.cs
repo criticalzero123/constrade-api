@@ -84,6 +84,7 @@ namespace ConstradeApi.Services.EntityToModel
                 HasReceipts = product.HasReceipts,
                 HasWarranty = product.HasWarranty,
                 IsGenerated = product.IsGenerated,
+                Value = product.Value,
             };
         }
         public static FavoriteModel ToModel(this Favorites favorite)

@@ -1,4 +1,5 @@
-﻿using ConstradeApi.Model.MCommunity.Repository;
+﻿using ConstradeApi.Model.MBoostProduct.Repository;
+using ConstradeApi.Model.MCommunity.Repository;
 using ConstradeApi.Model.MProduct.Repository;
 using ConstradeApi.Model.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +15,15 @@ namespace ConstradeApi.Controllers
     {
         private readonly IProductRepository _prodRepo;
         private readonly ICommunityRepository _comRepo;
+        private readonly IBoostProductRepository _boostRepo;
+        private readonly ICommunityRepository _commuRepo;
 
-        public HomeController(IProductRepository prodRepo, ICommunityRepository comRepo)
+        public HomeController(IProductRepository prodRepo, ICommunityRepository comRepo, IBoostProductRepository boostProd, ICommunityRepository commuRepo)
         {
             _prodRepo = prodRepo;
             _comRepo = comRepo;
+            _boostRepo = boostProd;
+            _commuRepo = commuRepo;
         }
 
         [HttpGet]
@@ -44,6 +49,51 @@ namespace ConstradeApi.Controllers
                 var products = await _prodRepo.GetSearchProductMethod(method);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, products));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("boosted")]
+        public async Task<IActionResult> GetBoostedProduct()
+        {
+            try
+            {
+                var products = await _boostRepo.GetBoostedProducts();
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, products));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetProductPopularByLength(int count)
+        {
+            try
+            {
+                var products = await _prodRepo.GetProductByLength(count);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, products));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("community")]
+        public async Task<IActionResult> GetCommunityPopular(int userId)
+        {
+            try
+            {
+                var community = await _commuRepo.GetPopularCommunity(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, community));
             }
             catch (Exception ex)
             {

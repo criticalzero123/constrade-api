@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Model.MProduct;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -31,6 +32,27 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<IEnumerable<ProductCardDetails>> GetBoostedProducts()
+        {
+            IEnumerable<ProductCardDetails> products = await _context.BoostProduct.Join(_context.Products.Include(p => p.User.Person),
+                                                                                        bp => bp.ProductId,
+                                                                                        p => p.ProductId,
+                                                                                        (bp, p) => new { bp, p })
+                                                                                  .Select(result => new ProductCardDetails
+                                                                                  {
+                                                                                      ProductId = result.p.ProductId,
+                                                                                      ProductName = result.p.Title,
+                                                                                      ThumbnailUrl = result.p.ThumbnailUrl,
+                                                                                      UserName = result.p.User.Person.FirstName + " " + result.p.User.Person.LastName,
+                                                                                      UserImage = result.p.User.ImageUrl,
+                                                                                      PreferTrade = result.p.PreferTrade,
+                                                                                      DateCreated = result.p.DateCreated,
+                                                                                  })
+                                                                                  .ToListAsync();
+
+            return products;
         }
 
         public async Task<BoostProductModel?> GetProductBoost(int id)

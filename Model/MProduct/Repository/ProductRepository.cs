@@ -347,5 +347,31 @@ namespace ConstradeApi.Model.MProduct.Repository
 
             return products;
         }
+
+        public async Task<IEnumerable<ProductCardDetails>> GetProductByLength(int count)
+        {
+            IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
+                                                                              .OrderBy(_p => _p.CountFavorite)
+                                                                                .Select(_p => new ProductCardDetails
+                                                                                {
+                                                                                    ProductId = _p.ProductId,
+                                                                                    ProductName = _p.Title,
+                                                                                    ThumbnailUrl = _p.ThumbnailUrl,
+                                                                                    UserName = _p.User.Person.FirstName + " " + _p.User.Person.LastName,
+                                                                                    UserImage = _p.User.ImageUrl,
+                                                                                    PreferTrade = _p.PreferTrade,
+                                                                                    DateCreated = _p.DateCreated,
+
+                                                                                })
+                                                                                .Take(count)
+                                                                                .ToListAsync();
+
+            return products;
+        }
+
+        public Task<IEnumerable<ProductCardDetails>> GetProductByFollow(int userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

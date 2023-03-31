@@ -16,5 +16,7 @@ namespace ConstradeApi.Model.MProduct.Repository
         Task<IEnumerable<FavoriteProductDetails>> GetFavoriteUser(int userId);
         Task<IEnumerable<ProductCardDetails>> GetSearchProduct(string text);
         Task<IEnumerable<ProductCardDetails>> GetSearchProductMethod(string tradeMethod);
+        Task<IEnumerable<ProductCardDetails>> GetProductByLength(int count);
+        Task<IEnumerable<ProductCardDetails>> GetProductByFollow(int userId);
     }
 }

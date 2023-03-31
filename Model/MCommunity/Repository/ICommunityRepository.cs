@@ -37,5 +37,6 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<IEnumerable<CommunityJoinModel>> GetMemberRequests(int communityId);
         Task<bool> AcceptMemberRequest(int id);
         Task<bool> RejectMemberRequest(int id);
+        Task<IEnumerable<CommunityItem>> GetSearchCommunity(string text, int userId);
     }
 }

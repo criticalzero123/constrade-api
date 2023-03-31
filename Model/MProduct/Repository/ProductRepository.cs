@@ -306,5 +306,46 @@ namespace ConstradeApi.Model.MProduct.Repository
             return favorites;
         }
 
+        public async Task<IEnumerable<ProductCardDetails>> GetSearchProduct(string text)
+        {
+            IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
+                                                                                .Where(_p => _p.Title.ToLower().Contains(text.ToLower()))
+                                                                                .OrderBy(_p => _p.CountFavorite)
+                                                                                .Select(_p => new ProductCardDetails
+                                                                                {
+                                                                                    ProductId = _p.ProductId,
+                                                                                    ProductName = _p.Title,
+                                                                                    ThumbnailUrl = _p.ThumbnailUrl,
+                                                                                    UserName = _p.User.Person.FirstName + " " + _p.User.Person.LastName,
+                                                                                    UserImage = _p.User.ImageUrl,
+                                                                                    PreferTrade = _p.PreferTrade,
+                                                                                    DateCreated = _p.DateCreated,
+
+                                                                                })
+                                                                                .ToListAsync();
+
+            return products;
+        }
+
+        public async Task<IEnumerable<ProductCardDetails>> GetSearchProductMethod(string tradeMethod)
+        {
+            IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
+                                                                              .Where(p => p.PreferTrade == tradeMethod)
+                                                                              .OrderBy(_p => _p.CountFavorite)
+                                                                                .Select(_p => new ProductCardDetails
+                                                                                {
+                                                                                    ProductId = _p.ProductId,
+                                                                                    ProductName = _p.Title,
+                                                                                    ThumbnailUrl = _p.ThumbnailUrl,
+                                                                                    UserName = _p.User.Person.FirstName + " " + _p.User.Person.LastName,
+                                                                                    UserImage = _p.User.ImageUrl,
+                                                                                    PreferTrade = _p.PreferTrade,
+                                                                                    DateCreated = _p.DateCreated,
+
+                                                                                })
+                                                                                .ToListAsync(); 
+
+            return products;
+        }
     }
 }

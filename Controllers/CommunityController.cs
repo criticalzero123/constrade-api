@@ -405,5 +405,20 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> GetCommunityByText(string text, int userId)
+        {
+            try
+            {
+                var communities = await _communityRepo.GetSearchCommunity(text,  userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, communities));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
     }
 }

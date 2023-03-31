@@ -457,5 +457,29 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
             return true;
         }
+
+        public async Task<IEnumerable<CommunityItem>> GetSearchCommunity(string text, int userId)
+        {
+            IEnumerable<Community> communities = await _context.Community.Include(_c => _c.User.Person)
+                                                                         .Where(c => c.Name.ToLower().Contains(text.ToLower()))
+                                                                         .ToListAsync();
+
+            var communityMembers = _context.CommunityMember.ToList().Join(communities,
+                                                                          _cm => _cm.CommunityId,
+                                                                          _c => _c.CommunityId,
+                                                                          (_cm, _c) => new { _cm, _c })
+                                                                    .OrderByDescending(_result => _result._c.TotalMembers)
+                                                                    .GroupBy(_result => _result._c,
+                                                                          _result => _result._cm,
+                                                                          (key, value) => new CommunityItem
+                                                                          {
+                                                                              Community = key.ToModel(),
+                                                                              OwnerName = key.User.Person.FirstName + " " + key.User.Person.LastName,
+                                                                              OwnerImage = key.User.ImageUrl,
+                                                                              IsJoined = value.Any(_cm => _cm.UserId == userId),
+                                                                          });
+                                                                    
+            return communityMembers;
+        }
     }
 }

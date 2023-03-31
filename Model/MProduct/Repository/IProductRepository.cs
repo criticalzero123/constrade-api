@@ -14,6 +14,7 @@ namespace ConstradeApi.Model.MProduct.Repository
         Task<bool> AddFavoriteProduct(FavoriteModel info);
         Task<bool> DeleteFavoriteProduct(int id);
         Task<IEnumerable<FavoriteProductDetails>> GetFavoriteUser(int userId);
-
+        Task<IEnumerable<ProductCardDetails>> GetSearchProduct(string text);
+        Task<IEnumerable<ProductCardDetails>> GetSearchProductMethod(string tradeMethod);
     }
 }

@@ -9,5 +9,6 @@ namespace ConstradeApi.Model.MProduct
         public UserModel User { get; set; }
         public PersonModel Person { get; set; }
         public bool IsFavorite { get; set; }
+        public bool IsBoosted { get; set; }
     }
 }

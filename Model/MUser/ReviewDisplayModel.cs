@@ -9,6 +9,6 @@
         public string Description { get; set; } = string.Empty;
         public short Rate { get; set; }
         public DateTime Date { get; set; }
-
+        public int ProductId { get; set; }
     }
 }

@@ -100,9 +100,9 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns>true or false</returns>
         public async Task<bool> CheckEmailExist(string email)
         {
-            bool result = await _context.Users.AnyAsync(user => user.Email == email);
+            var result = await _context.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
 
-            return result;
+            return result != null;
         }
 
         /// <summary>
@@ -294,16 +294,18 @@ namespace ConstradeApi.Model.MUser.Repository
                                     _t => _t.TransactionId,
                                     (_r, _t) => new { _r, _t }
                                   )
-              .Select(result => new ReviewDisplayModel
-              {
-                  ReviewId = result._r.ReviewId,
-                    Rate = result._r.Rate,
-                  TransactionId = result._t.TransactionId,
-                  UserName = result._t.Buyer.Person.FirstName + " " + result._t.Buyer.Person.LastName,
-                  ImageUrl = result._t.Buyer.ImageUrl,
-                  Description = result._r.Description,
-                  Date = result._r.DateCreated,
-              });
+                  .OrderByDescending(result => result._r.DateCreated)
+                  .Select(result => new ReviewDisplayModel
+                  {
+                      ReviewId = result._r.ReviewId,
+                      Rate = result._r.Rate,
+                      TransactionId = result._t.TransactionId,
+                      UserName = result._t.Buyer.Person.FirstName + " " + result._t.Buyer.Person.LastName,
+                      ImageUrl = result._t.Buyer.ImageUrl,
+                      Description = result._r.Description,
+                      Date = result._r.DateCreated,
+                      ProductId = result._t.ProductId,
+                  });
 
             return data;
         }
@@ -326,6 +328,7 @@ namespace ConstradeApi.Model.MUser.Repository
                                       _t => _t.TransactionId,
                                       (_r, _t) => new { _r, _t }
                                     )
+                .OrderByDescending(result => result._r.DateCreated)
                 .Select(result => new ReviewDisplayModel
                 {
                     ReviewId = result._r.ReviewId,
@@ -335,6 +338,7 @@ namespace ConstradeApi.Model.MUser.Repository
                     ImageUrl = result._t.Buyer.ImageUrl,
                     Description = result._r.Description,
                     Date = result._r.DateCreated,
+                    ProductId = result._t.ProductId,
                 });
 
             return data;
@@ -368,6 +372,8 @@ namespace ConstradeApi.Model.MUser.Repository
             User? user = _context.Users.Where(_u => _u.Email.Equals(email)).FirstOrDefault();
             if (user == null) return null;
 
+            if (!user.AuthProviderType.Equals("google")) return null;
+
             user.LastActiveAt = DateTime.Now;
             await _context.SaveChangesAsync();
 
@@ -388,7 +394,7 @@ namespace ConstradeApi.Model.MUser.Repository
         public async Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info)
         {
             User? user = _context.Users.Where(_u => _u.Email.Equals(info.Email)).Where(_u => _u.Password.Equals(info.Password)).FirstOrDefault();
-            if (user == null) return null;
+            if (user == null || !user.AuthProviderType.Equals("email") ) return null;
 
             user.LastActiveAt = DateTime.Now;
             await _context.SaveChangesAsync();
@@ -436,7 +442,7 @@ namespace ConstradeApi.Model.MUser.Repository
         {
             User? user = await _context.Users.Where(_u => _u.Email.Equals(model.Email)).FirstOrDefaultAsync();
 
-            if(user == null) return false;
+            if(user == null || !user.AuthProviderType.Equals("email")) return false;
 
             user.Password = model.NewPassword;
             await _context.SaveChangesAsync();

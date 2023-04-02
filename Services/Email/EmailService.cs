@@ -22,7 +22,7 @@ namespace ConstradeApi.Services.Email
             message.To.Add(recipient);
             message.Subject = "OTP CODE";
             message.From = new MailAddress("constradeapplication22@gmail.com");
-            message.Body = $"Your OTP Code is {code} this will expire in 5mins. \nThis is a automatic mail. \nDont Reply!";
+            message.Body = $"Your OTP Code is {code}. \n\nThis is a automatic mail. \n\nDont Reply!";
 
             using (var client = new SmtpClient("smtp.gmail.com", 587))
             {

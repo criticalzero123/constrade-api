@@ -90,6 +90,14 @@ namespace ConstradeApi.Model.MSubcription.Repository
 
             walletUser.Balance -= amount;
 
+            await _context.OtherTransactions.AddAsync(new OtherTransaction
+            {
+                WalletId = walletUser.WalletId,
+                Amount = amount,
+                Date = DateTime.Now,
+                TransactionType = OtherTransactionType.Subscribe,
+            });
+
             _user.UserType = newSubscription;
             _user.CountPost += 10;
 

@@ -40,7 +40,7 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
                                                                                         bp => bp.ProductId,
                                                                                         p => p.ProductId,
                                                                                         (bp, p) => new { bp, p })
-                                                                                  .Where(result => result.bp.DateTimeExpired < DateTime.Now)
+                                                                                  .Where(result => result.bp.DateTimeExpired > DateTime.Now)
                                                                                   .Select(result => new ProductCardDetails
                                                                                   {
                                                                                       ProductId = result.p.ProductId,
@@ -65,6 +65,7 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
             if(boosted.DateTimeExpired < DateTime.Now)
             {
                 boosted.Status = "expired";
+                _context.SaveChanges();
                 return null;
             }
 

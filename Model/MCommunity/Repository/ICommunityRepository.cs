@@ -11,7 +11,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
         Task<CommunityResponse> CreateCommunity(CommunityModel info);
         Task<IEnumerable<CommunityModel>> GetCommunityByOwnerId(int userId);
         Task<IEnumerable<CommunityItem>> GetCommunityJoined(int userId);
-        Task<IEnumerable<CommunityModel>> GetCommunities();
+        Task<IEnumerable<CommunityItem>> GetCommunities(int userId);
         Task<CommunityDetails?> GetCommunity(int id);
 
         /// <summary>

@@ -136,10 +136,8 @@ namespace ConstradeApi.Controllers
             {
                 var data = await _walletRepository.GetTransactionWalletPartial(walletId);
                 var otherData = await _walletRepository.GetOtherTransactionWalletPartial(walletId);
-                var final = new List<object>();
-                final.AddRange(data);
-                final.AddRange(otherData);
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, final));
+              
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, new { Money=data, Other=otherData }));
             }
             catch (Exception ex)
             {

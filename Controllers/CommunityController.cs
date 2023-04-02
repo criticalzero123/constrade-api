@@ -61,11 +61,11 @@ namespace ConstradeApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCommunity()
+        public async Task<IActionResult> GetAllCommunity(int userId)
         {
             try
             {
-                var list = await _communityRepo.GetCommunities();
+                var list = await _communityRepo.GetCommunities(userId);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, list));
             }

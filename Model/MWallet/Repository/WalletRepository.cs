@@ -144,17 +144,17 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// </summary>
         /// <param name="info"></param>
         /// <returns>true if the transaction is success otherwise false</returns>
-        public async Task<bool> TopUpMoney(TopUpTransactionModel info)
+        public async Task<bool> TopUpMoney(OtherTransactionModel info)
         {
             Wallet? _wallet = await _context.UserWallet.FindAsync(info.WalletId);
             if (_wallet == null) return false;
 
-            TopUpTransaction topUp = new TopUpTransaction()
+            OtherTransaction topUp = new OtherTransaction()
             {
                 WalletId = _wallet.WalletId,
                 Amount = info.Amount
             };
-            await _context.TopUpTransactions.AddAsync(topUp);
+            await _context.OtherTransactions.AddAsync(topUp);
             await _context.SaveChangesAsync();
 
             _wallet.Balance += info.Amount;
@@ -167,19 +167,10 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// </summary>
         /// <param name="walletId"></param>
         /// <returns>List of TopUpTransactionModel</returns>
-        public async Task<IEnumerable<TopUpTransactionModel>> GetTopUpByWalletId(int walletId)
+        public async Task<IEnumerable<OtherTransactionModel>> GetTopUpByWalletId(int walletId)
         {
-            return await _context.TopUpTransactions
+            return await _context.OtherTransactions
                 .Where(_t => _t.WalletId.Equals(walletId))
-                .Select(_t => _t.ToModel()).ToListAsync();
-        }
-        /// <summary>
-        /// GET: Getting all the top up transactions by the users
-        /// </summary>
-        /// <returns>List of TopUpTransactionModel</returns>
-        public async Task<IEnumerable<TopUpTransactionModel>> GetAllTopUpTransaction()
-        {
-            return await _context.TopUpTransactions
                 .Select(_t => _t.ToModel()).ToListAsync();
         }
         /// <summary>
@@ -187,14 +178,6 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Null or TopUpTransactionModel</returns>
-        public async Task<TopUpTransactionModel?> GetTopUpById(int id)
-        {
-            TopUpTransaction? _transaction = await _context.TopUpTransactions.FindAsync(id);
-            if (_transaction == null) return null;
-
-
-            return _transaction.ToModel();
-        }
 
         public async Task<IEnumerable<SendMoneyTransactionModel>> GetAllTransactionWallet(int userId)
         {

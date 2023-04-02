@@ -96,7 +96,7 @@ namespace ConstradeApi.Controllers
 
         // api/wallet/topup
         [HttpPost("topup")]
-        public async Task<IActionResult> TopUpMoney([FromBody] TopUpTransactionModel info)
+        public async Task<IActionResult> TopUpMoney([FromBody] OtherTransactionModel info)
         {
             try
             {
@@ -215,39 +215,6 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        // api/wallet/transactions/topup/4
-        [HttpGet("transactions/topup/{id}")]
-        public async Task<IActionResult> GetTopUpTransactionById(int id)
-        {
-            try
-            {
-                var data = await _walletRepository.GetTopUpById(id);
-
-                if (data == null) return NotFound();
-
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
-            }
-        }
-
-        // api/wallet/transactions/topup
-        [HttpGet("transactions/topup")]
-        public async Task<IActionResult> GetAllTopUpTransaction()
-        {
-            try
-            {
-                var data = await _walletRepository.GetAllTopUpTransaction();
-
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
-            }
-        }
-
+        
     }
 }

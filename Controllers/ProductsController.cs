@@ -232,11 +232,11 @@ namespace ConstradeApi.Controllers
         }
 
         [HttpPost("boost/{id}")]
-        public async Task<IActionResult> BoostProduct(int id, int days)
+        public async Task<IActionResult> BoostProduct(int id, int days, int userId)
         {
             try
             {
-                bool flag = await _boost.ProductBoost(id, days);
+                bool flag = await _boost.ProductBoost(id, days, userId);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }

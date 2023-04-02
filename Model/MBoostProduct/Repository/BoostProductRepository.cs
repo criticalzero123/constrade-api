@@ -62,11 +62,25 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
 
             if(boosted == null || boosted.Status != "active") return null;
 
+            if(boosted.DateTimeExpired < DateTime.Now)
+            {
+                boosted.Status = "expired";
+                return null;
+            }
+
             return boosted.ToModel();
         }
 
-        public async Task<bool> ProductBoost(int id, int days)
+        public async Task<bool> ProductBoost(int id, int days, int userId)
         {
+            //this is the amount per day
+            int amount = 5;
+            Wallet wallet= await _context.UserWallet.Where(w => w.UserId == userId).FirstAsync();
+
+            if(wallet.Balance < days * amount) return false;
+
+            wallet.Balance -= amount * days;
+
             BoostProduct product = new BoostProduct
             {
                 ProductId = id,
@@ -77,6 +91,16 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
             };
 
             await _context.BoostProduct.AddAsync(product);
+            await _context.SaveChangesAsync();
+
+            await _context.OtherTransactions.AddAsync(new OtherTransaction
+            {
+                WalletId = wallet.WalletId,
+                Amount = amount * days,
+                TransactionType = Enums.OtherTransactionType.Boost,
+                Date = DateTime.Now
+            });
+
             await _context.SaveChangesAsync();
 
             return true;

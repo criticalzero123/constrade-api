@@ -22,12 +22,8 @@ namespace ConstradeApi.Model.MWallet.Repository
 
          Task<SendMoneyTransactionModel?> GetWalletTransactionById(int id);
 
-         Task<bool> TopUpMoney(TopUpTransactionModel info);
+         Task<bool> TopUpMoney(OtherTransactionModel info);
 
-         Task<IEnumerable<TopUpTransactionModel>> GetTopUpByWalletId(int walletId);
-
-         Task<IEnumerable<TopUpTransactionModel>> GetAllTopUpTransaction();
-
-         Task<TopUpTransactionModel?> GetTopUpById(int id);
+         Task<IEnumerable<OtherTransactionModel>> GetTopUpByWalletId(int walletId);
     }
 }

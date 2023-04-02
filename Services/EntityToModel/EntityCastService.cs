@@ -141,14 +141,15 @@ namespace ConstradeApi.Services.EntityToModel
                 Balance = wallet.Balance,
             };
         }
-        public static TopUpTransactionModel ToModel(this TopUpTransaction transac)
+        public static OtherTransactionModel ToModel(this OtherTransaction transac)
         {
-            return new TopUpTransactionModel()
+            return new OtherTransactionModel()
             {
-                TopUpTransactionId = transac.TopUpTransactionId,
+                OtherTransactionId = transac.OtherTransactionId,
                 WalletId = transac.WalletId,
                 Amount = transac.Amount,
-                DateTopUp = transac.DateTopUp,
+                TransactionType = transac.TransactionType,
+                Date = transac.Date,
             };
         }
         public static SendMoneyTransactionModel ToModel(this SendMoneyTransaction transac)

@@ -167,7 +167,7 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// </summary>
         /// <param name="walletId"></param>
         /// <returns>List of TopUpTransactionModel</returns>
-        public async Task<IEnumerable<OtherTransactionModel>> GetTopUpByWalletId(int walletId)
+        public async Task<IEnumerable<OtherTransactionModel>> GetOtherTransactions(int walletId)
         {
             return await _context.OtherTransactions
                 .Where(_t => _t.WalletId.Equals(walletId))
@@ -179,14 +179,14 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <param name="id"></param>
         /// <returns>Null or TopUpTransactionModel</returns>
 
-        public async Task<IEnumerable<SendMoneyTransactionModel>> GetAllTransactionWallet(int userId)
+        public async Task<IEnumerable<SendMoneyTransactionModel>> GetTransactionWalletPartial(int userId)
         {
             IEnumerable<SendMoneyTransactionModel> _data = await _context.SendMoneyTransactions.Where(_t => _t.ReceiverWalletId == userId || 
                                                                                                       _t.SenderWalletId == userId)
                                                                                          .OrderByDescending(_t => _t)
                                                                                          .Take(10)
-                                                                                         .Select(_t => _t.ToModel()).ToListAsync()
-                                                                                         ;
+                                                                                         .Select(_t => _t.ToModel()).ToListAsync();
+
 
             return _data;
         }

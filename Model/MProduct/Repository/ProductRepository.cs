@@ -159,7 +159,7 @@ namespace ConstradeApi.Model.MProduct.Repository
                                                     Person = product.Product.User.Person.ToModel(),
                                                     Images = product.Images.Select(_i => _i.ToModel()),
                                                     IsFavorite = _context.ProductFavorite.Any(_pf => _pf.ProductId == id && _pf.UserId == userId),
-                                                    IsBoosted = _context.BoostProduct.Any(bp => bp.ProductId == id && bp.DateTimeExpired > DateTime.Now),
+                                                    IsBoosted = _context.BoostProduct.Any(bp => bp.ProductId == id && bp.Status == "active" ),
                                                 }).FirstOrDefault();
 
             if (_data == null) return null;

@@ -58,7 +58,7 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
 
         public async Task<BoostProductModel?> GetProductBoost(int id)
         {
-            BoostProduct? boosted = await _context.BoostProduct.Where(_b => _b.ProductId == id).FirstOrDefaultAsync();
+            BoostProduct? boosted = await _context.BoostProduct.Where(_b => _b.ProductId == id && _b.Status == "active").FirstOrDefaultAsync();
 
             if(boosted == null || boosted.Status != "active") return null;
 

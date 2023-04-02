@@ -13,7 +13,7 @@ namespace ConstradeApi.Model.MWallet.Repository
          Task<WalletModel?> GetWalletById(int id);
 
          Task<WalletResponseType> SendMoneyUser(SendMoneyTransactionModel info);
-         Task<IEnumerable<SendMoneyTransactionModel>> GetAllTransactionWallet(int userId);
+         Task<IEnumerable<SendMoneyTransactionModel>> GetTransactionWalletPartial(int userId);
          Task<IEnumerable<SendMoneyTransactionModel>> GetReceiveMoneyTransaction(int walletId);
 
          Task<IEnumerable<SendMoneyTransactionModel>> GetSendMoneyTransaction(int walletId);
@@ -24,6 +24,6 @@ namespace ConstradeApi.Model.MWallet.Repository
 
          Task<bool> TopUpMoney(OtherTransactionModel info);
 
-         Task<IEnumerable<OtherTransactionModel>> GetTopUpByWalletId(int walletId);
+         Task<IEnumerable<OtherTransactionModel>> GetOtherTransactions(int walletId);
     }
 }

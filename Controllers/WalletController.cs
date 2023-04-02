@@ -134,7 +134,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                var data = await _walletRepository.GetAllTransactionWallet(userId);
+                var data = await _walletRepository.GetTransactionWalletPartial(userId);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
             }
@@ -203,7 +203,7 @@ namespace ConstradeApi.Controllers
         {
             try
             {
-                var data = await _walletRepository.GetTopUpByWalletId(walletId);
+                var data = await _walletRepository.GetOtherTransactions(walletId);
 
                 if(data.Count() == 0) return NotFound();
 

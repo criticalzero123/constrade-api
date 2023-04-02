@@ -14,6 +14,7 @@ namespace ConstradeApi.Model.MWallet.Repository
 
          Task<WalletResponseType> SendMoneyUser(SendMoneyTransactionModel info);
          Task<IEnumerable<SendMoneyTransactionModel>> GetTransactionWalletPartial(int userId);
+         Task<IEnumerable<OtherTransactionModel>> GetOtherTransactionWalletPartial(int walletId);
          Task<IEnumerable<SendMoneyTransactionModel>> GetReceiveMoneyTransaction(int walletId);
 
          Task<IEnumerable<SendMoneyTransactionModel>> GetSendMoneyTransaction(int walletId);

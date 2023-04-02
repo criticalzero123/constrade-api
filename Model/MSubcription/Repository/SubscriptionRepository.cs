@@ -68,7 +68,7 @@ namespace ConstradeApi.Model.MSubcription.Repository
             Wallet walletUser = _context.UserWallet.Where(_w => _w.UserId == sub.UserId).First();
 
             //not enough balance
-            if (walletUser.Balance <= 100) return SubscriptionResponseType.NotEnoughBalance;
+            if (walletUser.Balance < 100) return SubscriptionResponseType.NotEnoughBalance;
 
             DateTime datetime = DateTime.Now;
             DateTime expiredDateTime = datetime.AddDays(30);
@@ -114,6 +114,9 @@ namespace ConstradeApi.Model.MSubcription.Repository
         {
             Subscription sub = await _context.Subscriptions.Where(_s => _s.UserId.Equals(uid)).FirstAsync();
             if (sub.SubscriptionType.Equals("free")) return false;
+
+            User user = await _context.Users.Where(_u => _u.UserId == uid).FirstAsync();
+            user.UserType = "verified";
 
             DateTime datetime = DateTime.Now;
             DateTime expiredDateTime = DateTime.Now;

@@ -179,10 +179,10 @@ namespace ConstradeApi.Model.MWallet.Repository
         /// <param name="id"></param>
         /// <returns>Null or TopUpTransactionModel</returns>
 
-        public async Task<IEnumerable<SendMoneyTransactionModel>> GetTransactionWalletPartial(int userId)
+        public async Task<IEnumerable<SendMoneyTransactionModel>> GetTransactionWalletPartial(int walletId)
         {
-            IEnumerable<SendMoneyTransactionModel> _data = await _context.SendMoneyTransactions.Where(_t => _t.ReceiverWalletId == userId || 
-                                                                                                      _t.SenderWalletId == userId)
+            IEnumerable<SendMoneyTransactionModel> _data = await _context.SendMoneyTransactions.Where(_t => _t.ReceiverWalletId == walletId || 
+                                                                                                      _t.SenderWalletId == walletId)
                                                                                          .OrderByDescending(_t => _t)
                                                                                          .Take(10)
                                                                                          .Select(_t => _t.ToModel()).ToListAsync();
@@ -190,6 +190,8 @@ namespace ConstradeApi.Model.MWallet.Repository
 
             return _data;
         }
+
+
 
         public async Task<IEnumerable<WalletUserDetailModel>> GetAllWalletUserDetails()
         {
@@ -206,5 +208,11 @@ namespace ConstradeApi.Model.MWallet.Repository
             return data;
         }
 
+        public async Task<IEnumerable<OtherTransactionModel>> GetOtherTransactionWalletPartial(int walletId)
+        {
+            var otherTransactions = await _context.OtherTransactions.Where(ot => ot.WalletId == walletId).Take(10).Select(ot => ot.ToModel()).ToListAsync();
+
+            return otherTransactions;
+        }
     }
 }

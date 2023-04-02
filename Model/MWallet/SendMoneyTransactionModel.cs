@@ -6,6 +6,6 @@
         public int SenderWalletId { get; set; }
         public int ReceiverWalletId { get; set; }
         public decimal Amount { get; set; }
-        public DateTime DateSend { get; set; }
+        public DateTime Date { get; set; }
     }
 }

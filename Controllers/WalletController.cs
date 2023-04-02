@@ -129,14 +129,17 @@ namespace ConstradeApi.Controllers
         }
 
         // api/wallet/transactions/all/4
-        [HttpGet("transactions/all/{userId}")]
-        public async Task<IActionResult> GetWalletAllTransaction(int userId)
+        [HttpGet("transactions/all/{walletId}")]
+        public async Task<IActionResult> GetWalletPartialTransaction(int walletId)
         {
             try
             {
-                var data = await _walletRepository.GetTransactionWalletPartial(userId);
-
-                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, data));
+                var data = await _walletRepository.GetTransactionWalletPartial(walletId);
+                var otherData = await _walletRepository.GetOtherTransactionWalletPartial(walletId);
+                var final = new List<object>();
+                final.AddRange(data);
+                final.AddRange(otherData);
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, final));
             }
             catch (Exception ex)
             {

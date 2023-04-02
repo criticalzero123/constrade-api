@@ -160,7 +160,7 @@ namespace ConstradeApi.Services.EntityToModel
                 SenderWalletId = transac.SenderWalletId,
                 ReceiverWalletId = transac.ReceiverWalletId,
                 Amount = transac.Amount,
-                DateSend = transac.DateSend,
+                Date = transac.DateSend,
             };
         }
         public static SubscriptionModel ToModel(this Subscription subscription)

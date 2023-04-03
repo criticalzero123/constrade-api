@@ -102,6 +102,7 @@ namespace ConstradeApi.Controllers
 
                 if (response.Response == ProductAddResponseType.UserNotFound) return NotFound();
                 if (response.Response == ProductAddResponseType.NoPostCount) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{ProductAddResponseType.NoPostCount}"));
+                if (response.Response == ProductAddResponseType.NotVerified) return Ok(ResponseHandler.GetApiResponse(ResponseType.Failure, $"{ProductAddResponseType.NotVerified}"));
 
                 var follower = await _userRepository.GetUserFollower(productModel.Product.PosterUserId);
 

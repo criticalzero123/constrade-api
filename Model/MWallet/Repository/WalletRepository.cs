@@ -197,7 +197,6 @@ namespace ConstradeApi.Model.MWallet.Repository
         {
             IEnumerable<WalletUserDetailModel> data = await _context.UserWallet
                                                                     .Include(_w => _w.User.Person)
-                                                                    .Where(_w => _w.User.UserType != "semi-verified" )
                                                                     .Select(_w => new WalletUserDetailModel
             {
                 WalletId = _w.WalletId,

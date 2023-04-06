@@ -2,6 +2,7 @@
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Services.EntityToModel;
+using ConstradeApi.Services.Password;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -81,7 +82,7 @@ namespace ConstradeApi.Model.MUser.Repository
             userTable.AuthProviderType = info.User.AuthProviderType;
             userTable.UserStatus = info.User.UserStatus;
             userTable.Email = info.User.Email.ToLower();
-            userTable.Password = info.User.Password!;
+            userTable.Password = info.User.Password != null ? PasswordHelper.Hash(info.User.Password) : "";
             userTable.ImageUrl = info.User.ImageUrl;
             userTable.CountPost = 0;
             userTable.DateCreated = DateTime.Now;
@@ -393,7 +394,7 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns>UserInfoModel or NULL</returns>
         public async Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info)
         {
-            User? user = _context.Users.Where(_u => _u.Email.Equals(info.Email)).Where(_u => _u.Password.Equals(info.Password)).FirstOrDefault();
+            User? user = _context.Users.Where(_u => _u.Email.Equals(info.Email) && _u.Password.Equals(PasswordHelper.Hash(info.Password!))).FirstOrDefault();
             if (user == null || !user.AuthProviderType.Equals("email") ) return null;
 
             user.LastActiveAt = DateTime.Now;

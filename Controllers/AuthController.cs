@@ -136,6 +136,10 @@ namespace ConstradeApi.Controllers
         {
             try
             {
+                bool userExist = await _userRepository.CheckEmailExist(userModel.User.Email);
+
+                if (userExist) return Unauthorized();
+
                 ResponseType response = ResponseType.Success;
                 int uid = await _userRepository.Save(userModel);
                 int apiId = await _apiKeyRepository.CreateApiKeyAsync(uid);

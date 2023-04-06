@@ -49,10 +49,10 @@ namespace ConstradeApi
             });
 
             // Add services to the container.
-            builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBProd"]));
+            //builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBProd"]));
             //builder.Services.AddDbContext<VerificationDataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBVerificationProd"]));
 
-            //builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBDev"]));
+            builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBDev"]));
             builder.Services.AddDbContext<VerificationDataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBVerificationDev"]));
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();

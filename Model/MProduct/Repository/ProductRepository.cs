@@ -143,6 +143,14 @@ namespace ConstradeApi.Model.MProduct.Repository
         /// <returns>ProductModel</returns>
         public async Task<ProductFullDetails?> Get(int id, int? userId)
         {
+            BoostProduct? boosted = await _context.BoostProduct.Where(_b => _b.ProductId == id && _b.Status == "active").FirstOrDefaultAsync();
+
+            if (boosted != null &&  boosted.DateTimeExpired < DateTime.Now &&   boosted.Status == "active")
+            {
+                boosted.Status = "expired";
+                _context.SaveChanges();
+            }
+
             var _data = _context.Products.Include(_p => _p.User.Person).ToList().Where(_p => _p.ProductId == id)
                                                 .GroupJoin(_context.Images.ToList(),
                                                            _p => _p.ProductId,
@@ -311,17 +319,22 @@ namespace ConstradeApi.Model.MProduct.Repository
         {
             IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
                                                                                 .Where(_p => _p.Title.ToLower().Contains(text.ToLower()))
-                                                                                .OrderBy(_p => _p.CountFavorite)
+                                                                                .GroupJoin(
+                                                                                _context.BoostProduct.Where(b => b.Status == "active"),
+                                                                                p => p.ProductId,
+                                                                                b => b.ProductId,
+                                                                                (p, b) => new { Product = p, Boost = b })
+                                                                              .OrderByDescending(_p => _p.Boost.Any())
+                                                                              .ThenByDescending(_p => _p.Product.CountFavorite)
                                                                                 .Select(_p => new ProductCardDetails
                                                                                 {
-                                                                                    ProductId = _p.ProductId,
-                                                                                    ProductName = _p.Title,
-                                                                                    ThumbnailUrl = _p.ThumbnailUrl,
-                                                                                    UserName = _p.User.Person.FirstName + " " + _p.User.Person.LastName,
-                                                                                    UserImage = _p.User.ImageUrl,
-                                                                                    PreferTrade = _p.PreferTrade,
-                                                                                    DateCreated = _p.DateCreated,
-
+                                                                                    ProductId = _p.Product.ProductId,
+                                                                                    ProductName = _p.Product.Title,
+                                                                                    ThumbnailUrl = _p.Product.ThumbnailUrl,
+                                                                                    UserName = _p.Product.User.Person.FirstName + " " + _p.Product.User.Person.LastName,
+                                                                                    UserImage = _p.Product.User.ImageUrl,
+                                                                                    PreferTrade = _p.Product.PreferTrade,
+                                                                                    DateCreated = _p.Product.DateCreated,
                                                                                 })
                                                                                 .ToListAsync();
 
@@ -331,18 +344,23 @@ namespace ConstradeApi.Model.MProduct.Repository
         public async Task<IEnumerable<ProductCardDetails>> GetSearchProductMethod(string tradeMethod)
         {
             IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
-                                                                              .Where(p => p.PreferTrade == tradeMethod)
-                                                                              .OrderBy(_p => _p.CountFavorite)
+                                                                              .Where(p => p.PreferTrade == tradeMethod && p.ProductStatus != "sold")
+                                                                              .GroupJoin(
+                                                                                _context.BoostProduct.Where(b => b.Status == "active"),
+                                                                                p => p.ProductId,
+                                                                                b => b.ProductId,
+                                                                                (p, b) => new { Product = p, Boost = b })
+                                                                              .OrderByDescending(_p => _p.Boost.Any())
+                                                                              .ThenByDescending(_p => _p.Product.CountFavorite)
                                                                                 .Select(_p => new ProductCardDetails
                                                                                 {
-                                                                                    ProductId = _p.ProductId,
-                                                                                    ProductName = _p.Title,
-                                                                                    ThumbnailUrl = _p.ThumbnailUrl,
-                                                                                    UserName = _p.User.Person.FirstName + " " + _p.User.Person.LastName,
-                                                                                    UserImage = _p.User.ImageUrl,
-                                                                                    PreferTrade = _p.PreferTrade,
-                                                                                    DateCreated = _p.DateCreated,
-
+                                                                                    ProductId = _p.Product.ProductId,
+                                                                                    ProductName = _p.Product.Title,
+                                                                                    ThumbnailUrl = _p.Product.ThumbnailUrl,
+                                                                                    UserName = _p.Product.User.Person.FirstName + " " + _p.Product.User.Person.LastName,
+                                                                                    UserImage = _p.Product.User.ImageUrl,
+                                                                                    PreferTrade = _p.Product.PreferTrade,
+                                                                                    DateCreated = _p.Product.DateCreated,
                                                                                 })
                                                                                 .ToListAsync(); 
 
@@ -352,27 +370,28 @@ namespace ConstradeApi.Model.MProduct.Repository
         public async Task<IEnumerable<ProductCardDetails>> GetProductByLength(int count)
         {
             IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
-                                                                              .OrderBy(_p => _p.CountFavorite)
+                                                                              .Where(_p => _p.ProductStatus != "sold")
+                                                                              .GroupJoin(
+                                                                                _context.BoostProduct.Where(b => b.Status == "active"),
+                                                                                p => p.ProductId,
+                                                                                b => b.ProductId,
+                                                                                (p, b) => new { Product = p, Boost = b })
+                                                                              .OrderByDescending(_p => _p.Boost.Any())
+                                                                              .ThenByDescending(_p => _p.Product.CountFavorite)
                                                                                 .Select(_p => new ProductCardDetails
                                                                                 {
-                                                                                    ProductId = _p.ProductId,
-                                                                                    ProductName = _p.Title,
-                                                                                    ThumbnailUrl = _p.ThumbnailUrl,
-                                                                                    UserName = _p.User.Person.FirstName + " " + _p.User.Person.LastName,
-                                                                                    UserImage = _p.User.ImageUrl,
-                                                                                    PreferTrade = _p.PreferTrade,
-                                                                                    DateCreated = _p.DateCreated,
-
+                                                                                    ProductId = _p.Product.ProductId,
+                                                                                    ProductName = _p.Product.Title,
+                                                                                    ThumbnailUrl = _p.Product.ThumbnailUrl,
+                                                                                    UserName = _p.Product.User.Person.FirstName + " " + _p.Product.User.Person.LastName,
+                                                                                    UserImage = _p.Product.User.ImageUrl,
+                                                                                    PreferTrade = _p.Product.PreferTrade,
+                                                                                    DateCreated = _p.Product.DateCreated,
                                                                                 })
                                                                                 .Take(count)
                                                                                 .ToListAsync();
 
             return products;
-        }
-
-        public Task<IEnumerable<ProductCardDetails>> GetProductByFollow(int userId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

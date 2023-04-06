@@ -100,8 +100,8 @@ namespace ConstradeApi.Model.MProduct.Repository
                 Location = product.Location,
                 ModelNumber = product.ModelNumber,
                 SerialNumber = product.SerialNumber,
-                GameGenre = product.GameGenre,
-                Platform = product.Platform,
+                GameGenre = product.GameGenre.ToLower(),
+                Platform = product.Platform.ToLower(),
                 ThumbnailUrl = product.ThumbnailUrl,
                 Cash = product.Cash,
                 Item = product.Item,
@@ -309,6 +309,8 @@ namespace ConstradeApi.Model.MProduct.Repository
                                                                                         UserImage = _f.User.ImageUrl,
                                                                                         DateCreated = _f.Product.DateCreated,
                                                                                         PreferTrade = _f.Product.PreferTrade,
+                                                                                        Genre = _f.Product.GameGenre,
+                                                                                        Platform = _f.Product.Platform,
                                                                                     }
                                                                                 }).ToListAsync();
 
@@ -335,6 +337,8 @@ namespace ConstradeApi.Model.MProduct.Repository
                                                                                     UserImage = _p.Product.User.ImageUrl,
                                                                                     PreferTrade = _p.Product.PreferTrade,
                                                                                     DateCreated = _p.Product.DateCreated,
+                                                                                    Genre = _p.Product.GameGenre,
+                                                                                    Platform = _p.Product.Platform,
                                                                                 })
                                                                                 .ToListAsync();
 
@@ -361,6 +365,8 @@ namespace ConstradeApi.Model.MProduct.Repository
                                                                                     UserImage = _p.Product.User.ImageUrl,
                                                                                     PreferTrade = _p.Product.PreferTrade,
                                                                                     DateCreated = _p.Product.DateCreated,
+                                                                                    Genre = _p.Product.GameGenre,
+                                                                                    Platform = _p.Product.Platform,
                                                                                 })
                                                                                 .ToListAsync(); 
 
@@ -387,6 +393,8 @@ namespace ConstradeApi.Model.MProduct.Repository
                                                                                     UserImage = _p.Product.User.ImageUrl,
                                                                                     PreferTrade = _p.Product.PreferTrade,
                                                                                     DateCreated = _p.Product.DateCreated,
+                                                                                    Genre = _p.Product.GameGenre,
+                                                                                    Platform = _p.Product.Platform,
                                                                                 })
                                                                                 .Take(count)
                                                                                 .ToListAsync();

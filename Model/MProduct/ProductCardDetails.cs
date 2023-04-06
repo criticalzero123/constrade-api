@@ -8,6 +8,8 @@
         public string UserName { get; set; } = string.Empty;
         public string UserImage { get; set; } = string.Empty;
         public string PreferTrade { get; set; } = string.Empty;
+        public string Genre { get; set; } = string.Empty;
+        public string Platform { get; set; } = string.Empty;
         public DateTime DateCreated { get; set; }
     }
 }

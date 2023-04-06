@@ -38,7 +38,15 @@ namespace ConstradeApi
             builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("Secrets.json", optional:true);
             builder.Services.AddControllers();
             builder.Services.AddSignalR();
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
 
             // Add services to the container.
             builder.Services.AddDbContext<DataContext>(option => option.UseNpgsql(builder.Configuration["ConnectionString:PostgresDBProd"]));
@@ -120,7 +128,8 @@ namespace ConstradeApi
            
             app.UseRouting();
             
-            app.UseHttpsRedirection(); 
+            app.UseHttpsRedirection();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
 

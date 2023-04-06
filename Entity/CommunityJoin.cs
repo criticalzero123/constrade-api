@@ -12,10 +12,12 @@ namespace ConstradeApi.Entity
         public int CommunityJoinRequestId { get; set; }
 
         [Column("community_id")]
+        [ForeignKey("Community")]
         public int CommunityId { get; set; }
         public Community Community { get; set; }
 
         [Column("user_id")]
+        [ForeignKey("User")]
         public int UserId { get; set; }
         public User User { get; set; }
 

@@ -11,6 +11,7 @@ namespace ConstradeApi.Entity
         public int CommunityPostId { get; set; }
 
         [ForeignKey("Community")]
+        [Column("community_id")]
         public int CommunityId { get; set; }
         public Community Community { get; set; }
 

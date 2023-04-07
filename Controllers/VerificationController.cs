@@ -36,20 +36,20 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetRequests()
-        //{
-        //    try
-        //    {
-        //        var requests = await _validIdRepo.GetValidationRequests();
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetRequests(int userId)
+        {
+            try
+            {
+                var request = await _validIdRepo.GetValidationRequests(userId);
 
-        //        return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, requests));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, request));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
 
-        //    }
-        //}
+            }
+        }
     }
 }

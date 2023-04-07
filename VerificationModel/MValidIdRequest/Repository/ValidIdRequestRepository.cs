@@ -14,9 +14,26 @@ namespace ConstradeApi.VerificationModel.MValidIdRequest.Repository
             _context = context;
         }
 
+        public async Task<ValidIdRequestModel?> GetValidationRequests(int userId)
+        {
+            ValidIdRequest? request = await _context.ValidIdRequests.Where(r => r.UserId == userId).FirstOrDefaultAsync();
+
+            if (request == null) return null;
+
+            return request.ToModel();
+        }
+
         public async Task<bool> SubmitValidId(ValidIdRequestModel info)
         {
-            ValidIdRequest request = new ValidIdRequest
+            ValidIdRequest? request = await _context.ValidIdRequests.Where(r => r.UserId == info.UserId).FirstOrDefaultAsync();
+
+            if (request != null)
+            {
+                _context.ValidIdRequests.Remove(request);
+                _context.SaveChanges(); 
+            }
+
+            ValidIdRequest _request = new ValidIdRequest
             {
                 ValidIdNumber = info.ValidIdNumber,
                 UserId = info.UserId,
@@ -26,7 +43,7 @@ namespace ConstradeApi.VerificationModel.MValidIdRequest.Repository
                 Status = "pending"
             };
 
-            await _context.ValidIdRequests.AddAsync(request);
+            await _context.ValidIdRequests.AddAsync(_request);
             await _context.SaveChangesAsync();  
             return true;
         }

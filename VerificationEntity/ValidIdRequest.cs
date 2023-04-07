@@ -1,10 +1,12 @@
 ﻿using ConstradeApi.Enums;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConstradeApi.VerificationEntity
 {
     [Table("valid_id_request")]
+    [Index("UserId")]
     public class ValidIdRequest
     {
         [Key]

@@ -221,21 +221,16 @@ namespace ConstradeApi.Model.MProduct.Repository
             Product? _product = await _context.Products.FindAsync(id);
             if (_product == null) return false;
 
-            _product.Title = product.Title;
+            _product.GameGenre = product.GameGenre;
+            _product.Platform = product.Platform;
             _product.Description = product.Description;
             _product.ModelNumber = product.ModelNumber;
             _product.SerialNumber = product.SerialNumber;
-            _product.GameGenre = product.GameGenre;
-            _product.Platform = product.Platform;
-            _product.ThumbnailUrl = product.ThumbnailUrl;
-            _product.Cash = product.Cash;
-            _product.Item = product.Item;
-            _product.Location = product.Location;
-            _product.Condition = product.Condition;
-            _product.PreferTrade = product.PreferTrade;
-            _product.ThumbnailUrl = product.ThumbnailUrl;
-            _product.IsDeliver = product.IsDeliver;
             _product.IsMeetup = product.IsMeetup;
+            _product.IsDeliver = product.IsDeliver;
+            _product.HasReceipts = product.HasReceipts;
+            _product.HasWarranty= product.HasWarranty;
+            _product.Location = product.Location;
 
 
             await _context.SaveChangesAsync();

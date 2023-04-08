@@ -417,11 +417,12 @@ namespace ConstradeApi.Model.MUser.Repository
             User user = await _context.Users.Where(_u => _u.PersonRefId.Equals(info.Person.PersonId)).FirstAsync();
 
             user.ImageUrl = info.User.ImageUrl;
-            await _context.SaveChangesAsync();
+            user.BackgroundImageUrl = info.User.BackgroundImageUrl;
 
             person.FirstName= info.Person.FirstName;
             person.LastName= info.Person.LastName; 
             person.Birthdate = info.Person.Birthdate;
+
             person.Gender = info.Person.Gender;
             await _context.SaveChangesAsync();
 

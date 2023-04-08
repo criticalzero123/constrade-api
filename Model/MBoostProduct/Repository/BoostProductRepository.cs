@@ -74,13 +74,17 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
 
         public async Task<bool> ProductBoost(int id, int days, int userId)
         {
+            User user = await _context.Users.Where(_u => _u.UserId == userId).FirstAsync();
             //this is the amount per day
             int amount = 5;
             Wallet wallet= await _context.UserWallet.Where(w => w.UserId == userId).FirstAsync();
 
             if(wallet.Balance < days * amount) return false;
 
-            wallet.Balance -= amount * days;
+            int partialAmount = amount * days;
+            decimal deduction = user.UserType == "premium" ?  Convert.ToDecimal(partialAmount - (partialAmount * .15)) : partialAmount;
+
+            wallet.Balance -= deduction;
 
             BoostProduct product = new BoostProduct
             {

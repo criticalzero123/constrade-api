@@ -291,7 +291,7 @@ namespace ConstradeApi.Model.MProduct.Repository
         public async Task<IEnumerable<FavoriteProductDetails>> GetFavoriteUser(int userId)
         {
             IEnumerable<FavoriteProductDetails> favorites = await _context.ProductFavorite.Include(_f => _f.Product.User.Person)
-                                                                                .Where(_u => _u.UserId == userId)
+                                                                                .Where(_u => _u.UserId == userId && _u.Product.ProductStatus != "sold")
                                                                                 .Select(_f => new FavoriteProductDetails
                                                                                 {
                                                                                     FavoriteId = _f.FavoriteId,
@@ -315,7 +315,7 @@ namespace ConstradeApi.Model.MProduct.Repository
         public async Task<IEnumerable<ProductCardDetails>> GetSearchProduct(string text)
         {
             IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
-                                                                                .Where(_p => _p.Title.ToLower().Contains(text.ToLower()))
+                                                                                .Where(_p => _p.Title.ToLower().Contains(text.ToLower()) && _p.ProductStatus != "sold")
                                                                                 .GroupJoin(
                                                                                 _context.BoostProduct.Where(b => b.Status == "active"),
                                                                                 p => p.ProductId,

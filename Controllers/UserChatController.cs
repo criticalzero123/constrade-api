@@ -56,6 +56,22 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        // api/<UserChatController/4
+        [HttpGet("user")]
+        public async Task<IActionResult> GetByUserName(string username)
+        {
+            try
+            {
+                var messagesList = await _userChatRepo.GetUserByName(username);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, messagesList));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         [HttpDelete("messages/message/{id}")]
         public async Task<IActionResult> DeleteMessageById(int id)
         {

@@ -2,6 +2,7 @@
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ConstradeApi.Model.MUserChat.Repository
 {
@@ -32,6 +33,21 @@ namespace ConstradeApi.Model.MUserChat.Repository
         {
             return await _context.UserChats.Select(_u => _u.ToModel()).ToListAsync();
         }
+
+        public async Task<IEnumerable<ChatResponseInfoModel>> GetUserByName(string name)
+        {
+            IEnumerable<ChatResponseInfoModel> users = await _context.Users.Include(_u => _u.Person)
+                                                                           .Where(_u => _u.Person.FirstName.ToLower().Contains(name.ToLower()) || _u.Person.LastName.ToLower().Contains(name.ToLower()))
+                                                                           .Select(_u => new ChatResponseInfoModel
+                                                                           {
+                                                                               User = _u,
+                                                                               OtherUserName = $"{_u.Person.FirstName} {_u.Person.LastName}",
+                                                                           })
+                                                                           .ToListAsync();
+
+            return users;
+        }
+
         public async Task<int?> GetUserChatIdByUId(int userId1, int userId2)
         {
             UserChat? userChat = await _context.UserChats.Where(_u => (_u.UserId1 == userId1 && _u.UserId2 == userId2) ||

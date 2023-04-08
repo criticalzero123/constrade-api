@@ -51,6 +51,12 @@ namespace ConstradeApi.Entity
 
         public string ImageUrl { get; set; } = string.Empty;
 
+
+        [Required]
+        [Column("background_image_url")]
+
+        public string BackgroundImageUrl { get; set; } = string.Empty;
+
         [Required]
         [Column("last_active_at")]
         public DateTime LastActiveAt { get; set; } = DateTime.Now;

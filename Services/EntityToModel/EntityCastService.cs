@@ -53,6 +53,7 @@ namespace ConstradeApi.Services.EntityToModel
                 Email = user.Email,
                 ImageUrl = user.ImageUrl,
                 LastActiveAt = user.LastActiveAt,
+                BackgroundImageUrl = user.BackgroundImageUrl,
                 CountPost = user.CountPost,
                 DateCreated = user.DateCreated,
                 

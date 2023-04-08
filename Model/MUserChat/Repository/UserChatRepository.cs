@@ -80,6 +80,7 @@ namespace ConstradeApi.Model.MUserChat.Repository
                                                 LastMessage = uc.LastMessage,
                                                 LastMessageDate = uc.LastMessageDate,
                                             })
+                                        .OrderByDescending(_uc => _uc.LastMessageDate)
                                         .ToListAsync();
 
             return chatList;

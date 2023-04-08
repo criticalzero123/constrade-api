@@ -16,6 +16,7 @@ namespace ConstradeApi.Model.MUser
         public string Email { get; set; } = string.Empty;
         public string? Password { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        public string BackgroundImageUrl {  get; set; } = string.Empty;
         public DateTime LastActiveAt { get; set; }
         public int CountPost { get; set; }
         public DateTime DateCreated { get; set; }

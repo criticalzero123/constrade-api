@@ -101,7 +101,7 @@ namespace ConstradeApi.Model.MUser.Repository
         /// <returns>true or false</returns>
         public async Task<bool> CheckEmailExist(string email)
         {
-            var result = await _context.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
+            var result = await _context.Users.Where(user => user.Email == email && user.UserStatus == "active").FirstOrDefaultAsync();
 
             return result != null;
         }
@@ -370,7 +370,7 @@ namespace ConstradeApi.Model.MUser.Repository
         //TODO: please make a checker if the user status is active or not
         public async Task<UserAndPersonModel?> LoginByGoogle(string email)
         {
-            User? user = _context.Users.Where(_u => _u.Email.Equals(email)).FirstOrDefault();
+            User? user = _context.Users.Where(_u => _u.Email.Equals(email) && _u.UserStatus == "active").FirstOrDefault();
             if (user == null) return null;
 
             if (!user.AuthProviderType.Equals("google")) return null;

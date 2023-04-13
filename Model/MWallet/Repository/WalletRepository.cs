@@ -151,8 +151,10 @@ namespace ConstradeApi.Model.MWallet.Repository
 
             OtherTransaction topUp = new OtherTransaction()
             {
-                WalletId = _wallet.WalletId,
-                Amount = info.Amount
+                WalletId = info.WalletId,
+                Amount = info.Amount,
+                TransactionType = OtherTransactionType.Topup,
+                Date = DateTime.Now,
             };
             await _context.OtherTransactions.AddAsync(topUp);
             await _context.SaveChangesAsync();

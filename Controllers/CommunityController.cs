@@ -351,7 +351,7 @@ namespace ConstradeApi.Controllers
             {
                 var comment = await _communityRepo.UpdateComment(info);
 
-                if (comment == null) return NotFound("Comment not found");
+                if (!comment) return NotFound("Comment not found");
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, comment));
             }

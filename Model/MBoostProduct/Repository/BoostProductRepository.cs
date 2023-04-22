@@ -2,7 +2,6 @@
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace ConstradeApi.Model.MBoostProduct.Repository
 {
@@ -82,7 +81,7 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
             if(wallet.Balance < days * amount) return false;
 
             int partialAmount = amount * days;
-            decimal deduction = user.UserType == "premium" ?  Convert.ToDecimal(partialAmount - (partialAmount * .15)) : partialAmount;
+            decimal deduction = user.UserType == "premium" ?  Convert.ToDecimal(Convert.ToDouble(partialAmount) - Convert.ToDouble(partialAmount * .15)) : partialAmount;
 
             wallet.Balance -= deduction;
 
@@ -101,7 +100,7 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
             await _context.OtherTransactions.AddAsync(new OtherTransaction
             {
                 WalletId = wallet.WalletId,
-                Amount = amount * days,
+                Amount = deduction,
                 TransactionType = Enums.OtherTransactionType.Boost,
                 Date = DateTime.Now
             });
@@ -109,6 +108,42 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<bool> EditBoostDay(int id, int newDay)
+        {
+            BoostProduct? product = await _context.BoostProduct.Include(p => p.Product.User)
+                                                                 .Where(p => p.BoostProductId == id && p.Status == "active")
+                                                                 .FirstOrDefaultAsync();
+
+            if (product == null) return false;
+
+
+            int daysLeft = (product.DateTimeExpired.Day - DateTime.Now.Day) - newDay;
+
+
+            product.DateTimeExpired = product.DateTimeExpired.AddDays(-daysLeft);
+
+            Wallet userWallet = await _context.UserWallet.Where(w => w.UserId == product.Product.User.UserId).FirstAsync();
+            int amountForBoost = 5;
+            decimal amountRefund = daysLeft * amountForBoost;
+
+            decimal refund = product.Product.User.UserType == "premium" ? Convert.ToDecimal(Convert.ToDouble(amountRefund) - (Convert.ToDouble(amountRefund) * .15)) : amountRefund;
+
+            userWallet.Balance += refund;
+             _context.SaveChanges();
+
+            await _context.OtherTransactions.AddAsync(new OtherTransaction
+            {
+                WalletId = userWallet.WalletId,
+                Amount = refund,
+                TransactionType = Enums.OtherTransactionType.Refund,
+                Date = DateTime.Now,
+            });
+            await _context.SaveChangesAsync();
+
+            return true;
+
         }
     }
 }

@@ -4,6 +4,7 @@
     {
         Topup,
         Boost,
-        Subscribe
+        Subscribe,
+        Refund
     }
 }

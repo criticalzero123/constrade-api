@@ -247,6 +247,21 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpPut("boost/{id}")]
+        public async Task<IActionResult> EditBoostProduct(int id, int days)
+        {
+            try
+            {
+                bool flag = await _boost.EditBoostDay(id, days);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         [HttpPut("boost/{id}/cancel")]
         public async Task<IActionResult> CancelBoost(int id)
         {

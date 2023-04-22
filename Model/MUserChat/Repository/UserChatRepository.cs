@@ -37,7 +37,7 @@ namespace ConstradeApi.Model.MUserChat.Repository
         public async Task<IEnumerable<ChatResponseInfoModel>> GetUserByName(string name)
         {
             IEnumerable<ChatResponseInfoModel> users = await _context.Users.Include(_u => _u.Person)
-                                                                           .Where(_u => _u.Person.FirstName.ToLower().Contains(name.ToLower()) || _u.Person.LastName.ToLower().Contains(name.ToLower()))
+                                                                           .Where(_u => _u.Person.FirstName.ToLower().Contains(name.ToLower()) || _u.Person.LastName.ToLower().Contains(name.ToLower()) || _u.Email.ToLower().Contains(name.ToLower()))
                                                                            .Select(_u => new ChatResponseInfoModel
                                                                            {
                                                                                User = _u,

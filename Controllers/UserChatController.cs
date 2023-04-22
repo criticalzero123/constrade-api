@@ -58,7 +58,7 @@ namespace ConstradeApi.Controllers
 
         // api/<UserChatController/4
         [HttpGet("user")]
-        public async Task<IActionResult> GetByUserName(string username)
+        public async Task<IActionResult> GetByUserNameAndEmail(string username)
         {
             try
             {

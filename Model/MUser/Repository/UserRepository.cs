@@ -395,7 +395,7 @@ namespace ConstradeApi.Model.MUser.Repository
         public async Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info)
         {
             User? user = _context.Users.Where(_u => _u.Email.Equals(info.Email) && _u.Password.Equals(PasswordHelper.Hash(info.Password!))).FirstOrDefault();
-            if (user == null || !user.AuthProviderType.Equals("email") ) return null;
+            if (user == null || !user.AuthProviderType.Equals("email") || user.UserStatus != "active") return null;
 
             user.LastActiveAt = DateTime.Now;
             await _context.SaveChangesAsync();
@@ -446,7 +446,7 @@ namespace ConstradeApi.Model.MUser.Repository
 
             if(user == null || !user.AuthProviderType.Equals("email")) return false;
 
-            user.Password = model.NewPassword;
+            user.Password = PasswordHelper.Hash(model.NewPassword);
             await _context.SaveChangesAsync();
 
             return true; 

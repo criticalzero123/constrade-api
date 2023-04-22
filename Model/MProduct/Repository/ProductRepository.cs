@@ -39,7 +39,7 @@ namespace ConstradeApi.Model.MProduct.Repository
         public async Task<IEnumerable<ProductCardDetails>> GetProductsByUserId(int userId)
         {
             IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
-                                                                        .Where(_p => _p.PosterUserId == userId)
+                                                                        .Where(_p => _p.PosterUserId == userId && _p.ProductStatus == "unsold")
                                                                         .OrderBy(_p => _p.DateCreated)
                                                                         .Select(_p => new ProductCardDetails
                                                                         {

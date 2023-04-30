@@ -1,4 +1,5 @@
 ﻿using ConstradeApi.Entity;
+using ConstradeApi.Enums;
 using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MTransaction;
 using ConstradeApi.Services.EntityToModel;
@@ -474,6 +475,22 @@ namespace ConstradeApi.Model.MUser.Repository
                 FollowCount = userFollowCount,
                 FollowedCount = userFollowedCount
             };
+        }
+
+        public async Task<WalletResponseType> AddCountPost(int userId, int counts)
+        {
+            Wallet wallet = await _context.UserWallet.Where(_w => _w.UserId == userId).FirstAsync();
+            int priceEachCount = 1;
+            int totalPrice = counts * priceEachCount;
+
+            if(wallet.Balance < totalPrice) return WalletResponseType.NotEnough;
+
+            User user = await _context.Users.Where(u => u.UserId == userId).FirstAsync();
+            wallet.Balance -= totalPrice;
+            user.CountPost += counts;
+            await _context.SaveChangesAsync();  
+
+            return WalletResponseType.Success;
         }
     }
 }

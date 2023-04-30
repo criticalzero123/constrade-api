@@ -1,4 +1,5 @@
-﻿using ConstradeApi.Model.MProduct;
+﻿using ConstradeApi.Enums;
+using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MTransaction;
 
 namespace ConstradeApi.Model.MUser.Repository
@@ -33,5 +34,6 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<bool> ChangePasswordByEmail(ChangePasswordModel model);
         Task<IEnumerable<TransactionModel>> GetNotRated(int buyerId, int sellerId);
         Task<decimal> GetAverage(int userId);
+        Task<WalletResponseType> AddCountPost(int userId, int counts);
     }
 }

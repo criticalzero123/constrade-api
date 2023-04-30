@@ -1,4 +1,5 @@
-﻿using ConstradeApi.Model.MProduct;
+﻿using ConstradeApi.Enums;
+using ConstradeApi.Model.MProduct;
 using ConstradeApi.Model.MReport;
 using ConstradeApi.Model.MReport.Repository;
 using ConstradeApi.Model.MUser;
@@ -156,6 +157,21 @@ namespace ConstradeApi.Controllers
                 bool flag = await _userReportRepository.CreateReport(model);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpPut("count/add/{userId}")]
+        public async Task<IActionResult> AddCountPostUser(int userId, int counts)
+        {
+            try
+            {
+                WalletResponseType response = await _userRepository.AddCountPost(userId, counts);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, $"{response}"));
             }
             catch (Exception ex)
             {

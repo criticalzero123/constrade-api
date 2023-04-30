@@ -9,5 +9,6 @@ namespace ConstradeApi.Model.MCommunity.MCommunityPost
         public UserAndPersonModel User { get; set;}
         public int CommentsLength { get; set;}
         public bool IsLiked { get; set;}
+        public bool IsMember { get; set;}
     }
 }

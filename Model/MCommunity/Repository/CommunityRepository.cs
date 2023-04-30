@@ -226,7 +226,8 @@ namespace ConstradeApi.Model.MCommunity.Repository
 
                                                                         },
                                                                         CommentsLength = p.CommentCount,
-                                                                        IsLiked = p.Liked
+                                                                        IsLiked = p.Liked,
+                                                                        IsMember = _context.CommunityMember.Any(u=> u.UserId ==p.Post.PosterUserId && u.CommunityId == p.Post.CommunityId)
                                                                     })
                                                                     .OrderByDescending(result => result.CommunityPost.CreatedDate);
 

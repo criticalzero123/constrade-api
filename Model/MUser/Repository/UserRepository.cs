@@ -488,6 +488,15 @@ namespace ConstradeApi.Model.MUser.Repository
             User user = await _context.Users.Where(u => u.UserId == userId).FirstAsync();
             wallet.Balance -= totalPrice;
             user.CountPost += counts;
+
+            await _context.OtherTransactions.AddAsync(new OtherTransaction
+            {
+                WalletId = wallet.WalletId,
+                Amount = totalPrice,
+                Date = DateTime.Now,
+                TransactionType = OtherTransactionType.AddCount,
+            });
+
             await _context.SaveChangesAsync();  
 
             return WalletResponseType.Success;

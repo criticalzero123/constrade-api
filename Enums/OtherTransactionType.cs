@@ -5,6 +5,7 @@
         Topup,
         Boost,
         Subscribe,
-        Refund
+        Refund,
+        AddCount,
     }
 }

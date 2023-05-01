@@ -15,6 +15,8 @@ namespace ConstradeApi.Model.MProduct.Repository
         Task<bool> DeleteFavoriteProduct(int id);
         Task<IEnumerable<FavoriteProductDetails>> GetFavoriteUser(int userId);
         Task<IEnumerable<ProductCardDetails>> GetSearchProduct(string text);
+        Task<IEnumerable<ProductCardDetails>> GetSearchProductGenre(string genre);
+        Task<IEnumerable<ProductCardDetails>> GetSearchProductPlatform(string platform);
         Task<IEnumerable<ProductCardDetails>> GetSearchProductMethod(string tradeMethod);
         Task<IEnumerable<ProductCardDetails>> GetProductByLength(int count);
     }

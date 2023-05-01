@@ -71,6 +71,36 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpGet("genre")]
+        public async Task<IActionResult> GetGenreProduct(string genre)
+        {
+            try
+            {
+                var products = await _prodRepo.GetSearchProductGenre(genre);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, products));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
+        [HttpGet("platform")]
+        public async Task<IActionResult> GetPlatformProduct(string platform)
+        {
+            try
+            {
+                var products = await _prodRepo.GetSearchProductPlatform(platform);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, products));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         [HttpGet("popular")]
         public async Task<IActionResult> GetProductPopularByLength(int count)
         {

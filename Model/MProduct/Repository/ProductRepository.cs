@@ -4,6 +4,7 @@ using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ConstradeApi.Model.MProduct.Repository
 {
@@ -393,6 +394,62 @@ namespace ConstradeApi.Model.MProduct.Repository
                                                                                 })
                                                                                 .Take(count)
                                                                                 .ToListAsync();
+
+            return products;
+        }
+
+        public async Task<IEnumerable<ProductCardDetails>> GetSearchProductGenre(string genre)
+        {
+            IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
+                                                                     .Where(_p => _p.GameGenre.ToLower().Contains(genre.ToLower()) && _p.ProductStatus != "sold")
+                                                                     .GroupJoin(
+                                                                     _context.BoostProduct.Where(b => b.Status == "active"),
+                                                                     p => p.ProductId,
+                                                                     b => b.ProductId,
+                                                                     (p, b) => new { Product = p, Boost = b })
+                                                                   .OrderByDescending(_p => _p.Boost.Any())
+                                                                   .ThenByDescending(_p => _p.Product.CountFavorite)
+                                                                     .Select(_p => new ProductCardDetails
+                                                                     {
+                                                                         ProductId = _p.Product.ProductId,
+                                                                         ProductName = _p.Product.Title,
+                                                                         ThumbnailUrl = _p.Product.ThumbnailUrl,
+                                                                         UserName = _p.Product.User.Person.FirstName + " " + _p.Product.User.Person.LastName,
+                                                                         UserImage = _p.Product.User.ImageUrl,
+                                                                         PreferTrade = _p.Product.PreferTrade,
+                                                                         DateCreated = _p.Product.DateCreated,
+                                                                         Genre = _p.Product.GameGenre,
+                                                                         Platform = _p.Product.Platform,
+                                                                     })
+                                                                     .ToListAsync();
+
+            return products;
+        }
+
+        public async Task<IEnumerable<ProductCardDetails>> GetSearchProductPlatform(string platform)
+        {
+            IEnumerable<ProductCardDetails> products = await _context.Products.Include(_p => _p.User.Person)
+                                                          .Where(_p => _p.Platform.ToLower().Contains(platform.ToLower()) && _p.ProductStatus != "sold")
+                                                          .GroupJoin(
+                                                          _context.BoostProduct.Where(b => b.Status == "active"),
+                                                          p => p.ProductId,
+                                                          b => b.ProductId,
+                                                          (p, b) => new { Product = p, Boost = b })
+                                                        .OrderByDescending(_p => _p.Boost.Any())
+                                                        .ThenByDescending(_p => _p.Product.CountFavorite)
+                                                          .Select(_p => new ProductCardDetails
+                                                          {
+                                                              ProductId = _p.Product.ProductId,
+                                                              ProductName = _p.Product.Title,
+                                                              ThumbnailUrl = _p.Product.ThumbnailUrl,
+                                                              UserName = _p.Product.User.Person.FirstName + " " + _p.Product.User.Person.LastName,
+                                                              UserImage = _p.Product.User.ImageUrl,
+                                                              PreferTrade = _p.Product.PreferTrade,
+                                                              DateCreated = _p.Product.DateCreated,
+                                                              Genre = _p.Product.GameGenre,
+                                                              Platform = _p.Product.Platform,
+                                                          })
+                                                          .ToListAsync();
 
             return products;
         }

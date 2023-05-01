@@ -382,7 +382,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
                                                                     {
                                                                         Community = _result._c.ToModel(),
                                                                         OwnerImage = _result._c.User.ImageUrl,
-                                                                        OwnerName = _result._c.User.Person.FirstName + " " + _result._c.User.Person.FirstName,
+                                                                        OwnerName = _result._c.User.Person.FirstName + " " + _result._c.User.Person.LastName,
                                                                         IsJoined = true,
                                                                     });
 

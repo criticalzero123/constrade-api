@@ -28,7 +28,7 @@ namespace ConstradeApi.Model.MCommunity.Repository
             User? owner = await _context.Users.FindAsync(info.OwnerUserId);
 
             if (owner == null) return CommunityResponse.Failed;
-            if (owner.UserType != "verified") return CommunityResponse.NotVerified;
+            if (owner.UserType == "semi-verified") return CommunityResponse.NotVerified;
 
             Community community = new Community
             {

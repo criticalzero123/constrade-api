@@ -39,7 +39,8 @@ namespace ConstradeApi.Model.MBoostProduct.Repository
                                                                                         bp => bp.ProductId,
                                                                                         p => p.ProductId,
                                                                                         (bp, p) => new { bp, p })
-                                                                                  .Where(result => result.bp.DateTimeExpired > DateTime.Now)
+                                                                                  .Where(result => result.bp.DateTimeExpired > DateTime.Now && result.p.ProductStatus == "unsold")
+                                                                                  .OrderByDescending(_result => _result.p.CountFavorite)
                                                                                   .Select(result => new ProductCardDetails
                                                                                   {
                                                                                       ProductId = result.p.ProductId,

@@ -404,7 +404,7 @@ namespace ConstradeApi.Model.MProduct.Repository
                                                                      .Where(_p => _p.GameGenre.ToLower().Contains(genre.ToLower()) && _p.ProductStatus != "sold")
                                                                      .GroupJoin(
                                                                      _context.BoostProduct.Where(b => b.Status == "active"),
-                                                                     p => p.ProductId,
+                                                                     p => p.ProductId, 
                                                                      b => b.ProductId,
                                                                      (p, b) => new { Product = p, Boost = b })
                                                                    .OrderByDescending(_p => _p.Boost.Any())

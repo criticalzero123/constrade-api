@@ -14,14 +14,12 @@ namespace ConstradeApi.Controllers
     public class HomeController : ControllerBase
     {
         private readonly IProductRepository _prodRepo;
-        private readonly ICommunityRepository _comRepo;
         private readonly IBoostProductRepository _boostRepo;
         private readonly ICommunityRepository _commuRepo;
 
-        public HomeController(IProductRepository prodRepo, ICommunityRepository comRepo, IBoostProductRepository boostProd, ICommunityRepository commuRepo)
+        public HomeController(IProductRepository prodRepo, IBoostProductRepository boostProd, ICommunityRepository commuRepo)
         {
             _prodRepo = prodRepo;
-            _comRepo = comRepo;
             _boostRepo = boostProd;
             _commuRepo = commuRepo;
         }

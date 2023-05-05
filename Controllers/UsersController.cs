@@ -164,8 +164,8 @@ namespace ConstradeApi.Controllers
             }
         }
 
-        [HttpGet("type")]
-        public async Task<IActionResult> ReportUser(int userId)
+        [HttpGet("type/{userId}")]
+        public async Task<IActionResult> GetUserType(int userId)
         {
             try
             {

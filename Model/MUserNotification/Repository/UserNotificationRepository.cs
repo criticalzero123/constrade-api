@@ -82,10 +82,10 @@ namespace ConstradeApi.Model.MUserNotification.Repository
             UserNotification _u1 = new UserNotification
             {
                 UserId = buyerUserId,
-                ToId = transactionId,
+                ToId = sellerUserId,
                 ImageUrl = "",
                 NotificationMessage = "Transaction completed. You can review him now.",
-                NotificationType = "transaction",
+                NotificationType = "review",
                 NotificationDate = DateTime.Now
             };
 

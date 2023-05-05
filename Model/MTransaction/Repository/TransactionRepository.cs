@@ -41,7 +41,7 @@ namespace ConstradeApi.Model.MTransaction.Repository
 
             _context.SaveChanges();
 
-            return _t.TransactionId;
+            return transaction.ProductId;
         }
 
 

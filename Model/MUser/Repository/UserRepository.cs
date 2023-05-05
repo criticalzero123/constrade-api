@@ -501,5 +501,12 @@ namespace ConstradeApi.Model.MUser.Repository
 
             return WalletResponseType.Success;
         }
+
+        public async Task<string> GetUserTypeById(int userId)
+        {
+            User user = await _context.Users.Where(u => u.UserId == userId).FirstAsync();
+
+            return user.UserType;
+        }
     }
 }

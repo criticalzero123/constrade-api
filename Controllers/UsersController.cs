@@ -164,6 +164,21 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpGet("type")]
+        public async Task<IActionResult> ReportUser(int userId)
+        {
+            try
+            {
+                string flag = await _userRepository.GetUserTypeById(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         [HttpPut("count/add/{userId}")]
         public async Task<IActionResult> AddCountPostUser(int userId, int counts)
         {

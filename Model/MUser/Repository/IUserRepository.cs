@@ -35,5 +35,6 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<IEnumerable<TransactionModel>> GetNotRated(int buyerId, int sellerId);
         Task<decimal> GetAverage(int userId);
         Task<WalletResponseType> AddCountPost(int userId, int counts);
+        Task<string> GetUserTypeById(int userId);
     }
 }

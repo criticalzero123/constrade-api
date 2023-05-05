@@ -17,7 +17,10 @@ namespace ConstradeApi.Model.MUserNotification.Repository
 
         public async Task<IEnumerable<UserNotificationModel>> GetNotifications(int userId)
         {
-            IEnumerable<UserNotificationModel> notif = await _context.Notification.Where(_f => _f.UserId == userId).Select(_f => _f.ToModel()).ToListAsync();
+            IEnumerable<UserNotificationModel> notif = await _context.Notification.Where(_f => _f.UserId == userId)
+                                                                                  .OrderByDescending(_f => _f.Status)
+                                                                                  .ThenByDescending(_f => _f.NotificationDate)
+                                                                                  .Select(_f => _f.ToModel()).ToListAsync();
 
             return notif;
         }

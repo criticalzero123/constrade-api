@@ -40,6 +40,8 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<decimal> GetAverage(int userId);
         Task<WalletResponseType> AddCountPost(int userId, int counts);
         Task<string> GetUserTypeById(int userId);
+        Task<int> GetUnreadNotif(int userId);
+        Task<bool> MarkAsReadNotif(int id);
       
     }
 }

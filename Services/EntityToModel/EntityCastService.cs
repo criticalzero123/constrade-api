@@ -307,6 +307,7 @@ namespace ConstradeApi.Services.EntityToModel
                 ImageUrl = notification.ImageUrl,
                 UserId = notification.UserId,
                 ToId = notification.ToId,
+                Status = notification.Status,
             };
         }
         public static CommunityModel ToModel(this Community community)

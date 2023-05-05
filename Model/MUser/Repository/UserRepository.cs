@@ -565,5 +565,22 @@ namespace ConstradeApi.Model.MUser.Repository
 
             return userFollowModels;
         }
+
+        public async Task<int> GetUnreadNotif(int userId)
+        {
+            return await _context.Notification.Where(f => f.UserId== userId && f.Status == "unread").CountAsync();
+        }
+
+        public async Task<bool> MarkAsReadNotif(int id)
+        {
+            UserNotification? notif = await _context.Notification.FindAsync(id);
+
+            if (notif == null) return false;
+
+            notif.Status = "read";
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

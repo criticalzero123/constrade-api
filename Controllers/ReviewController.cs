@@ -57,6 +57,21 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyReviewMade(int userId)
+        {
+            try
+            {
+                var reviews = await _userRepository.GetMyReviewsMade(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, reviews));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         //GET api/<UserController>
         [HttpGet("{otherUserId}/other")]
         public async Task<IActionResult> GetOtherReviews(int userId, int otherUserId)

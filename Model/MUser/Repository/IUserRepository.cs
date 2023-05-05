@@ -28,6 +28,7 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<bool> AddReview(int reviewerId, UserReviewModel userReviewModel);
         Task<IEnumerable<ReviewDisplayModel>> GetMyReviews(int userId, int otherUserId);
         Task<IEnumerable<ReviewDisplayModel>> GetReviews(int userId, int otherUserId);
+        Task<IEnumerable<ReviewDisplayModel>> GetMyReviewsMade(int userId);
         Task<UserAndPersonModel?> LoginByGoogle(string email);
         Task<UserAndPersonModel?> LoginByEmailAndPassword(UserLoginInfoModel info);
         Task<UserAndPersonModel?> UpdatePersonInfo(UserAndPersonModel info);
@@ -36,5 +37,6 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<decimal> GetAverage(int userId);
         Task<WalletResponseType> AddCountPost(int userId, int counts);
         Task<string> GetUserTypeById(int userId);
+      
     }
 }

@@ -508,5 +508,34 @@ namespace ConstradeApi.Model.MUser.Repository
 
             return user.UserType;
         }
+
+        public async Task<IEnumerable<ReviewDisplayModel>> GetMyReviewsMade(int userId)
+        {
+            List<Transaction> _transaction = await _context.Transactions.Include(_t => _t.Buyer.Person)
+                                                                    .Where(_t => _t.BuyerUserId == userId  && _t.IsReviewed)
+                                                                    .ToListAsync();
+            List<Review> _reviews = _context.UserReviews.ToList();
+
+
+            IEnumerable<ReviewDisplayModel> data = _reviews.Join(_transaction,
+                                    _r => _r.TransactionRefId,
+                                    _t => _t.TransactionId,
+                                    (_r, _t) => new { _r, _t }
+                                  )
+                  .OrderByDescending(result => result._r.DateCreated)
+                  .Select(result => new ReviewDisplayModel
+                  {
+                      ReviewId = result._r.ReviewId,
+                      Rate = result._r.Rate,
+                      TransactionId = result._t.TransactionId,
+                      UserName = result._t.Seller.Person.FirstName + " " + result._t.Seller.Person.LastName,
+                      ImageUrl = result._t.Seller.ImageUrl,
+                      Description = result._r.Description,
+                      Date = result._r.DateCreated,
+                      ProductId = result._t.ProductId,
+                  });
+
+            return data;
+        }
     }
 }

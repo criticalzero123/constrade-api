@@ -63,6 +63,42 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("follower")]
+        public async Task<IActionResult> GetFollowerUsers(int userId)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                var follower = await _userRepository.GetUserFollowerUsers(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, follower));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
+
+        [Authorize]
+        [HttpGet("followed")]
+        public async Task<IActionResult> GetFollowedUsers(int userId)
+        {
+            try
+            {
+                ResponseType responseType = ResponseType.Success;
+
+                var followed = await _userRepository.GetUserFollowUsers(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(responseType, followed));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex.InnerException != null ? ex.InnerException : ex));
+            }
+        }
+
         //GET api/<FollowController>/4
         [Authorize]
         [HttpGet]

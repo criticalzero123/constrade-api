@@ -511,7 +511,7 @@ namespace ConstradeApi.Model.MUser.Repository
 
         public async Task<IEnumerable<ReviewDisplayModel>> GetMyReviewsMade(int userId)
         {
-            List<Transaction> _transaction = await _context.Transactions.Include(_t => _t.Buyer.Person)
+            List<Transaction> _transaction = await _context.Transactions.Include(_t => _t.Seller.Person)
                                                                     .Where(_t => _t.BuyerUserId == userId  && _t.IsReviewed)
                                                                     .ToListAsync();
             List<Review> _reviews = _context.UserReviews.ToList();
@@ -536,6 +536,34 @@ namespace ConstradeApi.Model.MUser.Repository
                   });
 
             return data;
+        }
+
+        public async Task<IEnumerable<UserAndPersonModel>> GetUserFollowUsers(int userId)
+        {
+           
+                List<UserAndPersonModel> userFollowModels = await _context.UserFollows
+                    .Where(_u => _u.FollowedByUserId.Equals(userId))
+                    .Select(_u => new UserAndPersonModel
+                    {
+                        User = _u.User1.ToModel(),
+                        Person = _u.User1.Person.ToModel(),
+                    }).ToListAsync();
+
+                return userFollowModels;
+            
+        }
+
+        public async Task<IEnumerable<UserAndPersonModel>> GetUserFollowerUsers(int userId)
+        {
+            List<UserAndPersonModel> userFollowModels = await _context.UserFollows
+                  .Where(_u => _u.FollowByUserId.Equals(userId))
+                  .Select(_u => new UserAndPersonModel
+                  {
+                      User = _u.User2.ToModel(),
+                      Person = _u.User2.Person.ToModel(),
+                  }).ToListAsync();
+
+            return userFollowModels;
         }
     }
 }

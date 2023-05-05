@@ -16,6 +16,9 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<bool> DeleteFavorite(int id);
         Task<IEnumerable<UserFollowModel>> GetUserFollow(int userId);
         Task<IEnumerable<UserFollowModel>> GetUserFollower(int userId);
+        Task<IEnumerable<UserAndPersonModel>> GetUserFollowerUsers(int userId);
+        Task<IEnumerable<UserAndPersonModel>> GetUserFollowUsers(int userId);
+
         Task<UserFollowCount> GetUserFollowCount(int userId);
         /// <summary>
         /// GET: If the Current User follow the other user

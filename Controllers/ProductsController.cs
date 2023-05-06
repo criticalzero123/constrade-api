@@ -276,5 +276,20 @@ namespace ConstradeApi.Controllers
                 return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
+
+        [HttpGet("search/match")]
+        public async Task<IActionResult> MatchGenreAndPlatform(string text)
+        {
+            try
+            {
+                string? flag = await _productRepository.SearchGenrePlatformExist(text);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
     }
 }

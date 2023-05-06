@@ -19,5 +19,6 @@ namespace ConstradeApi.Model.MProduct.Repository
         Task<IEnumerable<ProductCardDetails>> GetSearchProductPlatform(string platform);
         Task<IEnumerable<ProductCardDetails>> GetSearchProductMethod(string tradeMethod);
         Task<IEnumerable<ProductCardDetails>> GetProductByLength(int count);
+        Task<string?> SearchGenrePlatformExist(string text);
     }
 }

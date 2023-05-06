@@ -4,6 +4,7 @@ using ConstradeApi.Model.MUser;
 using ConstradeApi.Services.EntityToModel;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ConstradeApi.Model.MProduct.Repository
@@ -452,6 +453,22 @@ namespace ConstradeApi.Model.MProduct.Repository
                                                           .ToListAsync();
 
             return products;
+        }
+
+        public async Task<string?> SearchGenrePlatformExist(string text)
+        {
+            var isGenreMatchFound = await _context.Products.Where(m => m.GameGenre.ToLower().Contains(text))
+                                                           .AnyAsync(m => EF.Functions.Like(m.GameGenre.ToLower(), $"%{text.ToLower()}%") && 
+                                                                           m.ProductStatus != "sold");
+
+            if (isGenreMatchFound) return "genre";
+
+            var isPlatformMatchFound = await _context.Products.AnyAsync(_p => _p.Platform.ToLower().Contains(text.ToLower()) && 
+                                                                              _p.ProductStatus != "sold");
+
+            if (isPlatformMatchFound) return "platform";
+
+            return null;
         }
     }
 }

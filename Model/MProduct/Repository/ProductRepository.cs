@@ -463,8 +463,9 @@ namespace ConstradeApi.Model.MProduct.Repository
 
             if (isGenreMatchFound) return "genre";
 
-            var isPlatformMatchFound = await _context.Products.AnyAsync(_p => _p.Platform.ToLower().Contains(text.ToLower()) && 
-                                                                              _p.ProductStatus != "sold");
+            var isPlatformMatchFound = await _context.Products.Where(m => m.Platform.ToLower().Contains(text))
+                                                           .AnyAsync(m => EF.Functions.Like(m.Platform.ToLower(), $"%{text.ToLower()}%") &&
+                                                                           m.ProductStatus != "sold");
 
             if (isPlatformMatchFound) return "platform";
 

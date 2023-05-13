@@ -1,4 +1,5 @@
-﻿using ConstradeApi.Services.EntityToModel;
+﻿using ConstradeApi.Entity;
+using ConstradeApi.Services.EntityToModel;
 using ConstradeApi.VerificationEntity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -8,10 +9,12 @@ namespace ConstradeApi.VerificationModel.MValidIdRequest.Repository
     public class ValidIdRequestRepository : IValidIdRequestRepository
     {
         private readonly VerificationDataContext _context;
+        private readonly DataContext _uContext;
 
-        public ValidIdRequestRepository(VerificationDataContext context)
+        public ValidIdRequestRepository(VerificationDataContext context, DataContext uContext)
         {
             _context = context;
+            _uContext = uContext;
         }
 
         public async Task<ValidIdRequestModel?> GetValidationRequests(int userId)
@@ -33,15 +36,24 @@ namespace ConstradeApi.VerificationModel.MValidIdRequest.Repository
                 _context.SaveChanges(); 
             }
 
+            bool exist = _context.ValidIdentification.Any(_v => _v.ValidIdNumber.Equals(info.ValidIdNumber) && _v.ValidIdType == info.ValidationType);
+
             ValidIdRequest _request = new ValidIdRequest
             {
                 ValidIdNumber = info.ValidIdNumber,
                 UserId = info.UserId,
                 UserName = info.UserName,
-                ValidationType = info.ValidationType,
+                ValidationType = info.ValidationType,                
                 RequestDate = DateTime.Now,
-                Status = "pending"
+                Status = exist ? "accepted" : "rejected"
             };
+
+            User? user = await _uContext.Users.FindAsync(info.UserId);
+            if (user == null) return false;
+
+            user.CountPost += 2;
+            user.UserType = "verified";
+            await _uContext.SaveChangesAsync();
 
             await _context.ValidIdRequests.AddAsync(_request);
             await _context.SaveChangesAsync();  

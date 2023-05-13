@@ -582,5 +582,15 @@ namespace ConstradeApi.Model.MUser.Repository
 
             return true;
         }
+
+        public async Task<IEnumerable<ProductModel>> GetWalletAndCashTransaction(int userId)
+        {
+            IEnumerable<ProductModel> productsSold = await _context.Products.Where(p => p.ProductStatus == "sold" &&
+                                                                                        (p.PreferTrade == "cash" || p.PreferTrade == "wallet") &&
+                                                                                        p.PosterUserId == userId
+                                                                                  ).Select(p => p.ToModel()).ToListAsync();
+
+            return productsSold;
+        }
     }
 }

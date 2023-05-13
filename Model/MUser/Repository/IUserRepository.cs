@@ -42,6 +42,7 @@ namespace ConstradeApi.Model.MUser.Repository
         Task<string> GetUserTypeById(int userId);
         Task<int> GetUnreadNotif(int userId);
         Task<bool> MarkAsReadNotif(int id);
+        Task<IEnumerable<ProductModel>> GetWalletAndCashTransaction(int userId);
       
     }
 }

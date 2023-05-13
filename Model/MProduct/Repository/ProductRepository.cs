@@ -454,16 +454,16 @@ namespace ConstradeApi.Model.MProduct.Repository
 
             return products;
         }
-
+        
         public async Task<string?> SearchGenrePlatformExist(string text)
         {
-            var isGenreMatchFound = await _context.Products.Where(m => m.GameGenre.ToLower().Contains(text))
+            var isGenreMatchFound = await _context.Products.Where(m => m.GameGenre.ToLower().Contains(text.ToLower()))
                                                            .AnyAsync(m => EF.Functions.Like(m.GameGenre.ToLower(), $"%{text.ToLower()}%") && 
                                                                            m.ProductStatus != "sold");
 
             if (isGenreMatchFound) return "genre";
 
-            var isPlatformMatchFound = await _context.Products.Where(m => m.Platform.ToLower().Contains(text))
+            var isPlatformMatchFound = await _context.Products.Where(m => m.Platform.ToLower().Contains(text.ToLower()))
                                                            .AnyAsync(m => EF.Functions.Like(m.Platform.ToLower(), $"%{text.ToLower()}%") &&
                                                                            m.ProductStatus != "sold");
 

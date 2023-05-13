@@ -92,6 +92,21 @@ namespace ConstradeApi.Controllers
             }
         }
 
+        [HttpGet("{userId}/transaction/statistic")]
+        public async Task<IActionResult> GetStatistic(int userId)
+        {
+            try
+            {
+                var result = await _userRepository.GetWalletAndCashTransaction(userId);
+
+                return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, result));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
+            }
+        }
+
         //POST api/<UserController>/4/favorite
         [HttpPost("{userId}/favorite")]
         public async Task<IActionResult> AddFavorite(int userId, [FromBody] FavoriteModel favoriteModel)

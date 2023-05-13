@@ -65,7 +65,7 @@ namespace ConstradeApi.Controllers
 
                 if (flag == -1) return BadRequest("Something Went Wrong");
 
-                await _notif.SendNotificationTransaction(transactionModel.SellerUserId, transactionModel.BuyerUserId, flag);
+                if (flag != -2 ) await _notif.SendNotificationTransaction(transactionModel.SellerUserId, transactionModel.BuyerUserId, flag);
 
                 return Ok(ResponseHandler.GetApiResponse(ResponseType.Success, flag));
             }

@@ -23,6 +23,32 @@ namespace ConstradeApi.Model.MTransaction.Repository
 
             if (product == null) return -1;
 
+            if (product.PreferTrade == "wallet")
+            {
+                Wallet buyerWallet = _context.UserWallet.Where(w => w.UserId == transaction.BuyerUserId).First();
+                Wallet senderWaller = _context.UserWallet.Where(w => w.UserId == transaction.SellerUserId).First();
+
+                if (buyerWallet.Balance < product.Cash) return -2;
+
+                //Deducting the balance of the sender
+                buyerWallet.Balance -= product.Cash;
+                await _context.SaveChangesAsync();
+
+                //Adding the balance of the receiver
+                senderWaller.Balance += product.Cash;
+                await _context.SaveChangesAsync();
+
+                SendMoneyTransaction _transaction = new SendMoneyTransaction()
+                {
+                    SenderWalletId = buyerWallet.WalletId,
+                    ReceiverWalletId = senderWaller.WalletId,
+                    Amount = product.Cash,
+                };
+
+                await _context.SendMoneyTransactions.AddAsync(_transaction);
+                await _context.SaveChangesAsync();
+            }
+
             Transaction _t = new Transaction
             {
                 ProductId = transaction.ProductId,
